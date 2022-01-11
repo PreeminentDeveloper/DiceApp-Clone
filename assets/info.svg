@@ -1,0 +1,12 @@
+<svg id="ic_warning" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="ic_warning-2" data-name="ic_warning" transform="translate(-2 -2)">
+    <g id="Oval" transform="translate(2 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2">
+      <circle cx="10" cy="10" r="10" stroke="none"/>
+      <circle cx="10" cy="10" r="9" fill="none"/>
+    </g>
+    <g id="Group" transform="translate(11 7)">
+      <rect id="Rectangle" width="2" height="7" rx="1" transform="translate(0 3)"/>
+      <rect id="Rectangle_3" data-name="Rectangle 3" width="2" height="2" rx="1"/>
+    </g>
+  </g>
+</svg>

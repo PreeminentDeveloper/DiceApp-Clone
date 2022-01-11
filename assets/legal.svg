@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 20 22">
+  <g id="ic_ad" transform="translate(1 1)">
+    <g id="ic_ad-2" data-name="ic_ad" transform="translate(-3 -2)">
+      <g id="Group" transform="translate(3 2)">
+        <path id="Rectangle_2" data-name="Rectangle 2" d="M0,14V0H14V14" transform="translate(0 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <path id="Oval" d="M0,0A4,4,0,0,0,4,4H4A4,4,0,0,0,8,0" transform="translate(0 16)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <path id="Oval_Copy" data-name="Oval Copy" d="M0,4H0A4,4,0,0,0,4,0" transform="translate(14 16)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <path id="Line" d="M0,1H10" transform="translate(8 15)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <path id="Line-2" data-name="Line" d="M10,1H0" transform="translate(4 19)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <rect id="Rectangle_3" data-name="Rectangle 3" width="2" height="2" transform="translate(2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <rect id="Rectangle_3_Copy" data-name="Rectangle 3 Copy" width="2" height="2" transform="translate(10)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <path id="Line-3" data-name="Line" d="M0,1H6" transform="translate(4 6)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+        <path id="Line_Copy" data-name="Line Copy" d="M0,1H6" transform="translate(4 10)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+      </g>
+    </g>
+  </g>
+</svg>
