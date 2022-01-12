@@ -6,6 +6,7 @@ import 'core/data/session_manager.dart';
 import 'core/navigation/routes.dart';
 import 'core/network/url_config.dart';
 import 'core/util/injection_container.dart';
+import 'views/auth/birthday.dart';
 import 'views/onboarding/sign_in_splash.dart';
 
 void main() async {
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
           routes: Routes.getRoutes,
           home: SessionManager.instance.authLogging
               ? const SignInSplashScreen()
-              : const SignInSplashScreen(),
+              :  Birthday(),
         );
       },
     );

@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter/gestures.dart';
 
+import 'birthday.dart';
 import 'bloc/auth_bloc.dart';
 import 'connect_friends.dart';
 
@@ -45,7 +46,7 @@ class _OTPState extends State<OTP> {
                 logger.d('Status: ${state.response}');
                 // Todo:=> Navigate User here
                 if (state.response.data?.verifyOtp?.authSession?.user?.status == "onboarding") {
-                  // PageRouter.gotoWidget(Birthday(), context);
+                  PageRouter.gotoWidget(Birthday(), context);
                 } else {
                   PageRouter.gotoWidget(ConnectFriends(), context, clearStack: true);
                 }
