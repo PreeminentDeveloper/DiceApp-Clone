@@ -120,7 +120,7 @@ class _BirthdayState extends State<Birthday> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileSetUp()));
+                                  builder: (context) => ProfileSetUp(age: _dobDate.text)));
                         }
                       },
                       style: ButtonStyle(

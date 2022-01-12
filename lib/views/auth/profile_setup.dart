@@ -1,6 +1,13 @@
 import 'dart:io';
+import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/util/debouncer.dart';
+import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
+import 'package:dice_app/views/auth/data/model/username/username_model.dart';
 import 'package:dice_app/views/widgets/back_arrow.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dice_app/views/widgets/validate.dart';
@@ -15,13 +22,19 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'bloc/auth_bloc.dart';
+import 'connect_friends.dart';
+
 class ProfileSetUp extends StatefulWidget {
+  final String age;
+  ProfileSetUp({required this.age});
+
   @override
   _ProfileSetUpState createState() => _ProfileSetUpState();
 }
 
 class _ProfileSetUpState extends State<ProfileSetUp> {
-  late File _image;
+  File? _image;
   final _debouncer = Debouncer(milliseconds: 900);
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -29,40 +42,43 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
   bool checker = false;
   String output = "";
   bool result = true;
-  AppState appState;
-  AuthBloc _loginBloc = AuthBloc();
+  bool _loadingState = false;
+  final _bloc = AuthBloc(inject());
 
   @override
   Widget build(BuildContext context) {
-    appState = Provider.of<AppState>(context);
-    print(appState.dob);
     SizeConfig().init(context);
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
           child: BlocProvider<AuthBloc>(
-              create: (context) => _loginBloc,
-              child: BlocListener<AuthBloc, AuthState>(listener:
-                  (context, state) async {
-                if (state is Error) {
-                  print(state.message);
-                }
-                if (state is VerifyUsernameLoaded) {
-                  print(state.verifyUsernameEntity.codeNameExists);
-                  output = !state.verifyUsernameEntity.codeNameExists
-                      ? "Congrats! Username is available."
-                      : state.verifyUsernameEntity.codeNameExists
-                      ? "Oops! Taken already"
-                      : "";
-                  result = state.verifyUsernameEntity.codeNameExists;
-                }
-                if (state is CompleteRegistrationLoaded) {
-                  appState.user =
-                      json.decode(await sharedStore.getFromStore("user"));
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => ConnectFriends()));
-                }
-              }, child:
+              create: (context) => _bloc,
+              child: BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is AuthLoadingState) {
+                      setState(() => _loadingState = true
+                      );
+                    }
+                    if (state is AuthSuccessState) {
+                      setState(() => _loadingState = false);
+                      PageRouter.gotoWidget(ConnectFriends(), context,
+                          clearStack: true);
+                    }
+                    if (state is AuthVerifyUsernameSuccess) {
+                      output = !state.response.codeNameExists!
+                          ? "Congrats! Username is available."
+                          : state.response.codeNameExists!
+                          ? "Oops! Taken already"
+                          : "";
+                      result = state.response.codeNameExists!;
+                    }
+
+                    if (state is AuthFailedState) {
+                      logger.d(state.message);
+                      setState(() => _loadingState = false);
+                      // Todo:=> show user error here
+                    }
+                  }, child:
               BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                 return SingleChildScrollView(
                   child: Container(
@@ -211,7 +227,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                   )
                                       : CircleAvatar(
                                     backgroundImage: FileImage(
-                                      _image,
+                                      _image!,
                                     ),
                                     radius: 43,
                                   ),
@@ -273,9 +289,10 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                               horizontal: SizeConfig.sizeXXL!),
                           child: TextFormField(
                             onChanged: (String val) {
-                              _debouncer.run(() => context
-                                  .read<AuthBloc>()
-                                  .add(VerifyUsername(username: val)));
+                              _debouncer.run(() =>
+                                  _bloc.add(VerifyUsernameEvent(
+                                      codeNameModel: CodeNameModel(val)
+                              )));
                             },
                             controller: _usernameController,
                             decoration: InputDecoration(
@@ -318,13 +335,16 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                   !result &&
                                   _usernameController.text.trim().isNotEmpty
                                   ? () {
-                                context.read<AuthBloc>().add(
-                                    CompleteRegistration(
-                                        username:
+                               _bloc.add(
+                                    ProfileSetUpEvent(
+                                        profileSetupModel: ProfileSetupModel(
+                                            SessionManager.instance.usersData["phone"],
                                         _usernameController.text,
-                                        phone: appState.phone,
-                                        age: appState.dob,
-                                        name: _nameController.text));
+                                          _nameController.text,
+                                            widget.age
+                                         )
+                                    )
+                               );
                               }
                                   : () {},
                               style: ButtonStyle(
@@ -345,8 +365,8 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                         // side: BorderSide(color: Colors.red)
                                       ))),
                               child: TextWidget(
-                                text: state is RegLoading
-                                    ? "Loading"
+                                text: _loadingState
+                                    ? "Loading..."
                                     : "enter".toUpperCase(),
                                 weight: FontWeight.w700,
                                 appcolor: checker &&
@@ -376,7 +396,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
     //Cropping the image
 
     File? croppedFile = await ImageCropper.cropImage(
-        sourcePath: image.path,
+        sourcePath: image!.path,
         // ratioX: 1.0,
         // ratioY: 1.0,
         maxWidth: 512,
@@ -384,7 +404,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
         aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
 
     //Compress the image
-    final lastIndex = croppedFile.path.lastIndexOf(new RegExp(r'.jp'));
+    final lastIndex = croppedFile!.path.lastIndexOf(new RegExp(r'.jp'));
     final splitted = croppedFile.path.substring(0, (lastIndex));
     final targetPath =
         "${splitted}_out${croppedFile.path.substring(lastIndex)}";
@@ -397,10 +417,11 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
 
     setState(() {
       _image = result!;
-      print(_image.lengthSync());
+      print(_image!.lengthSync());
     });
 
-    var token = await sharedStore.getFromStore("token".toString());
+    var token = SessionManager.instance.authToken;
+
 
     var request = http.MultipartRequest(
         'POST', Uri.parse("http://35.175.175.194/upload"));
@@ -409,7 +430,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
     request.headers['Authorization'] = 'Bearer ' + json.decode(token);
 
     request.fields['type'] = "profile_picture";
-    request.files.add(await http.MultipartFile.fromPath('image', result.path));
+    request.files.add(await http.MultipartFile.fromPath('image', result!.path));
     var response = await request.send();
     print(response.stream);
     print(response.statusCode);

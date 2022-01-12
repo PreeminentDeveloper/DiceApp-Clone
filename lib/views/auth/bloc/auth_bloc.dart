@@ -4,6 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:dice_app/views/auth/data/model/login/login_model.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_model.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_response.dart';
+import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
+import 'package:dice_app/views/auth/data/model/username/username_model.dart';
+import 'package:dice_app/views/auth/data/model/username/username_response.dart';
 import 'package:dice_app/views/auth/data/source/authorization.dart';
 import 'package:meta/meta.dart';
 
@@ -32,6 +35,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         yield AuthLoadingState();
         final response = await _authService.verifyOtp(event.otpModel);
+        yield AuthSuccessState(response: response);
+      } catch (e) {
+        yield AuthFailedState(message: e.toString());
+      }
+    }
+
+    /// Verify username event
+    if (event is VerifyUsernameEvent) {
+      try {
+        // yield AuthLoadingState();
+        final response = await _authService.verifyUsername(event.codeNameModel);
+        yield AuthVerifyUsernameSuccess(response: response);
+      } catch (e) {
+        yield AuthFailedState(message: e.toString());
+      }
+    }
+
+
+    /// setup profile
+    if (event is ProfileSetUpEvent) {
+      try {
+        yield AuthLoadingState();
+        final response = await _authService.setUpProfile(event.profileSetupModel);
         yield AuthSuccessState(response: response);
       } catch (e) {
         yield AuthFailedState(message: e.toString());

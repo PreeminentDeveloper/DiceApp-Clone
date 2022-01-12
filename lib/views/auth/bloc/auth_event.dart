@@ -14,3 +14,13 @@ class VerifyOtpEvent extends AuthEvent {
   OtpModel otpModel;
   VerifyOtpEvent({required this.otpModel});
 }
+
+class VerifyUsernameEvent extends AuthEvent {
+  CodeNameModel codeNameModel;
+  VerifyUsernameEvent({required this.codeNameModel});
+}
+
+class ProfileSetUpEvent extends AuthEvent {
+  ProfileSetupModel profileSetupModel;
+  ProfileSetUpEvent({required this.profileSetupModel});
+}
