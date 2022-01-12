@@ -10,16 +10,39 @@ class HomeGqlMutation {
       prevPage
       list{
         id
-        userId
+        name
+        status
+        type
         updatedAt
+        userId
         users{
+          age
           name
-          username
+          bio
+          connection
+          deviceId
           id
+          name
+          phone
+          status
+          username
           photo
+          conversation{
+            id
+            name
+            status
+            type
+            updatedAt
+            userId
+          
+          }
+          notificationSettings{
+            visibility
+          }
+        
         }
       }
-    }
+    }  
   }
   ''';
 }

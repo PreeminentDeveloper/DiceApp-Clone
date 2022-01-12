@@ -3,7 +3,7 @@ class ListOfConversationResponse {
 
   ListOfConversationResponse({this.data});
 
-  ListOfConversationResponse.fromJson(Map<String, dynamic> json) {
+  ListOfConversationResponse.fromJson(json) {
     data = json["data"] == null ? null : Data.fromJson(json["data"]);
   }
 
