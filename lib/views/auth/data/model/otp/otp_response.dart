@@ -24,6 +24,7 @@ class OtpResponse {
 }
 
 class VerifyOtp {
+
   String? typename;
   AuthSession? authSession;
 
@@ -47,6 +48,7 @@ class VerifyOtp {
 }
 
 class AuthSession {
+
   String? typename;
   String? refreshToken;
   String? token;

@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter/gestures.dart';
 
+import 'birthday.dart';
 import 'bloc/auth_bloc.dart';
 import 'connect_friends.dart';
 
@@ -46,7 +47,7 @@ class _OTPState extends State<OTP> {
                 if (state.response?.verifyOtp?.authSession?.user?.status ==
                     "onboarding") {
                   // Todo:=> Proceed
-                  // PageRouter.gotoWidget(Birthday(), context);
+                  PageRouter.gotoWidget(Birthday(), context);
                 } else {
                   /// cache login status here if user is not a new user
                   SessionManager.instance.authLogging = true;

@@ -5,6 +5,10 @@ import 'package:dice_app/views/auth/data/model/login/login_model.dart';
 import 'package:dice_app/views/auth/data/model/login/login_response.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_model.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_response.dart';
+import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
+import 'package:dice_app/views/auth/data/model/profile/profile_setup_response.dart';
+import 'package:dice_app/views/auth/data/model/username/username_model.dart';
+import 'package:dice_app/views/auth/data/model/username/username_response.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -28,6 +32,7 @@ class AuthService {
   Future<OtpResponse> verifyOtp(OtpModel model) async {
     try {
       final result = await _graphQLClient.client.mutate(MutationOptions(
+
           document: gql(model.verifyOtp()), onError: (data) => logger.e(data)));
       final _otpResponse = OtpResponse.fromJson(result.data!);
       SessionManager.instance.usersData =
@@ -41,4 +46,36 @@ class AuthService {
       rethrow;
     }
   }
+
+
+  Future<UsernameResponse> verifyUsername(CodeNameModel model) async {
+    try {
+      final result = await _graphQLClient.client.query(
+        QueryOptions(
+            document: gql(model.codeNameExists),
+            variables: {"codeName": model.codeName}),
+      );
+      return UsernameResponse.fromJson(result.data!);
+    } catch (e) {
+      logger.e(e);
+      rethrow;
+    }
+  }
+
+
+  Future<ProfileSetUpResponse> setUpProfile(ProfileSetupModel model) async {
+    try {
+      final result = await _graphQLClient.buildClient(token: SessionManager.instance.authToken).mutate(MutationOptions(
+
+          document: gql(model.completeRegistration()), onError: (data) => logger.e(data)));
+      final _profileResponse = ProfileSetUpResponse.fromJson(result.data!);
+      SessionManager.instance.usersData = _profileResponse.completeRegistration?.user?.toJson()
+      as Map<String, dynamic>;
+      return ProfileSetUpResponse.fromJson(result.data!);
+    } catch (e) {
+      logger.e(e);
+      rethrow;
+    }
+  }
+
 }

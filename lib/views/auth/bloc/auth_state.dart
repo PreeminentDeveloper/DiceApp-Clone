@@ -14,6 +14,11 @@ class AuthSuccessState extends AuthState {
   AuthSuccessState({required this.response});
 }
 
+class AuthVerifyUsernameSuccess extends AuthState {
+  UsernameResponse response;
+  AuthVerifyUsernameSuccess({required this.response});
+}
+
 class AuthFailedState extends AuthState {
   String message;
   AuthFailedState({required this.message});

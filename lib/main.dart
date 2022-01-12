@@ -11,6 +11,7 @@ import 'core/provider/get_provider.dart';
 import 'core/util/injection_container.dart';
 import 'views/home/home_screen.dart';
 
+
 void main() async {
   await initializeCore(environment: Environment.staging);
   runApp(const MyApp());
