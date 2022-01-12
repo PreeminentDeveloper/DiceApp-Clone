@@ -1,9 +1,11 @@
 import 'package:dice_app/core/data/permission_manager.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
+import 'package:dice_app/views/profile/my_profile.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -92,10 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   flexibleSpace: Container(
                     padding: EdgeInsets.only(bottom: 10.h),
                     child: ProfileWindow(() {
-                      // PageRouter.gotoWidget(MyProfile(), context)
-                      //     .whenComplete(() async {
-                      //   setState(() {});
-                      // });
+                      PageRouter.gotoWidget(MyProfile(), context);
                     }, value: flag ? false : true),
                   ),
                   bottom: PreferredSize(

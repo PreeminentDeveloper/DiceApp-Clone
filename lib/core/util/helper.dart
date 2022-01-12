@@ -2,6 +2,9 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -86,5 +89,35 @@ class Helpers {
         throw 'Could not launch $link';
       }
     }
+  }
+
+  /// Handles image processing
+  static Future<File>? processImage(ImageSource source) async {
+    File? _result;
+    try {
+      final image = await ImagePicker().getImage(source: source);
+
+      File? croppedFile = await ImageCropper.cropImage(
+          sourcePath: image!.path,
+          // ratioX: 1.0,
+          // ratioY: 1.0,
+          maxWidth: 512,
+          maxHeight: 512,
+          aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
+
+      //Compress the image
+      final lastIndex = croppedFile?.path.lastIndexOf(RegExp(r'.jp'));
+      final splitted = croppedFile?.path.substring(0, (lastIndex));
+      final targetPath =
+          "${splitted}_out${croppedFile?.path.substring(lastIndex!)}";
+      _result = await FlutterImageCompress.compressAndGetFile(
+        croppedFile!.path,
+        targetPath,
+        quality: 50,
+      );
+    } catch (e) {
+      logger.e('Error occured processing image: $e');
+    }
+    return _result!;
   }
 }
