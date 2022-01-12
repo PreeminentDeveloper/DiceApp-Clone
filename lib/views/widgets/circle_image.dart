@@ -30,6 +30,13 @@ class CircleImageHandler extends StatelessWidget {
         backgroundImage: FileImage(imageFile!),
       );
     }
+    if (image!.contains('assets')) {
+      return CircleAvatar(
+        radius: radius!.r,
+        backgroundColor: Colors.transparent,
+        backgroundImage: AssetImage(image!),
+      );
+    }
     if (showInitialText!) {
       return CircleAvatar(
         radius: radius?.r,

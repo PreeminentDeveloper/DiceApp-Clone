@@ -3,9 +3,9 @@ class ProfileSetupModel {
   final String? username;
   final String? name;
   final String? age;
+  final String? id;
 
-  ProfileSetupModel(this.phone, this.username, this.name, this.age);
-
+  ProfileSetupModel({this.phone, this.username, this.name, this.age, this.id});
 
   String completeRegistration() {
     return """
@@ -28,4 +28,22 @@ class ProfileSetupModel {
     """;
   }
 
+  String getProfile = '''
+  query (\$id: String!){
+    getProfile(input: {id: \$id}){
+      connection
+      name
+      id
+      bio
+      phone
+      username
+      phone
+      status
+      photo
+      conversation{
+        id
+      }
+    }
+  }
+  ''';
 }

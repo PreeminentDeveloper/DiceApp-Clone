@@ -1,42 +1,52 @@
 class User {
   String? typename;
-  String? id;
+  String? connection;
   String? name;
+  String? id;
+  dynamic bio;
   String? phone;
-  Photo? photo;
-  String? status;
   String? username;
+  String? status;
+  Photo? photo;
+  dynamic conversation;
 
   User(
       {this.typename,
-      this.id,
+      this.connection,
       this.name,
+      this.id,
+      this.bio,
       this.phone,
-      this.photo,
+      this.username,
       this.status,
-      this.username});
+      this.photo,
+      this.conversation});
 
   User.fromJson(Map<String, dynamic> json) {
     typename = json["__typename"];
-    id = json["id"];
+    connection = json["connection"];
     name = json["name"];
+    id = json["id"];
+    bio = json["bio"];
     phone = json["phone"];
-    photo = json["photo"] == null ? null : Photo.fromJson(json["photo"]);
-    status = json["status"];
     username = json["username"];
+    status = json["status"];
+    photo = json["photo"] == null ? null : Photo.fromJson(json["photo"]);
+    conversation = json["conversation"];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["__typename"] = typename;
-    data["id"] = id;
+    data["connection"] = connection;
     data["name"] = name;
+    data["id"] = id;
+    data["bio"] = bio;
     data["phone"] = phone;
-    if (photo != null) {
-      data["photo"] = photo?.toJson();
-    }
-    data["status"] = status;
     data["username"] = username;
+    data["status"] = status;
+    if (photo != null) data["photo"] = photo?.toJson();
+    data["conversation"] = conversation;
     return data;
   }
 }

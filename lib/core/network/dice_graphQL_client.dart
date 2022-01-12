@@ -13,15 +13,14 @@ class DiceGraphQLClient {
 
   GraphQLClient buildClient({String token = ''}) {
     Link? link;
-    if (token.isNotEmpty) {
-      AuthLink authLink = AuthLink(
-        getToken: () async => 'Bearer ' + SessionManager.instance.authToken,
-      );
-      link = authLink.concat(_httpLink!);
-    }
+    AuthLink authLink = AuthLink(
+      getToken: () async => 'Bearer ' + SessionManager.instance.authToken,
+    );
+    link = authLink.concat(_httpLink!);
+
     _client = GraphQLClient(
       cache: GraphQLCache(store: HiveStore()),
-      link: link ?? _httpLink!,
+      link: link,
     );
     return _client!;
   }

@@ -11,7 +11,9 @@ import 'package:image_picker/image_picker.dart';
 
 class ImageModal extends StatelessWidget {
   final Function(File? file)? fileCallBack;
-  const ImageModal({this.fileCallBack, Key? key}) : super(key: key);
+  final bool? showDeleteButton;
+  const ImageModal({this.fileCallBack, Key? key, this.showDeleteButton = true})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,24 +23,32 @@ class ImageModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextWidget(
-              text: "Delete Photo",
-              size: FontSize.s16,
-              weight: FontWeight.w400,
-              appcolor: DColors.red,
-              align: TextAlign.center,
-              onTap: () {
-                PageRouter.goBack(context);
-              },
+            Visibility(
+              visible: showDeleteButton!,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextWidget(
+                    text: "Delete Photo",
+                    size: FontSize.s16,
+                    weight: FontWeight.w400,
+                    appcolor: DColors.red,
+                    align: TextAlign.center,
+                    onTap: () {
+                      PageRouter.goBack(context);
+                    },
+                  ),
+                  SizedBox(height: 8.h),
+                  const Divider(),
+                  SizedBox(height: 8.h),
+                ],
+              ),
             ),
-            SizedBox(height: 8.h),
-            const Divider(),
-            SizedBox(height: 8.h),
             TextWidget(
               text: "Take photo",
               size: FontSize.s16,
               weight: FontWeight.w400,
-              appcolor: DColors.blue100,
+              appcolor: DColors.primaryAccentColor,
               align: TextAlign.center,
               onTap: () async {
                 final _file = await Helpers.processImage(ImageSource.camera);
@@ -52,7 +62,7 @@ class ImageModal extends StatelessWidget {
               text: "Choose photo",
               size: FontSize.s16,
               weight: FontWeight.w400,
-              appcolor: DColors.blue100,
+              appcolor: DColors.primaryAccentColor,
               align: TextAlign.center,
               onTap: () async {
                 final _file = await Helpers.processImage(ImageSource.gallery);

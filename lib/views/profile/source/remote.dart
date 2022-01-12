@@ -13,7 +13,6 @@ class ProfileService {
       var request =
           http.MultipartRequest('POST', Uri.parse(UrlConfig.uploadBaseUrl));
 
-      logger.d(SessionManager.instance.authToken);
       //Header....
       request.headers['Authorization'] =
           'Bearer ${SessionManager.instance.authToken}';
@@ -28,4 +27,7 @@ class ProfileService {
       rethrow;
     }
   }
+
+
+  
 }

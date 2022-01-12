@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/navigation/routes.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/profile/provider/profile_service.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,20 +17,6 @@ class ConnectFriends extends StatefulWidget {
 }
 
 class _ConnectFriendsState extends State<ConnectFriends> {
-  // AppState appState;
-
-  @override
-  void initState() {
-    super.initState();
-    // appState = Provider.of<AppState>(context, listen: false);
-    // getUserInfo();
-  }
-
-  // getUserInfo() async {
-  //   appState.user = json.decode(await sharedStore.getFromStore("user"));
-  //   print(await sharedStore.getFromStore("user"));
-  // }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -40,8 +29,9 @@ class _ConnectFriendsState extends State<ConnectFriends> {
         actions: [
           GestureDetector(
             onTap: () {
-              // Navigator.pushReplacement(
-              //     context, MaterialPageRoute(builder: (_) => HomeScreen()));
+              Provider.of<ProfileProvider>(context, listen: false)
+                  .getUsersInformations(notifyListeners: true);
+              PageRouter.gotoNamed(Routes.home, context);
             },
             child: Padding(
               padding: EdgeInsets.all(SizeConfig.sizeLarge!),
@@ -81,13 +71,13 @@ class _ConnectFriendsState extends State<ConnectFriends> {
                 },
                 style: ButtonStyle(
                     backgroundColor:
-                    MaterialStateProperty.all<Color>(DColors.white),
+                        MaterialStateProperty.all<Color>(DColors.white),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25))),
                     elevation: MaterialStateProperty.all(2),
                     shadowColor:
-                    MaterialStateProperty.all<Color>(Colors.black87)),
+                        MaterialStateProperty.all<Color>(Colors.black87)),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 10.0, horizontal: 40),

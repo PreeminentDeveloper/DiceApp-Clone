@@ -8,7 +8,10 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
 import 'package:dice_app/views/auth/data/model/username/username_model.dart';
+import 'package:dice_app/views/profile/provider/profile_service.dart';
+import 'package:dice_app/views/profile/widget/image_modal.dart';
 import 'package:dice_app/views/widgets/back_arrow.dart';
+import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dice_app/views/widgets/validate.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +27,7 @@ import 'dart:convert';
 
 import 'bloc/auth_bloc.dart';
 import 'connect_friends.dart';
+import 'widget/date_picker.dart';
 
 class ProfileSetUp extends StatefulWidget {
   final String age;
@@ -44,6 +48,14 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
   bool result = true;
   bool _loadingState = false;
   final _bloc = AuthBloc(inject());
+  ProfileProvider? _profileProvider;
+
+  @override
+  void initState() {
+    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _profileProvider?.getUsersInformations();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,33 +65,32 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
         body: SafeArea(
           child: BlocProvider<AuthBloc>(
               create: (context) => _bloc,
-              child: BlocListener<AuthBloc, AuthState>(
-                  listener: (context, state) {
-                    if (state is AuthLoadingState) {
-                      setState(() => _loadingState = true
-                      );
-                    }
-                    if (state is AuthSuccessState) {
-                      setState(() => _loadingState = false);
-                      PageRouter.gotoWidget(ConnectFriends(), context,
-                          clearStack: true);
-                    }
-                    if (state is AuthVerifyUsernameSuccess) {
-                      output = !state.response.codeNameExists!
-                          ? "Congrats! Username is available."
-                          : state.response.codeNameExists!
+              child: BlocListener<AuthBloc, AuthState>(listener:
+                  (context, state) {
+                if (state is AuthLoadingState) {
+                  setState(() => _loadingState = true);
+                }
+                if (state is AuthSuccessState) {
+                  setState(() => _loadingState = false);
+                  _profileProvider?.getUsersInformations();
+                  PageRouter.gotoWidget(ConnectFriends(), context,
+                      clearStack: true);
+                }
+                if (state is AuthVerifyUsernameSuccess) {
+                  output = !state.response.codeNameExists!
+                      ? "Congrats! Username is available."
+                      : state.response.codeNameExists!
                           ? "Oops! Taken already"
                           : "";
-                      result = state.response.codeNameExists!;
-                    }
+                  result = state.response.codeNameExists!;
+                }
 
-                    if (state is AuthFailedState) {
-                      logger.d(state.message);
-                      setState(() => _loadingState = false);
-                      // Todo:=> show user error here
-                    }
-                  }, child:
-              BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+                if (state is AuthFailedState) {
+                  logger.d(state.message);
+                  setState(() => _loadingState = false);
+                }
+              }, child:
+                  BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                 return SingleChildScrollView(
                   child: Container(
                     alignment: Alignment.center,
@@ -93,7 +104,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                           alignment: Alignment.center,
                           child: TextWidget(
                             text:
-                            "Add a profile picture, \nyour name and username",
+                                "Add a profile picture, \nyour name and username",
                             align: TextAlign.center,
                             type: "objectivity",
                             weight: FontWeight.w700,
@@ -104,114 +115,19 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                         // SizedBox(height: MediaQuery.of(context).size.width/2),
                         GestureDetector(
                           onTap: () {
-                            showModalBottomSheet(
-                                backgroundColor: DColors.inputText,
-                                // useRootNavigator:true,
-                                context: context,
-                                builder: (t) {
-                                  return StatefulBuilder(builder:
-                                      (BuildContext contxt,
-                                      StateSetter setModalState) {
-                                    return Container(
-                                      // padding: const EdgeInsets.all(8.0),
-                                      height: 190,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            child: TextButton(
-                                              style: ButtonStyle(
-                                                // backgroundColor: MaterialStateProperty.all<Color>(DColors.inputColor),
-                                                  shape: MaterialStateProperty
-                                                      .all<RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(0),
-                                                        // side: BorderSide(color: Colors.red)
-                                                      ))),
-                                              onPressed: () {
-                                                getImageFile(ImageSource.camera,
-                                                    setModalState);
-                                                Navigator.pop(context, true);
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets.all(2.0),
-                                                child: TextWidget(
-                                                  text: "Take Photo",
-                                                  appcolor: Colors.blue,
-                                                  type: "Objectivity",
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const Divider(),
-                                          Container(
-                                            width: double.infinity,
-                                            child: TextButton(
-                                              style: ButtonStyle(
-                                                // backgroundColor: MaterialStateProperty.all<Color>(DColors.inputColor),
-                                                  shape: MaterialStateProperty
-                                                      .all<RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(0),
-                                                        // side: BorderSide(color: Colors.red)
-                                                      ))),
-                                              onPressed: () {
-                                                getImageFile(
-                                                    ImageSource.gallery,
-                                                    setModalState);
-                                                Navigator.pop(context, true);
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets.all(2.0),
-                                                child: TextWidget(
-                                                  text: "Choose Photo",
-                                                  appcolor: Colors.blue,
-                                                  type: "Objectivity",
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const Divider(),
-                                          Container(
-                                            width: double.infinity,
-                                            child: TextButton(
-                                              style: ButtonStyle(
-                                                  backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(DColors.white),
-                                                  shape: MaterialStateProperty
-                                                      .all<RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            0),
-                                                        // side: BorderSide(color: Colors.red)
-                                                      ))),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets.all(8.0),
-                                                child: TextWidget(
-                                                  text: "Cancel",
-                                                  appcolor: Colors.blue,
-                                                  type: "Objectivity",
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  });
-                                });
+                            showSheet(
+                              context,
+                              child: ImageModal(
+                                showDeleteButton: false,
+                                fileCallBack: (File? file) {
+                                  setState(() => _image = file);
+                                  PageRouter.goBack(context);
+                                  Provider.of<ProfileProvider>(context,
+                                          listen: false)
+                                      .uploadFile(file);
+                                },
+                              ),
+                            );
                           },
                           child: Container(
                               alignment: Alignment.center,
@@ -219,16 +135,9 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                   vertical: SizeConfig.sizeXXL!),
                               child: Stack(
                                 children: [
-                                  _image == null
-                                      ? Image.asset(
-                                    "assets/profile.png",
-                                    height: 90,
-                                    width: 90,
-                                  )
-                                      : CircleAvatar(
-                                    backgroundImage: FileImage(
-                                      _image!,
-                                    ),
+                                  CircleImageHandler(
+                                    'assets/profile.png',
+                                    imageFile: _image,
                                     radius: 43,
                                   ),
                                   Positioned(
@@ -236,12 +145,12 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                       top: 60.h,
                                       child: CircleAvatar(
                                         backgroundColor:
-                                        DColors.primaryAccentColor,
-                                        radius: 15.r,
+                                            DColors.primaryAccentColor,
+                                        radius: 12.r,
                                         child: Icon(
                                           Icons.camera_alt_outlined,
                                           color: DColors.white,
-                                          size: 15.w,
+                                          size: 10.w,
                                         ),
                                       ))
                                 ],
@@ -268,10 +177,10 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                               border: InputBorder.none,
                               focusedBorder: const UnderlineInputBorder(
                                   borderSide:
-                                  BorderSide(color: DColors.inputText)),
+                                      BorderSide(color: DColors.inputText)),
                               enabledBorder: const UnderlineInputBorder(
                                   borderSide:
-                                  BorderSide(color: DColors.inputText)),
+                                      BorderSide(color: DColors.inputText)),
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
                               hintText: "Name",
@@ -289,20 +198,17 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                               horizontal: SizeConfig.sizeXXL!),
                           child: TextFormField(
                             onChanged: (String val) {
-                              _debouncer.run(() =>
-                                  _bloc.add(VerifyUsernameEvent(
-                                      codeNameModel: CodeNameModel(val)
-                              )));
+                              _validateUser(context, val);
                             },
                             controller: _usernameController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               focusedBorder: const UnderlineInputBorder(
                                   borderSide:
-                                  BorderSide(color: DColors.inputText)),
+                                      BorderSide(color: DColors.inputText)),
                               enabledBorder: const UnderlineInputBorder(
                                   borderSide:
-                                  BorderSide(color: DColors.inputText)),
+                                      BorderSide(color: DColors.inputText)),
                               errorBorder: InputBorder.none,
                               disabledBorder: InputBorder.none,
                               hintText: "Username",
@@ -321,7 +227,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                               text: output,
                               size: FontSize.s11,
                               appcolor:
-                              result ? Colors.red : DColors.primaryColor,
+                                  result ? Colors.red : DColors.primaryColor,
                             )),
                         SizedBox(height: SizeConfig.sizeXXXL),
                         Container(
@@ -332,48 +238,46 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                               vertical: 16.h),
                           child: TextButton(
                               onPressed: checker &&
-                                  !result &&
-                                  _usernameController.text.trim().isNotEmpty
+                                      !result &&
+                                      _usernameController.text.trim().isNotEmpty
                                   ? () {
-                               _bloc.add(
-                                    ProfileSetUpEvent(
-                                        profileSetupModel: ProfileSetupModel(
-                                            SessionManager.instance.usersData["phone"],
-                                        _usernameController.text,
-                                          _nameController.text,
-                                            widget.age
-                                         )
-                                    )
-                               );
-                              }
+                                      _bloc.add(ProfileSetUpEvent(
+                                          profileSetupModel: ProfileSetupModel(
+                                        phone: _profileProvider?.user?.phone,
+                                        username: _usernameController.text,
+                                        name: _nameController.text,
+                                        age: widget.age,
+                                        id: _profileProvider?.user?.id,
+                                      )));
+                                    }
                                   : () {},
                               style: ButtonStyle(
                                   backgroundColor: checker &&
-                                      !result &&
-                                      _usernameController.text
-                                          .trim()
-                                          .isNotEmpty
+                                          !result &&
+                                          _usernameController.text
+                                              .trim()
+                                              .isNotEmpty
                                       ? MaterialStateProperty.all<Color>(
-                                      DColors.primaryColor)
+                                          DColors.primaryColor)
                                       : MaterialStateProperty.all<Color>(
-                                      const Color(0xFFF2F0F0)),
+                                          const Color(0xFFF2F0F0)),
                                   shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
+                                          RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            SizeConfig.sizeXXL!),
-                                        // side: BorderSide(color: Colors.red)
-                                      ))),
+                                    borderRadius: BorderRadius.circular(
+                                        SizeConfig.sizeXXL!),
+                                    // side: BorderSide(color: Colors.red)
+                                  ))),
                               child: TextWidget(
                                 text: _loadingState
                                     ? "Loading..."
                                     : "enter".toUpperCase(),
                                 weight: FontWeight.w700,
                                 appcolor: checker &&
-                                    !result &&
-                                    _usernameController.text
-                                        .trim()
-                                        .isNotEmpty
+                                        !result &&
+                                        _usernameController.text
+                                            .trim()
+                                            .isNotEmpty
                                     ? DColors.white
                                     : DColors.faded,
                                 size: FontSize.s12,
@@ -387,54 +291,32 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
         ));
   }
 
-  getImageFile(ImageSource source, setModalState) async {
-    //Clicking or Picking from Gallery
-    print("ttttt");
+  bool _isUsernameCompliant(String _username, [int minLength = 6]) {
+    if (_username.isEmpty) {
+      return false;
+    }
+    if (_username.contains(RegExp(r'[A-Z]'))) {
+      output = 'Username can\t contain Upper case letters';
+      result = true;
+      setState(() {});
+      return false;
+    }
+    if (_username.contains(RegExp(r'[!@#$%^&*(),?" " ":{}|<>]'))) {
+      output = 'Username can\t contain special characters';
+      result = true;
+      setState(() {});
+      return false;
+    }
+    output = '';
+    result = false;
+    setState(() {});
+    return true;
+  }
 
-    var image = await ImagePicker().getImage(source: source);
-
-    //Cropping the image
-
-    File? croppedFile = await ImageCropper.cropImage(
-        sourcePath: image!.path,
-        // ratioX: 1.0,
-        // ratioY: 1.0,
-        maxWidth: 512,
-        maxHeight: 512,
-        aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
-
-    //Compress the image
-    final lastIndex = croppedFile!.path.lastIndexOf(new RegExp(r'.jp'));
-    final splitted = croppedFile.path.substring(0, (lastIndex));
-    final targetPath =
-        "${splitted}_out${croppedFile.path.substring(lastIndex)}";
-    var result = await FlutterImageCompress.compressAndGetFile(
-      croppedFile.path,
-      targetPath,
-      quality: 50,
-    );
-    print(result);
-
-    setState(() {
-      _image = result!;
-      print(_image!.lengthSync());
-    });
-
-    var token = SessionManager.instance.authToken;
-
-
-    var request = http.MultipartRequest(
-        'POST', Uri.parse("http://35.175.175.194/upload"));
-
-    //Header....
-    request.headers['Authorization'] = 'Bearer ' + json.decode(token);
-
-    request.fields['type'] = "profile_picture";
-    request.files.add(await http.MultipartFile.fromPath('image', result!.path));
-    var response = await request.send();
-    print(response.stream);
-    print(response.statusCode);
-    final res = await http.Response.fromStream(response);
-    print(res.body);
+  void _validateUser(BuildContext context, String val) {
+    if (_isUsernameCompliant(val)) {
+      _debouncer.run(() =>
+          _bloc.add(VerifyUsernameEvent(codeNameModel: CodeNameModel(val))));
+    }
   }
 }

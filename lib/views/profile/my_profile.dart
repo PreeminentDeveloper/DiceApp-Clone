@@ -68,12 +68,15 @@ class _MyProfileState extends State<MyProfile> {
                         child: Column(
                           children: [
                             GestureDetector(
-                              onTap: () => showSheet(context, child: ImageModal(
-                                fileCallBack: (File? file) {
-                                  PageRouter.goBack(context);
-                                  _profileProvider?.uploadFile(file);
-                                },
-                              )),
+                              onTap: () => showSheet(
+                                context,
+                                child: ImageModal(
+                                  fileCallBack: (File? file) {
+                                    PageRouter.goBack(context);
+                                    _profileProvider?.uploadFile(file);
+                                  },
+                                ),
+                              ),
                               child: Center(
                                 child: CircleImageHandler(
                                   'https://${provider.user?.photo?.hostname}/${provider.user?.photo?.url}',

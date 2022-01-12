@@ -19,14 +19,14 @@ class ProfileProvider extends ChangeNotifier {
 
   void getUsersInformations({bool notifyListeners = false}) {
     user = User.fromJson(SessionManager.instance.usersData);
+    logger.d(user?.toJson());
     if (notifyListeners) this.notifyListeners();
   }
 
   void uploadFile(File? file) async {
     try {
       profileEnum = ProfileEnum.busy;
-      final _response = await _profileService.profileImageUpdate(file);
-      logger.d(_response);
+      await _profileService.profileImageUpdate(file);
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;
