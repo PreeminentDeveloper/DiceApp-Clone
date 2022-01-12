@@ -9,6 +9,7 @@ import 'core/network/url_config.dart';
 import 'core/provider/get_provider.dart';
 import 'core/util/injection_container.dart';
 import 'core/util/size_config.dart';
+import 'views/home/home_screen.dart';
 import 'views/onboarding/sign_in_splash.dart';
 
 void main() async {
@@ -23,19 +24,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      builder: () {
-        return MaterialApp(
-          title: 'DiceMessanger',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(primarySwatch: Colors.green),
-          routes: Routes.getRoutes,
-          home: SessionManager.instance.authLogging
-              ? const SignInSplashScreen()
-              : const SignInSplashScreen(),
-        );
-      },
+    return MultiProvider(
+      providers: Providers.getProviders,
+      child: ScreenUtilInit(
+        designSize: const Size(375, 812),
+        builder: () {
+          return MaterialApp(
+            title: 'DiceMessanger',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(primarySwatch: Colors.green),
+            routes: Routes.getRoutes,
+            home: HomeScreen(),
+          );
+        },
+      ),
     );
   }
 }
