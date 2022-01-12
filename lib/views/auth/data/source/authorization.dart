@@ -25,14 +25,17 @@ class AuthService {
     }
   }
 
-  Future<dynamic> verifyOtp(OtpModel model) async {
+  Future<OtpResponse> verifyOtp(OtpModel model) async {
     try {
       final result = await _graphQLClient.client.mutate(MutationOptions(
-          document: gql(model.verifyOtp()),
-          onError: (data) => logger.e(data)));
+
+          document: gql(model.verifyOtp()), onError: (data) => logger.e(data)));
       final _otpResponse = OtpResponse.fromJson(result.data!);
-      SessionManager.instance.usersData = _otpResponse.data?.verifyOtp?.authSession?.user as Map<String, dynamic>;
-      SessionManager.instance.authToken = _otpResponse.data?.verifyOtp?.authSession?.token;
+      SessionManager.instance.usersData =
+          _otpResponse.verifyOtp?.authSession?.user?.toJson()
+              as Map<String, dynamic>;
+      SessionManager.instance.authToken =
+          _otpResponse.verifyOtp?.authSession?.token;
       return OtpResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

@@ -4,6 +4,8 @@ import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/views/auth/bloc/auth_bloc.dart';
 import 'package:dice_app/views/auth/data/source/authorization.dart';
+import 'package:dice_app/views/home/data/source/remote.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -32,7 +34,9 @@ Future<void> _initializeCore() async {
 }
 
 /// Initialize providers here
-void _initProviders() {}
+void _initProviders() {
+  inject.registerLazySingleton<HomeProvider>(() => HomeProvider(inject()));
+}
 
 /// Initialize bloc's here
 void _initBloc() {
@@ -51,6 +55,8 @@ void _initServices() {
       () => DiceGraphQLClient(baseUrl: UrlConfig.coreBaseUrl));
   inject.registerLazySingleton<AuthService>(
       () => AuthService(networkService: inject()));
+  inject.registerLazySingleton<HomeService>(
+      () => HomeService(networkService: inject()));
 }
 
 /// Initialize usecases here

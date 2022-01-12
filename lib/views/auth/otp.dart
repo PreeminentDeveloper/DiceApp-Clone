@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
@@ -43,18 +44,19 @@ class _OTPState extends State<OTP> {
               }
               if (state is AuthSuccessState) {
                 setState(() => _loadingState = false);
-                logger.d('Status: ${state.response}');
-                // Todo:=> Navigate User here
-                if (state.response.data?.verifyOtp?.authSession?.user?.status == "onboarding") {
+                if (state.response?.verifyOtp?.authSession?.user?.status ==
+                    "onboarding") {
+                  // Todo:=> Proceed
                   PageRouter.gotoWidget(Birthday(), context);
                 } else {
-                  PageRouter.gotoWidget(ConnectFriends(), context, clearStack: true);
+                  /// cache login status here if user is not a new user
+                  SessionManager.instance.authLogging = true;
+                  PageRouter.gotoWidget(ConnectFriends(), context,
+                      clearStack: true);
                 }
-
               }
               if (state is AuthFailedState) {
                 setState(() => _loadingState = false);
-                // Todo:=> show user error here
               }
             },
             child: SingleChildScrollView(
@@ -75,7 +77,6 @@ class _OTPState extends State<OTP> {
                     size: FontSize.s19,
                   ),
                   SizedBox(height: 149.5.h),
-
                   TextWidget(
                       text: "6-Digit code",
                       align: TextAlign.center,
@@ -103,8 +104,7 @@ class _OTPState extends State<OTP> {
                       animationDuration: const Duration(milliseconds: 300),
                       pinTheme: PinTheme(
                           activeFillColor: DColors.inputText,
-                          inactiveColor: DColors.inputText
-                          ),
+                          inactiveColor: DColors.inputText),
                       onCompleted: (value) {
                         _bloc.add(VerifyOtpEvent(
                             otpModel: OtpModel(
@@ -113,7 +113,6 @@ class _OTPState extends State<OTP> {
                       onChanged: (value) {},
                     ),
                   ),
-
                   RichText(
                       text: TextSpan(
                           text: 'Didn\'t receive a code?',

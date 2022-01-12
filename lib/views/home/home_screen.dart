@@ -1,0 +1,172 @@
+import 'package:dice_app/core/data/permission_manager.dart';
+import 'package:dice_app/core/util/assets.dart';
+import 'package:dice_app/core/util/pallets.dart';
+import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
+import 'package:dice_app/views/widgets/custom_divider.dart';
+import 'package:dice_app/views/widgets/default_appbar.dart';
+import 'package:dice_app/views/widgets/textviews.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
+import 'package:phoenix_socket/phoenix_socket.dart';
+
+import 'widget/profile_window.dart';
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  SlidableController? _slidableController;
+
+  var online;
+
+  ScrollController _scrollController = ScrollController();
+  bool upDirection = false, flag = false;
+  HomeProvider? _homeProvider;
+
+  @override
+  void initState() {
+    PermissionManager.requestPermission(context);
+    _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    _initializeController();
+    _listConversations();
+    super.initState();
+  }
+
+  void _initializeController() {
+    _scrollController = ScrollController()
+      ..addListener(() {
+        upDirection = _scrollController.position.userScrollDirection ==
+            ScrollDirection.reverse;
+
+        // makes sure we don't call setState too much, but only when it is needed
+        if (upDirection != flag) setState(() {});
+
+        flag = upDirection;
+      });
+  }
+
+  void _listConversations() async {
+    _homeProvider?.getUsersInformations();
+    _homeProvider?.listConversations(pageNumber: 1, search: '');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    double _height = MediaQuery.of(context).size.height;
+    double _width = MediaQuery.of(context).size.width;
+    return Scaffold(
+        backgroundColor: DColors.white,
+        appBar: defaultAppBar(context,
+            elevation: flag ? 0 : null,
+            leading: Container(
+                margin: EdgeInsets.only(left: 16.w),
+                child: SvgPicture.asset(Assets.dice)),
+            actions: [
+              GestureDetector(
+                child: Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    child: SvgPicture.asset(Assets.diceLogo)),
+                onTap: () => null,
+              )
+            ]),
+        body: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder: (context, innerBoxScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  floating: true,
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  flexibleSpace: Container(
+                    padding: EdgeInsets.only(bottom: 10.h),
+                    child: ProfileWindow(() {
+                      // PageRouter.gotoWidget(MyProfile(), context)
+                      //     .whenComplete(() async {
+                      //   setState(() {});
+                      // });
+                    }, value: flag ? false : true),
+                  ),
+                  bottom: PreferredSize(
+                    child: Container(
+                      height: _height * 0.055,
+                      color: Colors.white,
+                      width: SizeConfig.getDeviceWidth(context),
+                      padding:
+                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextWidget(
+                          text: "Chats",
+                          size: FontSize.s16,
+                          weight: FontWeight.w700,
+                          align: TextAlign.left,
+                          appcolor: DColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                    preferredSize: Size(_width, _height * 0.055),
+                  ),
+                )
+              ];
+            },
+            body: Consumer<HomeProvider>(
+              builder: (context, homeProvider, child) {
+                if (homeProvider.homeEnum == HomeEnum.busy) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (homeProvider.list!.isEmpty) {
+                  return const EmptyFriendsWidget();
+                }
+                return ListView(
+                  children: [
+                    CustomeDivider(thickness: .3),
+                    SizedBox(height: 8.h),
+                    ...List.generate(1000, (index) {
+                      return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...[]
+                                .map((user) => Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [],
+                                    ))
+                                .toList()
+                          ]);
+                    }).toList(),
+                  ],
+                );
+              },
+            )));
+  }
+
+  ///TODO remove from list
+  _deleteDialog() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 23.h, horizontal: 16.w),
+      child: Material(
+        color: Colors.transparent,
+        child: TextWidget(
+          text: "Delete for me",
+          size: FontSize.s16,
+          weight: FontWeight.w400,
+          appcolor: DColors.red,
+          align: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}

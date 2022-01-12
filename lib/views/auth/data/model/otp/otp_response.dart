@@ -1,34 +1,22 @@
+import 'package:dice_app/core/entity/users_entity.dart';
 
 class OtpResponse {
-  Data? data;
-
-  OtpResponse({this.data});
-
-  OtpResponse.fromJson(Map<String, dynamic> json) {
-    data = json["data"] == null ? null : Data.fromJson(json["data"]);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if(this.data != null) {
-      data["data"] = this.data?.toJson();
-    }
-    return data;
-  }
-}
-
-class Data {
+  String? typename;
   VerifyOtp? verifyOtp;
 
-  Data({this.verifyOtp});
+  OtpResponse({this.typename, this.verifyOtp});
 
-  Data.fromJson(Map<String, dynamic> json) {
-    verifyOtp = json["verifyOtp"] == null ? null : VerifyOtp.fromJson(json["verifyOtp"]);
+  OtpResponse.fromJson(Map<String, dynamic> json) {
+    typename = json["__typename"];
+    verifyOtp = json["verifyOtp"] == null
+        ? null
+        : VerifyOtp.fromJson(json["verifyOtp"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if(verifyOtp != null) {
+    data["__typename"] = typename;
+    if (verifyOtp != null) {
       data["verifyOtp"] = verifyOtp?.toJson();
     }
     return data;
@@ -36,17 +24,23 @@ class Data {
 }
 
 class VerifyOtp {
+
+  String? typename;
   AuthSession? authSession;
 
-  VerifyOtp({this.authSession});
+  VerifyOtp({this.typename, this.authSession});
 
   VerifyOtp.fromJson(Map<String, dynamic> json) {
-    authSession = json["authSession"] == null ? null : AuthSession.fromJson(json["authSession"]);
+    typename = json["__typename"];
+    authSession = json["authSession"] == null
+        ? null
+        : AuthSession.fromJson(json["authSession"]);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
-    if(authSession != null) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["__typename"] = typename;
+    if (authSession != null) {
       data["authSession"] = authSession?.toJson();
     }
     return data;
@@ -54,13 +48,16 @@ class VerifyOtp {
 }
 
 class AuthSession {
+
+  String? typename;
   String? refreshToken;
   String? token;
   User? user;
 
-  AuthSession({this.refreshToken, this.token, this.user});
+  AuthSession({this.typename, this.refreshToken, this.token, this.user});
 
   AuthSession.fromJson(Map<String, dynamic> json) {
+    typename = json["__typename"];
     refreshToken = json["refreshToken"];
     token = json["token"];
     user = json["user"] == null ? null : User.fromJson(json["user"]);
@@ -68,66 +65,12 @@ class AuthSession {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data["__typename"] = typename;
     data["refreshToken"] = refreshToken;
     data["token"] = token;
-    if(user != null) {
+    if (user != null) {
       data["user"] = user?.toJson();
     }
-    return data;
-  }
-}
-
-class User {
-  String? id;
-  String? name;
-  String? phone;
-  Photo? photo;
-  String? status;
-  String? username;
-
-  User({this.id, this.name, this.phone, this.photo, this.status, this.username});
-
-  User.fromJson(Map<String, dynamic> json) {
-    id = json["id"];
-    name = json["name"];
-    phone = json["phone"];
-    photo = json["photo"] == null ? null : Photo.fromJson(json["photo"]);
-    status = json["status"];
-    username = json["username"];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data["id"] = id;
-    data["name"] = name;
-    data["phone"] = phone;
-    if(photo != null) {
-      data["photo"] = photo?.toJson();
-    }
-    data["status"] = status;
-    data["username"] = username;
-    return data;
-  }
-}
-
-class Photo {
-  String? hostname;
-  String? type;
-  String? url;
-
-  Photo({this.hostname, this.type, this.url});
-
-  Photo.fromJson(Map<String, dynamic> json) {
-    hostname = json["hostname"];
-    type = json["type"];
-    url = json["url"];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data["hostname"] = hostname;
-    data["type"] = type;
-    data["url"] = url;
     return data;
   }
 }
