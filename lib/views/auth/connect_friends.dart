@@ -4,7 +4,7 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/navigation/routes.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
-import 'package:dice_app/views/profile/provider/profile_service.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

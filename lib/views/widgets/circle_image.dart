@@ -51,7 +51,7 @@ class CircleImageHandler extends StatelessWidget {
       return CircularProfileAvatar(
         image!,
         radius: radius!.r,
-        backgroundColor: DColors.lightGrey,
+        backgroundColor: DColors.grey,
         borderWidth: borderWidth!,
         borderColor: borderColor!,
         cacheImage: true,
@@ -64,11 +64,11 @@ class CircleImageHandler extends StatelessWidget {
         showInitialTextAbovePicture: showInitialText!,
         placeHolder: (context, url) => CircleAvatar(
           radius: radius!.r,
-          backgroundColor: DColors.lightGrey,
+          backgroundColor: DColors.grey,
         ),
         errorWidget: (context, url, _) => CircleAvatar(
           radius: radius?.r,
-          backgroundColor: DColors.lightGrey,
+          backgroundColor: DColors.grey,
         ),
       );
     }

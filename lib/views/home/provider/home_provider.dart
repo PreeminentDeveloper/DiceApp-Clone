@@ -9,15 +9,10 @@ enum HomeEnum { initial, busy, idle }
 class HomeProvider extends ChangeNotifier {
   HomeEnum homeEnum = HomeEnum.initial;
   final HomeService _homeService;
-  User? user;
+
   List<dynamic>? list = [];
 
   HomeProvider(this._homeService);
-
-  void getUsersInformations({bool notifyListeners = false}) {
-    user = User.fromJson(SessionManager.instance.usersData);
-    if (notifyListeners) this.notifyListeners();
-  }
 
   void listConversations(
       {required int pageNumber,

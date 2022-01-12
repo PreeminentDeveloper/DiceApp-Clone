@@ -6,7 +6,7 @@ import 'package:dice_app/views/auth/bloc/auth_bloc.dart';
 import 'package:dice_app/views/auth/data/source/authorization.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
-import 'package:dice_app/views/profile/provider/profile_service.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/source/remote.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -38,7 +38,8 @@ Future<void> _initializeCore() async {
 /// Initialize providers here
 void _initProviders() {
   inject.registerLazySingleton<HomeProvider>(() => HomeProvider(inject()));
-  inject.registerLazySingleton<ProfileProvider>(() => ProfileProvider(inject()));
+  inject
+      .registerLazySingleton<ProfileProvider>(() => ProfileProvider(inject()));
 }
 
 /// Initialize bloc's here
@@ -60,7 +61,8 @@ void _initServices() {
       () => AuthService(networkService: inject()));
   inject.registerLazySingleton<HomeService>(
       () => HomeService(networkService: inject()));
-  inject.registerLazySingleton<ProfileService>(() => ProfileService());
+  inject.registerLazySingleton<ProfileService>(
+      () => ProfileService(networkService: inject()));
 }
 
 /// Initialize usecases here

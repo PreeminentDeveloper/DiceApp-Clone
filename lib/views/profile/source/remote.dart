@@ -1,12 +1,18 @@
 import 'dart:io';
 
 import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/auth/data/model/profile/get_user_data_response.dart';
+import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileService {
-  ProfileService();
+  final DiceGraphQLClient _graphQLClient;
+  ProfileService({required DiceGraphQLClient networkService})
+      : _graphQLClient = networkService;
 
   Future<dynamic> profileImageUpdate(File? file) async {
     try {
@@ -28,6 +34,20 @@ class ProfileService {
     }
   }
 
+  Future<void> getUsersProfile(ProfileSetupModel model) async {
+    try {
+      final _user = await _graphQLClient.client.query(
+        QueryOptions(
+            document: gql(model.getProfile),
+            variables: {"id": model.id},
+            fetchPolicy: FetchPolicy.cacheAndNetwork),
+      );
 
-  
+      final _data = GetUserDataResponse.fromJson(_user.data);
+      SessionManager.instance.usersData =
+          _data.getProfile?.toJson() as Map<String, dynamic>;
+    } catch (e) {
+      logger.e(e);
+    }
+  }
 }

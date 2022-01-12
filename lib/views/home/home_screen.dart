@@ -6,6 +6,7 @@ import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
 import 'package:dice_app/views/profile/my_profile.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -34,10 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
   ScrollController _scrollController = ScrollController();
   bool upDirection = false, flag = false;
   HomeProvider? _homeProvider;
+  ProfileProvider? _profileProvider;
 
   @override
   void initState() {
     PermissionManager.requestPermission(context);
+    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _initializeController();
     _listConversations();
@@ -58,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _listConversations() async {
-    _homeProvider?.getUsersInformations();
+    _profileProvider?.getUsersInformations();
     _homeProvider?.listConversations(pageNumber: 1, search: '');
   }
 

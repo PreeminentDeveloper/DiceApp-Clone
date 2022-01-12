@@ -3,6 +3,7 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class ProfileWindow extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeProvider>(
+    return Consumer<ProfileProvider>(
       builder: (context, provider, child) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),

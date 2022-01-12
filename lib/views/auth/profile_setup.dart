@@ -8,7 +8,7 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
 import 'package:dice_app/views/auth/data/model/username/username_model.dart';
-import 'package:dice_app/views/profile/provider/profile_service.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/image_modal.dart';
 import 'package:dice_app/views/widgets/back_arrow.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';

@@ -6,7 +6,7 @@ class GetUserDataResponse {
 
   GetUserDataResponse({this.typename, this.getProfile});
 
-  GetUserDataResponse.fromJson(Map<String, dynamic> json) {
+  GetUserDataResponse.fromJson(json) {
     typename = json["__typename"];
     getProfile =
         json["getProfile"] == null ? null : User.fromJson(json["getProfile"]);

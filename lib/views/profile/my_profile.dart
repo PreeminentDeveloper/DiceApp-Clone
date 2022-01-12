@@ -5,7 +5,7 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
-import 'package:dice_app/views/profile/provider/profile_service.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/image_modal.dart';
 import 'package:dice_app/views/widgets/bottom_sheet.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
@@ -52,9 +52,7 @@ class _MyProfileState extends State<MyProfile> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Visibility(
-                  visible: _loading, child: const LinearProgressIndicator()),
-              Consumer<HomeProvider>(
+              Consumer<ProfileProvider>(
                 builder: (context, provider, child) {
                   return SizedBox(
                     width: double.infinity,
@@ -67,11 +65,17 @@ class _MyProfileState extends State<MyProfile> {
                         padding: EdgeInsets.all(SizeConfig.sizeLarge!),
                         child: Column(
                           children: [
+                            Visibility(
+                                visible:
+                                    provider.profileEnum == ProfileEnum.busy,
+                                child: const LinearProgressIndicator()),
+                            SizedBox(height: 16.h),
                             GestureDetector(
                               onTap: () => showSheet(
                                 context,
                                 child: ImageModal(
                                   fileCallBack: (File? file) {
+                                    setState(() => _image = file);
                                     PageRouter.goBack(context);
                                     _profileProvider?.uploadFile(file);
                                   },
@@ -123,13 +127,13 @@ class _MyProfileState extends State<MyProfile> {
               SizedBox(height: 11.6.h),
               GestureDetector(
                 onTap: () {},
-                child: Container(
+                child: SizedBox(
                   width: double.infinity,
                   child: Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
+                        side: const BorderSide(
                             width: 0.2,
                             color: Color(0XFF707070),
                             style: BorderStyle.solid)),

@@ -68,7 +68,7 @@ class ImageModal extends StatelessWidget {
               onTap: () async {
                 final _file =
                     await Helpers.processImage(context, ImageSource.gallery);
-                // fileCallBack!(_file);
+                fileCallBack!(_file);
               },
             ),
           ],
