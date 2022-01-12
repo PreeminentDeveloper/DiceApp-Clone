@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 
 import 'package:phoenix_socket/phoenix_socket.dart';
 
+import 'find_people.dart';
 import 'widget/profile_window.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                     margin: const EdgeInsets.only(right: 16),
                     child: SvgPicture.asset(Assets.diceLogo)),
-                onTap: () => null,
+                onTap: () => PageRouter.gotoWidget(FindPeople(), context),
               )
             ]),
         body: NestedScrollView(
