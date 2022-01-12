@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'core/data/session_manager.dart';
 import 'core/navigation/routes.dart';
 import 'core/network/url_config.dart';
 import 'core/provider/get_provider.dart';
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(primarySwatch: Colors.green),
             routes: Routes.getRoutes,
-            home: SignInSplashScreen(),
+            home: SessionManager.instance.authLogging
+                ? HomeScreen()
+                : const SignInSplashScreen(),
           );
         },
       ),

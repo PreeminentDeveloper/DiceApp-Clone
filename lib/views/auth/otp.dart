@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
@@ -47,13 +48,14 @@ class _OTPState extends State<OTP> {
                   // Todo:=> Proceed
                   // PageRouter.gotoWidget(Birthday(), context);
                 } else {
+                  /// cache login status here if user is not a new user
+                  SessionManager.instance.authLogging = true;
                   PageRouter.gotoWidget(ConnectFriends(), context,
                       clearStack: true);
                 }
               }
               if (state is AuthFailedState) {
                 setState(() => _loadingState = false);
-                // Todo:=> show user error here
               }
             },
             child: SingleChildScrollView(
