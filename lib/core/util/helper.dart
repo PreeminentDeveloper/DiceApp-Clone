@@ -1,12 +1,15 @@
 // ignore_for_file: unnecessary_string_interpolations
 
 import 'dart:io';
+import 'dart:math';
+import 'package:dice_app/core/util/pallets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final Logger logger = Logger();
@@ -92,32 +95,64 @@ class Helpers {
   }
 
   /// Handles image processing
-  static Future<File>? processImage(ImageSource source) async {
-    File? _result;
+  static Future<File?> processImage(
+      BuildContext context, ImageSource source) async {
     try {
-      final image = await ImagePicker().getImage(source: source);
+      final pickedFile = await ImagePicker.platform.pickImage(source: source);
 
-      File? croppedFile = await ImageCropper.cropImage(
-          sourcePath: image!.path,
-          // ratioX: 1.0,
-          // ratioY: 1.0,
-          maxWidth: 512,
-          maxHeight: 512,
-          aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
-
-      //Compress the image
-      final lastIndex = croppedFile?.path.lastIndexOf(RegExp(r'.jp'));
-      final splitted = croppedFile?.path.substring(0, (lastIndex));
-      final targetPath =
-          "${splitted}_out${croppedFile?.path.substring(lastIndex!)}";
-      _result = await FlutterImageCompress.compressAndGetFile(
-        croppedFile!.path,
-        targetPath,
-        quality: 50,
-      );
+      if (pickedFile != null) {
+        return await _cropImage(context, pickedFile);
+      }
     } catch (e) {
-      logger.e('Error occured processing image: $e');
+      logger.e('Error: $e');
     }
-    return _result!;
+    return null;
   }
+
+  static Future<File?> _cropImage(
+      BuildContext context, PickedFile imageFile) async {
+    File? croppedFile = await ImageCropper.cropImage(
+        sourcePath: imageFile.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [CropAspectRatioPreset.square]
+            : [CropAspectRatioPreset.square],
+        androidUiSettings: const AndroidUiSettings(
+            toolbarTitle: 'DiceMessanger',
+            toolbarColor: DColors.accentColor,
+            toolbarWidgetColor: DColors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: const IOSUiSettings(
+          title: 'DiceMessanger',
+        ));
+
+    final _response = await _compressImageFiles(croppedFile!);
+    return _response;
+  }
+
+  static Future<File?> _compressImageFiles(File mFile) async {
+    final _dir = await _findLocalPath();
+    final _targetPath = _dir.absolute.path + "/${_generateKey(15)}.jpg";
+    File? _result = await FlutterImageCompress.compressAndGetFile(
+        mFile.path, _targetPath,
+        quality: 10);
+    return _result;
+  }
+
+//* getting local path
+  static Future<Directory> _findLocalPath() async {
+    final directory = Platform.isAndroid
+        ? await getExternalStorageDirectory()
+        : await getApplicationDocumentsDirectory();
+    return directory!;
+  }
+
+//* generate key
+  static const _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  static final Random _rnd = Random();
+
+  static String _generateKey(int length) =>
+      String.fromCharCodes(Iterable.generate(
+          length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 }

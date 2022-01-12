@@ -51,7 +51,8 @@ class ImageModal extends StatelessWidget {
               appcolor: DColors.primaryAccentColor,
               align: TextAlign.center,
               onTap: () async {
-                final _file = await Helpers.processImage(ImageSource.camera);
+                final _file =
+                    await Helpers.processImage(context, ImageSource.camera);
                 fileCallBack!(_file);
               },
             ),
@@ -65,8 +66,9 @@ class ImageModal extends StatelessWidget {
               appcolor: DColors.primaryAccentColor,
               align: TextAlign.center,
               onTap: () async {
-                final _file = await Helpers.processImage(ImageSource.gallery);
-                fileCallBack!(_file);
+                final _file =
+                    await Helpers.processImage(context, ImageSource.gallery);
+                // fileCallBack!(_file);
               },
             ),
           ],
