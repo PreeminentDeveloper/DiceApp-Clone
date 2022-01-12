@@ -1,4 +1,5 @@
 import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,13 @@ enum HomeEnum { initial, busy, idle }
 class HomeProvider extends ChangeNotifier {
   HomeEnum homeEnum = HomeEnum.initial;
   final HomeService _homeService;
+  User? user;
   List<dynamic>? list = [];
 
   HomeProvider(this._homeService);
 
   void getUsersInformations({bool notifyListeners = false}) {
-    // final _usersData = SessionManager.instance.usersData;
+    user = User.fromJson(SessionManager.instance.usersData);
     if (notifyListeners) this.notifyListeners();
   }
 

@@ -2,6 +2,7 @@ import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
@@ -17,51 +18,56 @@ class ProfileWindow extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        CircleImageHandler(
-          'https://host/url',
-          radius: 20,
-          showInitialText: true,
-          initials: Helpers.getInitials('JC'),
-        ),
-        SizedBox(width: 15.w),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextWidget(
-                text: 'Name',
-                size: FontSize.s14,
-                weight: FontWeight.w700,
-                appcolor: DColors.mildDark,
+    return Consumer<HomeProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            CircleImageHandler(
+              'https://${provider.user?.photo?.hostname}/${provider.user?.photo?.url}',
+              radius: 20,
+              showInitialText: provider.user?.photo?.url?.isEmpty,
+              initials: Helpers.getInitials(provider.user?.name ?? ''),
+            ),
+            SizedBox(width: 15.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextWidget(
+                    text: provider.user?.name ?? '',
+                    size: FontSize.s14,
+                    weight: FontWeight.w700,
+                    appcolor: DColors.mildDark,
+                  ),
+                  SizedBox(height: SizeConfig.sizeExtraSmall),
+                  TextWidget(
+                    text: 'About...',
+                    size: FontSize.s12,
+                    weight: FontWeight.w500,
+                    appcolor: DColors.grey,
+                  )
+                ],
               ),
-              SizedBox(height: SizeConfig.sizeExtraSmall),
-              TextWidget(
-                text: value ? "About..." : '',
-                size: FontSize.s12,
-                weight: FontWeight.w500,
-                appcolor: DColors.grey,
-              )
-            ],
-          ),
-        ),
-        GestureDetector(
-            onTap: () {
-              clicked();
-            },
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    color: DColors.inputText),
-                child: SvgPicture.asset(
-                  Assets.assetArrow,
-                  color: DColors.white,
-                ))),
-      ]),
+            ),
+            GestureDetector(
+                onTap: () {
+                  clicked();
+                },
+                child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.r),
+                        color: DColors.inputText),
+                    child: SvgPicture.asset(
+                      Assets.assetArrow,
+                      color: DColors.white,
+                    ))),
+          ]),
+        );
+      },
     );
   }
 }
