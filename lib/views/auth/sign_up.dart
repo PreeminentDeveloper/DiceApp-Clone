@@ -20,6 +20,8 @@ import 'bloc/auth_bloc.dart';
 import 'data/model/login/login_model.dart';
 
 class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -41,7 +43,6 @@ class _SignUpState extends State<SignUp> {
   Future<String> _getId() async {
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
-      // import 'dart:io'
       var iosDeviceInfo = await deviceInfo.iosInfo;
       return iosDeviceInfo.identifierForVendor; // unique ID on iOS
     } else {
@@ -64,7 +65,7 @@ class _SignUpState extends State<SignUp> {
             if (state is AuthSuccessState) {
               setState(() => _loadingState = false);
               PageRouter.gotoWidget(
-                  OTP(_phoneController.text, _deviceID), context);
+                  OTP(dialCode + _phoneController.text, _deviceID), context);
             }
             if (state is AuthFailedState) {
               logger.d(state.message);
@@ -149,7 +150,7 @@ class _SignUpState extends State<SignUp> {
                                     disabledBorder: InputBorder.none,
                                     hintText: "814 4920 830",
                                     hintStyle: TextStyle(
-                                        color: Color(0xFFE3E3E3),
+                                        color: const Color(0xFFE3E3E3),
                                         fontSize: FontSize.s16,
                                         fontFamily: "Objectivity"),
                                     contentPadding: EdgeInsets.symmetric(
@@ -173,7 +174,7 @@ class _SignUpState extends State<SignUp> {
                         alignment: Alignment.center,
                         child: TextWidget(
                           text: "Your number is only used for signing in",
-                          appcolor: Color(0xFFB2B2B2),
+                          appcolor: const Color(0xFFB2B2B2),
                           size: FontSize.s12,
                           weight: FontWeight.w500,
                           type: "Objectivity",
@@ -188,7 +189,7 @@ class _SignUpState extends State<SignUp> {
                             onPressed: () async {
                               // _onLoginButtonPressed();
                               FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
+                                  .requestFocus(FocusNode());
                               if (phoneKey.currentState!.validate()) {
                                 _deviceID = await _getId();
                                 setState(() {});
@@ -204,7 +205,7 @@ class _SignUpState extends State<SignUp> {
                                     ? MaterialStateProperty.all<Color>(
                                         DColors.primaryColor)
                                     : MaterialStateProperty.all<Color>(
-                                        Color(0xFFF2F0F0)),
+                                        const Color(0xFFF2F0F0)),
                                 shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
@@ -213,7 +214,7 @@ class _SignUpState extends State<SignUp> {
                                   // side: BorderSide(color: Colors.red)
                                 ))),
                             child: TextWidget(
-                              text: _loadingState ? "Loading..." : "CONFIRM",
+                              text: _loadingState ? "LOADING..." : "CONFIRM",
                               appcolor: checker
                                   ? Colors.white
                                   : const Color(0xFFB2B2B2),

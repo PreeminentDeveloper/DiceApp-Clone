@@ -22,19 +22,19 @@ class SessionManager {
 
   static const String keyAuthToken = 'auth_token';
   static const String keyUserData = 'users_data';
-  static const String logginKey = 'loggin';
+  static const String loginKey = 'login';
   static const String userIdKey = 'userIdKey';
 
   String get authToken => sharedPreferences!.getString(keyAuthToken) ?? '';
   int get userId => sharedPreferences!.getInt(userIdKey) ?? 0;
 
-  bool get authLogging => sharedPreferences!.getBool(logginKey) ?? false;
+  bool get authLogging => sharedPreferences!.getBool(loginKey) ?? false;
 
   set authLogging(bool logging) =>
-      sharedPreferences!.setBool(logginKey, logging);
+      sharedPreferences!.setBool(loginKey, logging);
 
-  set authToken(String authToken) =>
-      sharedPreferences!.setString(keyAuthToken, authToken);
+  set authToken(String? authToken) =>
+      sharedPreferences!.setString(keyAuthToken, authToken!);
 
   set userId(int userId) => sharedPreferences!.setInt(userIdKey, userId);
 
