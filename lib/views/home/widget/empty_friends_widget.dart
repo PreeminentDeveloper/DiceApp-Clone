@@ -1,5 +1,7 @@
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/invite/invite-contacts.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,8 +27,7 @@ class EmptyFriendsWidget extends StatelessWidget {
                 vertical: 20),
             child: TextButton(
                 onPressed: () {
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (_) => InviteContacts()));
+                  PageRouter.gotoWidget(InviteContacts(), context);
                 },
                 style: ButtonStyle(
                     backgroundColor:

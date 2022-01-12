@@ -6,6 +6,8 @@ import 'package:dice_app/views/auth/bloc/auth_bloc.dart';
 import 'package:dice_app/views/auth/data/source/authorization.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/invite/provider/invite_provider.dart';
+import 'package:dice_app/views/invite/source/invite_remote.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/source/remote.dart';
 import 'package:get_it/get_it.dart';
@@ -40,6 +42,7 @@ void _initProviders() {
   inject.registerLazySingleton<HomeProvider>(() => HomeProvider(inject()));
   inject
       .registerLazySingleton<ProfileProvider>(() => ProfileProvider(inject()));
+  inject.registerLazySingleton<InviteProvider>(() => InviteProvider(inject()));
 }
 
 /// Initialize bloc's here
@@ -63,6 +66,8 @@ void _initServices() {
       () => HomeService(networkService: inject()));
   inject.registerLazySingleton<ProfileService>(
       () => ProfileService(networkService: inject()));
+  inject.registerLazySingleton<InviteService>(
+      () => InviteService(networkService: inject()));
 }
 
 /// Initialize usecases here

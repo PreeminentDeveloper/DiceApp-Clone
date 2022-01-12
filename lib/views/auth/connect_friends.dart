@@ -4,6 +4,7 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/navigation/routes.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/invite/invite-contacts.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class ConnectFriends extends StatefulWidget {
+  const ConnectFriends({Key? key}) : super(key: key);
+
   @override
   State<ConnectFriends> createState() => _ConnectFriendsState();
 }
@@ -67,7 +70,7 @@ class _ConnectFriendsState extends State<ConnectFriends> {
             SizedBox(height: SizeConfig.sizeXXL),
             TextButton(
                 onPressed: () {
-                  // PageRouter.gotoWidget(InviteContacts(), context);
+                  PageRouter.gotoWidget(InviteContacts(), context);
                 },
                 style: ButtonStyle(
                     backgroundColor:

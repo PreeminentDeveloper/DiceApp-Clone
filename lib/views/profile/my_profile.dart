@@ -5,6 +5,7 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/invite/invite-contacts.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/about_modal.dart';
 import 'package:dice_app/views/profile/widget/image_modal.dart';
@@ -210,7 +211,8 @@ class _MyProfileState extends State<MyProfile> {
                     SizedBox(height: 11.6.h),
 
                     GestureDetector(
-                      onTap: () => null,
+                      onTap: () =>
+                          PageRouter.gotoWidget(InviteContacts(), context),
                       behavior: HitTestBehavior.opaque,
                       child: Container(
                         width: double.infinity,
@@ -218,7 +220,7 @@ class _MyProfileState extends State<MyProfile> {
                           elevation: 2,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
+                              side: const BorderSide(
                                   width: 0.2,
                                   color: Color(0XFF707070),
                                   style: BorderStyle.solid)),

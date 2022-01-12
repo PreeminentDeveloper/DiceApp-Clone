@@ -58,17 +58,19 @@ class CircleImageHandler extends StatelessWidget {
         initialsText: showInitialText!
             ? Text(
                 initials!,
-                style: TextStyle(color: DColors.white),
+                style: const TextStyle(color: DColors.white),
               )
-            : Text(''),
+            : const Text(''),
         showInitialTextAbovePicture: showInitialText!,
         placeHolder: (context, url) => CircleAvatar(
           radius: radius!.r,
           backgroundColor: DColors.grey,
+          child: Text(initials!, style: const TextStyle(color: DColors.white)),
         ),
         errorWidget: (context, url, _) => CircleAvatar(
           radius: radius?.r,
           backgroundColor: DColors.grey,
+          child: Text(initials!, style: const TextStyle(color: DColors.white)),
         ),
       );
     }

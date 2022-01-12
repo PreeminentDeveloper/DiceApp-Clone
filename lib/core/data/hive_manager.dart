@@ -1,5 +1,6 @@
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/home/data/source/dao.dart';
+import 'package:dice_app/views/invite/dao/contacts_dao.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,13 +22,16 @@ class HiveManager {
 
 class HiveBoxes {
   static const listofConversations = 'listofConversations';
+  static const contacts = 'contacts';
 
   static Future openAllBox() async {
     listOfConversationsDao = ListOfConversationsDao();
+    contactDao = ContactDao();
   }
 
   static Future clearAllBox() async {
     await listOfConversationsDao?.truncate();
+    await contactDao?.truncate();
   }
 
   static Future<Box<T>> openBox<T>(String boxName) async {
