@@ -1,3 +1,4 @@
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
@@ -12,6 +13,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter/gestures.dart';
 
 import 'bloc/auth_bloc.dart';
+import 'connect_friends.dart';
 
 class OTP extends StatefulWidget {
   final String? phone, deviceID;
@@ -42,6 +44,12 @@ class _OTPState extends State<OTP> {
                 setState(() => _loadingState = false);
                 logger.d('Status: ${state.response}');
                 // Todo:=> Navigate User here
+                if (state.response.data?.verifyOtp?.authSession?.user?.status == "onboarding") {
+                  // PageRouter.gotoWidget(Birthday(), context);
+                } else {
+                  PageRouter.gotoWidget(ConnectFriends(), context, clearStack: true);
+                }
+
               }
               if (state is AuthFailedState) {
                 setState(() => _loadingState = false);
@@ -92,27 +100,16 @@ class _OTPState extends State<OTP> {
                       obscureText: false,
                       animationType: AnimationType.fade,
                       animationDuration: const Duration(milliseconds: 300),
-                      // borderRadius: BorderRadius.circular(5),
-                      // fieldHeight: 50,
-                      // fieldWidth: 30,
                       pinTheme: PinTheme(
-                          // shape: PinCodeFieldShape.box,
-                          // borderRadius: BorderRadius.circular(5),
-                          // fieldHeight: 50,
-                          // fieldWidth: 40,
                           activeFillColor: DColors.inputText,
                           inactiveColor: DColors.inputText
-                          // hasError ? Colors.blue.shade100 : Colors.white,
                           ),
                       onCompleted: (value) {
                         _bloc.add(VerifyOtpEvent(
                             otpModel: OtpModel(
                                 widget.phone, widget.deviceID, value)));
                       },
-
-                      onChanged: (value) {
-                        // _entered = true;
-                      },
+                      onChanged: (value) {},
                     ),
                   ),
 
@@ -135,7 +132,6 @@ class _OTPState extends State<OTP> {
                                 // navigate to desired screen
                               })
                       ])),
-                  // SizedBox(height: SizeConfig.defaultImageHeight)
                 ],
               ),
             ),

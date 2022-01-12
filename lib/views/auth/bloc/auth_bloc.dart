@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dice_app/views/auth/data/model/login/login_model.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_model.dart';
+import 'package:dice_app/views/auth/data/model/otp/otp_response.dart';
 import 'package:dice_app/views/auth/data/source/authorization.dart';
 import 'package:meta/meta.dart';
 

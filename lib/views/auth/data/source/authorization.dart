@@ -28,12 +28,12 @@ class AuthService {
   Future<dynamic> verifyOtp(OtpModel model) async {
     try {
       final result = await _graphQLClient.client.mutate(MutationOptions(
-          document: gql(model.verifyOtp()), onError: (data) => logger.e(data)));
-      // return LoginResponse.fromJson(result.data!);
-      ///Todo: Use this below to fetch to cache users data
-      // SessionManager.instance.usersData = 
-      logger.d(result.data);
-      return null;
+          document: gql(model.verifyOtp()),
+          onError: (data) => logger.e(data)));
+      final _otpResponse = OtpResponse.fromJson(result.data!);
+      SessionManager.instance.usersData = _otpResponse.data?.verifyOtp?.authSession?.user as Map<String, dynamic>;
+      SessionManager.instance.authToken = _otpResponse.data?.verifyOtp?.authSession?.token;
+      return OtpResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
       rethrow;

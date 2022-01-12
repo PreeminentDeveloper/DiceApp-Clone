@@ -33,8 +33,8 @@ class SessionManager {
   set authLogging(bool logging) =>
       sharedPreferences!.setBool(loginKey, logging);
 
-  set authToken(String authToken) =>
-      sharedPreferences!.setString(keyAuthToken, authToken);
+  set authToken(String? authToken) =>
+      sharedPreferences!.setString(keyAuthToken, authToken!);
 
   set userId(int userId) => sharedPreferences!.setInt(userIdKey, userId);
 
