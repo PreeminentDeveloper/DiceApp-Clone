@@ -15,13 +15,14 @@ class ProfileService {
 
       logger.d(SessionManager.instance.authToken);
       //Header....
-      request.headers['Authorization'] = SessionManager.instance.authToken;
+      request.headers['Authorization'] =
+          'Bearer ${SessionManager.instance.authToken}';
 
       request.fields['type'] = "profile_picture";
       request.files.add(await http.MultipartFile.fromPath('image', file!.path));
       var response = await request.send();
       final res = await http.Response.fromStream(response);
-      logger.d(res.body);
+      return res.body;
     } catch (exception) {
       logger.e(exception);
       rethrow;
