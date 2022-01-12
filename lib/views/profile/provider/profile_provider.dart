@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
@@ -35,6 +36,23 @@ class ProfileProvider extends ChangeNotifier {
       logger.e(e);
       profileEnum = ProfileEnum.idle;
     }
+    notifyListeners();
+  }
+
+  void updateUsersInfo(BuildContext context, String key, String value) async {
+    try {
+      profileEnum = ProfileEnum.busy;
+      notifyListeners();
+
+      await _profileService.updateUsersInfo(key, value, user!.id!);
+      getUsersInformations(notifyListeners: true);
+      profileEnum = ProfileEnum.idle;
+      PageRouter.goBack(context);
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+
     notifyListeners();
   }
 }

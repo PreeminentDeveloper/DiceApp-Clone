@@ -44,7 +44,7 @@ class ProfileWindow extends StatelessWidget {
                   ),
                   SizedBox(height: SizeConfig.sizeExtraSmall),
                   TextWidget(
-                    text: 'About...',
+                    text: provider.user?.bio ?? 'About...',
                     size: FontSize.s12,
                     weight: FontWeight.w500,
                     appcolor: DColors.grey,

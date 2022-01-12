@@ -46,4 +46,22 @@ class ProfileSetupModel {
     }
   }
   ''';
+
+  String updateUserInfo(String key, String value, String userId) {
+    return """
+      mutation{
+          updateUser(input: {$key: "$value"}, userId: "$userId"){
+            user{
+              bio
+              id
+              name
+              username 
+              phone
+              status
+              photo
+            }
+          }
+      }
+    """;
+  }
 }
