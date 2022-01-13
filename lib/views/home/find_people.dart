@@ -36,8 +36,6 @@ class _FindPeopleState extends State<FindPeople> {
   void _loadFriends() {
     _profileProvider?.getUsersInformations();
     _inviteProvider?.getConnections(pageNumber: 1, id: _profileProvider?.user?.id);
-
-    // inviteBloc.add(MyConnections(pageNo: 1, perPage: 10, userId: appState.user["id"]));
   }
 
   @override
@@ -48,12 +46,6 @@ class _FindPeopleState extends State<FindPeople> {
       appBar: defaultAppBar(context, title: 'Search'),
       body: Consumer<InviteProvider>(
         builder: (context, inviteProvider, child) {
-          if (inviteProvider.inviteEnum == InviteEnum.busy) {
-            // return const Center(child: CircularProgressIndicator());
-          }
-          // if (homeProvider.list!.isEmpty) {
-          //   return const EmptyFriendsWidget();
-          // }
           return Center(
               child:  Column(
                 children: [
@@ -62,7 +54,7 @@ class _FindPeopleState extends State<FindPeople> {
                     decoration: BoxDecoration(
                         color: DColors.inputText,
                         borderRadius: BorderRadius.circular(5)),
-                    margin: EdgeInsets.all(30),
+                    margin: const EdgeInsets.all(30),
                     child: GestureDetector(
                       onTap: () {
                         PageRouter.gotoWidget(SearchUsers(), context,
@@ -103,7 +95,7 @@ class _FindPeopleState extends State<FindPeople> {
                   GreyContainerRow(
                       title: "Friends",
                       length: inviteProvider.inviteEnum == InviteEnum.idle
-                          ? _inviteProvider?.list?.length
+                          ? inviteProvider.list.length
                           : length),
 
                   if (inviteProvider.inviteEnum == InviteEnum.busy)
@@ -113,13 +105,13 @@ class _FindPeopleState extends State<FindPeople> {
                     ),
 
                   if (inviteProvider.inviteEnum == InviteEnum.idle)
-                    _inviteProvider!.list!.length > 0
+                    inviteProvider.list.length > 0
                         ? ListView.builder(
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: _inviteProvider?.list?.length,
+                        itemCount: inviteProvider.list.length,
                         itemBuilder: (BuildContext context, int index) {
-                          var connections = inviteProvider.list?.elementAt(index);
+                          var connections = inviteProvider.list.elementAt(index);
                           return People(
                               connections.name,
                               connections.username,

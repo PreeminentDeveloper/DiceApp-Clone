@@ -18,7 +18,7 @@ class InviteProvider extends ChangeNotifier {
   final InviteService _inviteService;
   User? user;
   List<Contacts>? mContacts = [];
-  List<dynamic>? list = [];
+  List<dynamic> list = [];
   List searchUser = [];
 
   InviteProvider(this._inviteService);
@@ -46,7 +46,7 @@ class InviteProvider extends ChangeNotifier {
           .getConnections(pageNumber: pageNumber,
           perPage: perPage,
           userID: id!);
-      list = (_response?.data?.listConnections?.list ?? []) as List?;
+      list = ((_response?.listConnections?.list ?? []) as List?)!;
       inviteEnum = InviteEnum.idle;
     } catch (e) {
       inviteEnum = InviteEnum.idle;

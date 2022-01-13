@@ -39,6 +39,7 @@ class InviteService {
             document: gql(InviteGQL.listConnections),
             variables: {"pageNo": pageNumber, "perPage": perPage, "userId": userID}),
       );
+      print(result.data);
       return MyConnectionResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
@@ -55,7 +56,6 @@ class InviteService {
             document: gql(InviteGQL.searchUser),
             variables: {"search": name})
       );
-      print(result.data!);
       return SearchUserResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

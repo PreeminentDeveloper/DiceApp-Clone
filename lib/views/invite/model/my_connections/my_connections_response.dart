@@ -1,33 +1,19 @@
 
 class MyConnectionResponse {
-  Data? data;
+  String? typename;
 
-  MyConnectionResponse({this.data});
-
-  MyConnectionResponse.fromJson(Map<String, dynamic> json) {
-    data = json["data"] == null ? null : Data.fromJson(json["data"]);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if(this.data != null) {
-      data["data"] = this.data?.toJson();
-    }
-    return data;
-  }
-}
-
-class Data {
   ListConnections? listConnections;
 
-  Data({this.listConnections});
+  MyConnectionResponse({this.typename, this.listConnections});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  MyConnectionResponse.fromJson(Map<String, dynamic> json) {
+    typename = json["__typename"];
     listConnections = json["listConnections"] == null ? null : ListConnections.fromJson(json["listConnections"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data["__typename"] = typename;
     if(listConnections != null) {
       data["listConnections"] = listConnections?.toJson();
     }
@@ -50,8 +36,9 @@ class ListConnections {
     firstPage = json["firstPage"];
     hasNext = json["hasNext"];
     hasPrev = json["hasPrev"];
+    list = json["list"] ?? [];
 
-    list = json["list"]==null ? null : (json["list"]).map((e)=>List.fromJson(e)).toList();
+    // list = json["list"]==null ? null : (json["list"]).map((e)=>List.fromJson(e)).toList();
     nextPage = json["nextPage"];
     page = json["page"];
     prevPage = json["prevPage"];
