@@ -4,6 +4,8 @@ import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/views/auth/bloc/auth_bloc.dart';
 import 'package:dice_app/views/auth/data/source/authorization.dart';
+import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
+import 'package:dice_app/views/chat/data/sources/chat_sources.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/invite/provider/invite_provider.dart';
@@ -48,6 +50,7 @@ void _initProviders() {
 /// Initialize bloc's here
 void _initBloc() {
   inject.registerLazySingleton<AuthBloc>(() => AuthBloc(inject()));
+  inject.registerLazySingleton<ChatBloc>(() => ChatBloc(inject()));
 }
 
 /// Initialize data sources implementations
@@ -68,6 +71,8 @@ void _initServices() {
       () => ProfileService(networkService: inject()));
   inject.registerLazySingleton<InviteService>(
       () => InviteService(networkService: inject()));
+  inject.registerLazySingleton<ChatService>(
+      () => ChatService(networkService: inject()));
 }
 
 /// Initialize usecases here
