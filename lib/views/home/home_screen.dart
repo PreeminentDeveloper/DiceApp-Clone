@@ -142,42 +142,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     CustomeDivider(thickness: .3),
                     SizedBox(height: 8.h),
-                    ...List.generate(1000, (index) {
-                      return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ...homeProvider.list!
-                                .map((user) => ChatListWidget(
-                                      slideKey: user.id,
-                                      chatObject: ChatObject(
-                                          image: user.name ?? '',
-                                          name: user.name,
-                                          recentMessage: user.username,
-                                          date: 'timeAgo'),
-                                      onTapProfile: () => PageRouter.gotoWidget(
-                                          OtherProfile(user.id!), context),
-                                      onPressed: () {
-                                        // PageRouter.gotoWidget(
-                                        //     MessageScreen(
-                                        //         data: state.homeEntity
-                                        //                 .conversationData[
-                                        //             index],
-                                        //         user: user,
-                                        //         socket: socket1,
-                                        //         channel: channel1,
-                                        //         online: online),
-                                        //     context);
-                                      },
-                                      onTapDelete: () => showSheet(context,
-                                          child: _deleteDialog()),
-                                      onTapCamera: () async {
-                                        PageRouter.gotoWidget(
-                                            CameraPictureScreen(), context);
-                                      },
-                                    ))
-                                .toList()
-                          ]);
-                    }).toList(),
+                    ...homeProvider.list!
+                        .map((user) => ChatListWidget(
+                              slideKey: user.id,
+                              chatObject: ChatObject(
+                                  image: user.name ?? '',
+                                  name: user.name,
+                                  recentMessage: user.username,
+                                  date: 'timeAgo'),
+                              onTapProfile: () => PageRouter.gotoWidget(
+                                  OtherProfile(user.id!), context),
+                              onPressed: () {
+                                // PageRouter.gotoWidget(
+                                //     MessageScreen(
+                                //         data: state.homeEntity
+                                //                 .conversationData[
+                                //             index],
+                                //         user: user,
+                                //         socket: socket1,
+                                //         channel: channel1,
+                                //         online: online),
+                                //     context);
+                              },
+                              onTapDelete: () =>
+                                  showSheet(context, child: _deleteDialog()),
+                              onTapCamera: () async {
+                                PageRouter.gotoWidget(
+                                    CameraPictureScreen(), context);
+                              },
+                            ))
+                        .toList()
                   ],
                 );
               },

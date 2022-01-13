@@ -28,7 +28,10 @@ class HomeProvider extends ChangeNotifier {
           perPage: perPage,
           search: search,
           userID: userID);
+      logger.d(_response.listConversations?.list?.length);
+      list?.clear();
       _response.listConversations?.list?.map((e) => list = e.users).toList();
+      logger.d(list?.length);
       homeEnum = HomeEnum.idle;
     } catch (e) {
       logger.e(e);
