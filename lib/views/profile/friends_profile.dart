@@ -1,3 +1,4 @@
+import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
@@ -13,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'widget/friends_background.dart';
 import 'widget/friends_profile_window_widget.dart';
 import 'widget/not_a_chatty_user.dart';
+import 'widget/note_window.dart';
 
 class OtherProfile extends StatefulWidget {
   final String id;
@@ -43,6 +45,9 @@ class _OtherProfileState extends State<OtherProfile> {
           const FriendsProfileImageBackground(),
           Consumer2<ProfileProvider, HomeProvider>(
             builder: (context, profile, homeProvider, child) {
+              if (profile.profileEnum == ProfileEnum.busy) {
+                return const Center(child: CircularProgressIndicator());
+              }
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -94,9 +99,7 @@ class _OtherProfileState extends State<OtherProfile> {
                       ),
                     ),
                   ),
-                  _requestButton(
-                      profile.getUserDataResponse?.getProfile?.connection ??
-                          ''),
+                  _requestButton(profile.getUserDataResponse?.getProfile),
                   TextWidget(
                     text: "Chats",
                     appcolor: DColors.mildDark,
@@ -117,9 +120,9 @@ class _OtherProfileState extends State<OtherProfile> {
     );
   }
 
-  GestureDetector _requestButton(String status) {
+  GestureDetector _requestButton(User? getProfile) {
     return GestureDetector(
-      onTap: () => _makeRequest(status),
+      onTap: () => _makeRequest(getProfile),
       child: Container(
         alignment: Alignment.centerRight,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -128,7 +131,7 @@ class _OtherProfileState extends State<OtherProfile> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 23.w),
-            child: _buttonIconDetector(status),
+            child: _buttonIconDetector(getProfile?.connection),
           ),
         ),
       ),
@@ -136,8 +139,8 @@ class _OtherProfileState extends State<OtherProfile> {
   }
 
   /// RETURNS ICONS FOR BUTTON
-  Widget? _buttonIconDetector(String value) {
-    switch (value.toLowerCase()) {
+  Widget? _buttonIconDetector(String? value) {
+    switch (value?.toLowerCase()) {
       case 'unconnected':
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -184,13 +187,37 @@ class _OtherProfileState extends State<OtherProfile> {
     }
   }
 
-  void _makeRequest(String value) {
-    if (value.toLowerCase() != 'unconnected' &&
-        value.toLowerCase() != 'requested') {
-      logger.d('Navigate user to chat screen here');
+  void _makeRequest(User? value) {
+    if (value?.connection!.toLowerCase() != 'unconnected' &&
+        value?.connection!.toLowerCase() != 'requested') {
       return;
     }
 
-    logger.d('Request user to be friends with');
+    _showDialog(value);
+  }
+
+  void _showDialog(User? user) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: TextWidget(
+              text: 'Add a note (optional)',
+              size: FontSize.s17,
+              weight: FontWeight.w700,
+              appcolor: DColors.lightGrey,
+              align: TextAlign.center,
+            ),
+            content: NoteWindow(
+              justFollow: () => _followThisUser(user?.id),
+              addNote: (String note) => _followThisUser(user?.id, note: note),
+            ),
+          );
+        });
+  }
+
+  _followThisUser(String? receiverID, {String? note}) {
+    _profileProvider?.requestConnection(msg: note, receiverID: receiverID);
+    _profileProvider?.getMyFriendsProfile(receiverID!);
   }
 }

@@ -59,10 +59,22 @@ class ProfileProvider extends ChangeNotifier {
 
   void getMyFriendsProfile(String id) async {
     try {
-      profileEnum = ProfileEnum.busy;
+      if (getUserDataResponse == null) profileEnum = ProfileEnum.busy;
       final _response = await _profileService
           .getUsersProfile(ProfileSetupModel(id: id), isMyProfile: false);
       getUserDataResponse = _response;
+      profileEnum = ProfileEnum.idle;
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void requestConnection({String? msg, required String? receiverID}) async {
+    try {
+      await _profileService.requestConnection(
+          msg: msg, senderID: user!.id!, receiverID: receiverID);
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;

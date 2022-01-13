@@ -21,14 +21,49 @@ class ProfileInfoWindowWidget extends StatelessWidget {
     if (getProfile?.photo == null) {
       return SizedBox(
         height: MediaQuery.of(context).size.height / 3,
-        child: CircleAvatar(
-          radius: 60.0,
-          child: TextWidget(
-            text: Helpers.getInitials(getProfile?.name ?? ''),
-            appcolor: DColors.faded,
-            size: FontSize.s20! * 2.5,
-          ),
-          backgroundColor: const Color(0xffE3E3E3),
+        child: Column(
+          children: [
+            Container(
+                alignment: Alignment.bottomCenter,
+                width: double.infinity,
+                padding: EdgeInsets.only(top: 50.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: SvgPicture.asset("assets/back.svg",
+                            color: Colors.white)),
+                    TextWidget(
+                      text: "Profile",
+                      size: FontSize.s16,
+                      weight: FontWeight.w700,
+                      type: "Objectivity",
+                      appcolor: DColors.white,
+                    ),
+                    GestureDetector(
+                      onTap: () => null,
+                      child: SvgPicture.asset(
+                        "assets/add-friend.svg",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 25, horizontal: 20)),
+            CircleAvatar(
+              radius: 60.0,
+              child: TextWidget(
+                text: Helpers.getInitials(getProfile?.name ?? ''),
+                appcolor: DColors.faded,
+                size: FontSize.s20! * 2.5,
+              ),
+              backgroundColor: const Color(0xffE3E3E3),
+            ),
+          ],
         ),
       );
     }

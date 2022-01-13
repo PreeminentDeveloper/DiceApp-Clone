@@ -64,4 +64,17 @@ class ProfileSetupModel {
       }
     """;
   }
+
+  String requestConnection(
+      {String? message, String? requesterId, String? userId}) {
+    return """
+      mutation{
+          requestConnection(message: "$message", requesterId: "$requesterId", userId: "$userId"){
+            id
+            requesterId
+            userId
+          }
+      }
+    """;
+  }
 }

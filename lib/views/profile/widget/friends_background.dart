@@ -24,35 +24,6 @@ class FriendsProfileImageBackground extends StatelessWidget {
               offset: Offset(0.0, 0.75))
         ],
       ),
-      child: Container(
-          alignment: Alignment.bottomCenter,
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child:
-                      SvgPicture.asset("assets/back.svg", color: Colors.white)),
-              TextWidget(
-                text: "Profile",
-                size: FontSize.s16,
-                weight: FontWeight.w700,
-                type: "Objectivity",
-                appcolor: DColors.white,
-              ),
-              GestureDetector(
-                onTap: () => null,
-                child: SvgPicture.asset(
-                  "assets/add-friend.svg",
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          margin: const EdgeInsets.symmetric(vertical: 25, horizontal: 20)),
     );
   }
 }
