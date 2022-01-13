@@ -32,14 +32,13 @@ class InviteService {
       required int perPage,
       required String userID}) async {
     try {
-      final result = await _graphQLClient.buildClient().query(
-            QueryOptions(document: gql(InviteGQL.listConnections), variables: {
-              "pageNo": pageNumber,
-              "perPage": perPage,
-              "userId": userID
-            }),
-          );
-      print(result.data);
+      final result = await _graphQLClient.client.query(
+        QueryOptions(document: gql(InviteGQL.listConnections), variables: {
+          "pageNo": pageNumber,
+          "perPage": perPage,
+          "userId": userID
+        }),
+      );
       return MyConnectionResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
@@ -47,9 +46,8 @@ class InviteService {
   }
 
   Future<SearchUserResponse?> findPeople({required String name}) async {
-    print(name);
     try {
-      final result = await _graphQLClient.buildClient().query(QueryOptions(
+      final result = await _graphQLClient.client.query(QueryOptions(
           document: gql(InviteGQL.searchUser), variables: {"search": name}));
       return SearchUserResponse.fromJson(result.data!);
     } catch (e) {

@@ -1,6 +1,7 @@
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_model.dart';
+import 'package:dice_app/views/invite/model/find_people/search_users_response.dart';
 import 'package:dice_app/views/invite/source/invite_remote.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +12,9 @@ class InviteProvider extends ChangeNotifier {
   final InviteService _inviteService;
   User? user;
   List<Contacts>? mContacts = [];
-  List<dynamic> list = [];
-  List searchUser = [];
+
+  List<dynamic>? list = [];
+  List<SearchUser> searchUser = [];
 
   InviteProvider(this._inviteService);
 
@@ -36,7 +38,7 @@ class InviteProvider extends ChangeNotifier {
       inviteEnum = InviteEnum.busy;
       final _response = await _inviteService.getConnections(
           pageNumber: pageNumber, perPage: perPage, userID: id!);
-      list = ((_response?.listConnections?.list ?? []) as List?)!;
+      list = ((_response?.listConnections?.list ?? []));
       inviteEnum = InviteEnum.idle;
     } catch (e) {
       inviteEnum = InviteEnum.idle;
@@ -49,7 +51,6 @@ class InviteProvider extends ChangeNotifier {
       inviteEnum = InviteEnum.busy;
       final _response = await _inviteService.findPeople(name: name);
       searchUser = (_response?.searchUser ?? []);
-      print(searchUser);
       inviteEnum = InviteEnum.idle;
     } catch (e) {
       inviteEnum = InviteEnum.idle;

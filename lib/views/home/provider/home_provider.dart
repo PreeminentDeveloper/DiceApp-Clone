@@ -1,6 +1,7 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/data/model/list_of_conversation_response.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:flutter/material.dart';
 
@@ -10,25 +11,27 @@ class HomeProvider extends ChangeNotifier {
   HomeEnum homeEnum = HomeEnum.initial;
   final HomeService _homeService;
 
-  List<dynamic>? list = [];
+  List<User>? list = [];
 
   HomeProvider(this._homeService);
 
-  void listConversations(
-      {required int pageNumber,
-      int perPage = 20,
-      required String search}) async {
+  void listConversations({
+    required int pageNumber,
+    int perPage = 20,
+    required String search,
+    required String userID,
+  }) async {
     try {
       homeEnum = HomeEnum.busy;
-
-      /// Todo:=> Replace the static userID with a dynamic userID
-      /// line 32
       final _response = await _homeService.listConvo(
           pageNumber: pageNumber,
           perPage: perPage,
           search: search,
-          userID: '087a51cb-0aaf-42eb-8708-eb76bb5ff051');
-      list = _response.data?.listConversations?.list ?? [];
+          userID: userID);
+      logger.d(_response.listConversations?.list?.length);
+      list?.clear();
+      _response.listConversations?.list?.map((e) => list = e.users).toList();
+      logger.d(list?.length);
       homeEnum = HomeEnum.idle;
     } catch (e) {
       logger.e(e);

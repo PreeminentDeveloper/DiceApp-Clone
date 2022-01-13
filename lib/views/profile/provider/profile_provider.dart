@@ -4,6 +4,7 @@ import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/auth/data/model/profile/get_user_data_response.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:dice_app/views/profile/source/remote.dart';
@@ -15,7 +16,7 @@ class ProfileProvider extends ChangeNotifier {
   ProfileEnum profileEnum = ProfileEnum.initial;
   final ProfileService _profileService;
   User? user;
-  List<dynamic>? list = [];
+  GetUserDataResponse? getUserDataResponse;
 
   ProfileProvider(this._profileService);
 
@@ -53,6 +54,31 @@ class ProfileProvider extends ChangeNotifier {
       profileEnum = ProfileEnum.idle;
     }
 
+    notifyListeners();
+  }
+
+  void getMyFriendsProfile(String id) async {
+    try {
+      if (getUserDataResponse == null) profileEnum = ProfileEnum.busy;
+      final _response = await _profileService
+          .getUsersProfile(ProfileSetupModel(id: id), isMyProfile: false);
+      getUserDataResponse = _response;
+      profileEnum = ProfileEnum.idle;
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void requestConnection({String? msg, required String? receiverID}) async {
+    try {
+      await _profileService.requestConnection(
+          msg: msg, senderID: user!.id!, receiverID: receiverID);
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
     notifyListeners();
   }
 }

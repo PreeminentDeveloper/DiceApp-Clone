@@ -10,6 +10,8 @@ import 'package:dice_app/views/profile/model/update_profile_response.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 
+final ProfileSetupModel _model = ProfileSetupModel();
+
 class ProfileService {
   final DiceGraphQLClient _graphQLClient;
   ProfileService({required DiceGraphQLClient networkService})
@@ -35,7 +37,8 @@ class ProfileService {
     }
   }
 
-  Future<void> getUsersProfile(ProfileSetupModel model) async {
+  Future<GetUserDataResponse?> getUsersProfile(ProfileSetupModel model,
+      {bool isMyProfile = true}) async {
     try {
       final _user = await _graphQLClient.client.query(
         QueryOptions(
@@ -45,8 +48,11 @@ class ProfileService {
       );
 
       final _data = GetUserDataResponse.fromJson(_user.data);
-      SessionManager.instance.usersData =
-          _data.getProfile?.toJson() as Map<String, dynamic>;
+      if (isMyProfile) {
+        SessionManager.instance.usersData =
+            _data.getProfile?.toJson() as Map<String, dynamic>;
+      }
+      return _data;
     } catch (e) {
       logger.e(e);
     }
@@ -54,14 +60,25 @@ class ProfileService {
 
   Future<UpdateUserDataResponse?> updateUsersInfo(
       String key, String value, String id) async {
-    ProfileSetupModel model = ProfileSetupModel();
     try {
-      final _result = await _graphQLClient.client.mutate(
-          MutationOptions(document: gql(model.updateUserInfo(key, value, id))));
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(_model.updateUserInfo(key, value, id))));
       final _response = UpdateUserDataResponse.fromJson(_result.data);
       SessionManager.instance.usersData =
           _response.updateUser?.user?.toJson() as Map<String, dynamic>;
       return _response;
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<dynamic> requestConnection(
+      {String? msg, String? senderID, String? receiverID}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(_model.requestConnection(
+              message: msg, requesterId: senderID, userId: receiverID))));
+      logger.d(_result.data);
     } catch (e) {
       logger.e(e);
     }

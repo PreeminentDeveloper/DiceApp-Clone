@@ -14,10 +14,10 @@ defaultAppBar(BuildContext context,
     bool? centerTitle = true,
     bool? automaticallyImplyLeading = true,
     Color? backgroundColor,
-    double? elevation,
+    double? elevation = 1,
     Function()? onTap}) {
   return PreferredSize(
-    preferredSize: Size.fromHeight(90),
+    preferredSize: const Size.fromHeight(90),
     child: GestureDetector(
       onTap: onTap,
       child: AppBar(
@@ -27,7 +27,7 @@ defaultAppBar(BuildContext context,
         titleSpacing: titleSpacing,
         centerTitle: centerTitle,
         automaticallyImplyLeading: automaticallyImplyLeading!,
-        elevation: elevation ?? AppBarTheme.of(context).elevation,
+        elevation: elevation,
         title: titleWidget ??
             TextWidget(
               text: title ?? '',

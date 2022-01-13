@@ -130,17 +130,18 @@ class _SearchUsersState extends State<SearchUsers> {
                               .toList()
                               .length,
                       itemBuilder: (BuildContext context, int index) {
-                        var people = selectedWidgetMarker != WidgetMarker.friend
-                            ? inviteProvider.searchUser.elementAt(index)
-                            : inviteProvider.searchUser
-                                .where((element) =>
-                                    element.connection == "connected")
-                                .toList()
-                                .elementAt(index);
+                        final people =
+                            selectedWidgetMarker != WidgetMarker.friend
+                                ? inviteProvider.searchUser.elementAt(index)
+                                : inviteProvider.searchUser
+                                    .where((element) =>
+                                        element.connection == "connected")
+                                    .toList()
+                                    .elementAt(index);
                         // (people.photo["hostname"]);
                         return people.name != null
                             ? People(people.name, people.username, people.id,
-                                people.photo)
+                                'https://${people.photo?.hostname}/${people.photo?.url}')
                             : Container();
                       }),
                 )
