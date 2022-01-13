@@ -3,8 +3,10 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/widgets/bottom_sheet.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -68,7 +70,8 @@ class ProfileInfoWindowWidget extends StatelessWidget {
                   appcolor: DColors.white,
                 ),
                 GestureDetector(
-                  onTap: () => null,
+                  onTap: () =>
+                      showSheet(context, child: _pictureModal(context)),
                   child: SvgPicture.asset(
                     "assets/add-friend.svg",
                     color: Colors.white,
@@ -77,6 +80,56 @@ class ProfileInfoWindowWidget extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _pictureModal(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 23.h, horizontal: 16.w),
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextWidget(
+              text: "Send a message",
+              size: FontSize.s16,
+              weight: FontWeight.w400,
+              appcolor: DColors.blue100,
+              align: TextAlign.center,
+              onTap: () {
+                PageRouter.goBack(context);
+              },
+            ),
+            SizedBox(height: 8.h),
+            const Divider(),
+            SizedBox(height: 8.h),
+            TextWidget(
+              text: "Remove from list",
+              size: FontSize.s16,
+              weight: FontWeight.w400,
+              appcolor: DColors.red,
+              align: TextAlign.center,
+              onTap: () {
+                PageRouter.goBack(context);
+              },
+            ),
+            SizedBox(height: 8.h),
+            const Divider(),
+            SizedBox(height: 8.h),
+            TextWidget(
+              text: "Block",
+              size: FontSize.s16,
+              weight: FontWeight.w400,
+              appcolor: DColors.black,
+              align: TextAlign.center,
+              onTap: () {
+                PageRouter.goBack(context);
+              },
+            ),
+          ],
         ),
       ),
     );

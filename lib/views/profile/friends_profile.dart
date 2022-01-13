@@ -1,3 +1,4 @@
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
