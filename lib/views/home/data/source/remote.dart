@@ -16,7 +16,7 @@ class HomeService {
       required String search,
       required String userID}) async {
     try {
-      final result = await _graphQLClient.client.query(
+      final _result = await _graphQLClient.client.query(
         QueryOptions(
             document: gql(HomeGqlMutation.listConversations),
             variables: {
@@ -27,7 +27,10 @@ class HomeService {
             },
             fetchPolicy: FetchPolicy.networkOnly),
       );
-      return ListOfConversationResponse.fromJson(result.data);
+
+      logger.d(_result.data);
+
+      return ListOfConversationResponse.fromJson(_result.data);
     } catch (exception) {
       logger.e(exception);
       rethrow;

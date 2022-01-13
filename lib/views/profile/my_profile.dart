@@ -91,7 +91,8 @@ class _MyProfileState extends State<MyProfile> {
                                     imageFile: _image,
                                     radius: 60.r,
                                     showInitialText:
-                                        provider.user?.photo?.url?.isEmpty,
+                                        provider.user?.photo?.url?.isEmpty ??
+                                            true,
                                     initials: Helpers.getInitials(
                                         provider.user?.name ?? ''),
                                   ),
