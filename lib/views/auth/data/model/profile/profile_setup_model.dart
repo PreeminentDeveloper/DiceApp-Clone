@@ -77,4 +77,17 @@ class ProfileSetupModel {
       }
     """;
   }
+
+  String acceptConnectionRequest(
+      {String? message, String? requesterId, String? userId}) {
+    return """
+      mutation{
+          acceptConnectionRequest(message: "$message", requesterId: "$requesterId", userId: "$userId"){
+            id
+            requesterId
+            userId
+          }
+      }
+    """;
+  }
 }

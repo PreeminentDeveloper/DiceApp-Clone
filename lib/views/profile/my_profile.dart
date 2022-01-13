@@ -1,16 +1,19 @@
 import 'dart:io';
+
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
-import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/invite/invite-contacts.dart';
+import 'package:dice_app/views/invite/provider/invite_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/about_modal.dart';
+import 'package:dice_app/views/profile/widget/bottomsheet_header.dart';
 import 'package:dice_app/views/profile/widget/image_modal.dart';
 import 'package:dice_app/views/widgets/bottom_sheet.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
+import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/image_loader.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -21,6 +24,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'modal/bottom_sheet_modal.dart';
+import 'widget/friend_list.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -31,11 +35,19 @@ class _MyProfileState extends State<MyProfile> {
   File? _image;
   bool _loading = false;
   ProfileProvider? _profileProvider;
+  InviteProvider? _inviteProvider;
 
   @override
   void initState() {
-    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     super.initState();
+    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _inviteProvider = Provider.of<InviteProvider>(context, listen: false);
+    getMyConnectionRequest();
+  }
+
+  getMyConnectionRequest() {
+    _inviteProvider?.getMyConnectionRequest(
+        pageNumber: 1, id: _profileProvider?.user?.id);
   }
 
   @override
@@ -193,7 +205,7 @@ class _MyProfileState extends State<MyProfile> {
                               ),
                               GestureDetector(
                                   onTap: () {
-                                    // _bottomSheetMore(context, "friend");
+                                    _bottomSheetMore(context, "friend");
                                   },
                                   child: _items(
                                       "assets/add-friend.svg", "Add Friends")),
@@ -266,4 +278,80 @@ class _MyProfileState extends State<MyProfile> {
       ],
     );
   }
+}
+
+void _bottomSheetMore(context, label) {
+  showModalBottomSheet(
+    context: context,
+    enableDrag: true,
+    backgroundColor: Colors.transparent,
+    isDismissible: true,
+    isScrollControlled: true,
+    builder: (builder) {
+      return Consumer<InviteProvider>(builder: (context, provider, child) {
+        return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.4,
+            minChildSize: 0.4,
+            maxChildSize: 0.8,
+            builder: (context, scrollController) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.w),
+                padding: EdgeInsets.all(SizeConfig.sizeSmall!),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.r),
+                        topRight: Radius.circular(20.r))),
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    SizedBox(height: SizeConfig.sizeSmall),
+                    Center(
+                      child: Container(
+                          width: SizeConfig.getDeviceWidth(context) / 9,
+                          child: const Divider(
+                            thickness: 2,
+                            color: DColors.lightGrey,
+                          )),
+                    ),
+                    SizedBox(height: SizeConfig.sizeSmall),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SizeConfig.sizeLarge!,
+                      ),
+                      child: label == "chat"
+                          ? const BottomSheetHeader(
+                              header: "Chat Notifications",
+                              icon: "assets/bell.svg")
+                          : label == "friend"
+                              ? const BottomSheetHeader(
+                                  header: "Friends",
+                                  icon: "assets/add-friend.svg")
+                              : const BottomSheetHeader(
+                                  header: "Trophies",
+                                  icon: "assets/favorite.svg"),
+                    ),
+                    SizedBox(height: SizeConfig.sizeSmall),
+                    CustomeDivider(),
+                    if (label == "friend"
+                    // && provider.myRequest != null
+                    )
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemBuilder: (context, item) {
+                          var friends = provider.myRequest.elementAt(item);
+                          return FriendList(friends.requester.name,
+                              friends.requester.username, friends.requester.id);
+                        },
+                        itemCount: provider.myRequest.length,
+                      )
+                  ],
+                ),
+              );
+            });
+      });
+    },
+  );
 }

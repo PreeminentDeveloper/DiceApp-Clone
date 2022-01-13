@@ -19,7 +19,6 @@ class InviteGQL {
   }
   ''';
 
-
   static String searchUser = '''
   query (\$search: String!){
     searchUser(input: {search: \$search}){
@@ -36,4 +35,26 @@ class InviteGQL {
   }
   ''';
 
+  static String listConnectionRequest = '''
+  query (\$pageNo: int!, \$perPage: int!, \$userId: String!){
+    listConnectionRequest(pageNo: \$pageNo, perPage: \$perPage, userId: \$userId){
+      firstPage
+      hasNext
+      hasPrev
+      nextPage
+      page
+      prevPage
+      list{
+        userId
+        requester{
+          name
+          id
+          phone
+          username
+          photo
+        }
+      }
+    }
+  }
+  ''';
 }

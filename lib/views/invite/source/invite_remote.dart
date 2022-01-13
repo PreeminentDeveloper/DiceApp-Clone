@@ -1,5 +1,6 @@
 import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_model.dart';
 import 'package:dice_app/views/invite/model/find_people/search_users_response.dart';
@@ -50,6 +51,25 @@ class InviteService {
       final result = await _graphQLClient.client.query(QueryOptions(
           document: gql(InviteGQL.searchUser), variables: {"search": name}));
       return SearchUserResponse.fromJson(result.data!);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<ConnectionRequestResponse?> myConnectionRequest(
+      {required int pageNumber,
+      required int perPage,
+      required String userID}) async {
+    try {
+      final result = await _graphQLClient.client.query(QueryOptions(
+          document: gql(InviteGQL.listConnectionRequest),
+          variables: {
+            "pageNo": pageNumber,
+            "perPage": perPage,
+            "userId": userID
+          }));
+      print(result.data);
+      return ConnectionRequestResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
     }

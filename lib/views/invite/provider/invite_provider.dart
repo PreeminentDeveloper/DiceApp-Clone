@@ -15,6 +15,7 @@ class InviteProvider extends ChangeNotifier {
 
   List<dynamic>? list = [];
   List<SearchUser> searchUser = [];
+  List myRequest = [];
 
   InviteProvider(this._inviteService);
 
@@ -51,6 +52,20 @@ class InviteProvider extends ChangeNotifier {
       inviteEnum = InviteEnum.busy;
       final _response = await _inviteService.findPeople(name: name);
       searchUser = (_response?.searchUser ?? []);
+      inviteEnum = InviteEnum.idle;
+    } catch (e) {
+      inviteEnum = InviteEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void getMyConnectionRequest(
+      {required int pageNumber, int perPage = 20, required String? id}) async {
+    try {
+      inviteEnum = InviteEnum.busy;
+      final _response = await _inviteService.myConnectionRequest(
+          pageNumber: pageNumber, perPage: perPage, userID: id!);
+      myRequest = (_response?.listConnectionRequest?.list ?? []);
       inviteEnum = InviteEnum.idle;
     } catch (e) {
       inviteEnum = InviteEnum.idle;
