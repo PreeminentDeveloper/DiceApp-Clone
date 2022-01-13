@@ -26,8 +26,8 @@ class ProfileWindow extends StatelessWidget {
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             CircleImageHandler(
               'https://${provider.user?.photo?.hostname}/${provider.user?.photo?.url}',
-              radius: 20,
-              showInitialText: provider.user?.photo == null ? true : false,
+              radius: 20.r,
+              showInitialText: provider.user?.photo?.url?.isEmpty ?? true,
               initials: Helpers.getInitials(provider.user?.name ?? ''),
             ),
             SizedBox(width: 15.w),

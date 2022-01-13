@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         backgroundColor: DColors.white,
         appBar: defaultAppBar(context,
-            elevation: flag ? 0 : null,
+            elevation: flag ? 0 : 1,
             leading: Container(
                 margin: EdgeInsets.only(left: 16.w),
                 child: SvgPicture.asset(Assets.dice)),
@@ -93,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverAppBar(
                   backgroundColor: Colors.transparent,
                   floating: true,
+                  elevation: 1,
                   pinned: true,
                   automaticallyImplyLeading: false,
                   flexibleSpace: Container(

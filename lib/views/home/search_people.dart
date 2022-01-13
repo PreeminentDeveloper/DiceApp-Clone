@@ -31,7 +31,6 @@ class _SearchUsersState extends State<SearchUsers> {
     _inviteProvider = Provider.of<InviteProvider>(context, listen: false);
   }
 
-
   findFriends(name) {
     _inviteProvider?.findPeople(name: name);
   }
@@ -75,7 +74,7 @@ class _SearchUsersState extends State<SearchUsers> {
                                   border: InputBorder.none,
                                   hintText: "Find friends and people",
                                   hintStyle:
-                                  const TextStyle(color: DColors.lightGrey),
+                                      const TextStyle(color: DColors.lightGrey),
                                   contentPadding: const EdgeInsets.all(13),
                                   prefixIcon: GestureDetector(
                                     child: Padding(
@@ -109,8 +108,8 @@ class _SearchUsersState extends State<SearchUsers> {
             ),
           ),
         ),
-        body: Consumer<InviteProvider>(
-            builder: (context, inviteProvider, child) {
+        body:
+            Consumer<InviteProvider>(builder: (context, inviteProvider, child) {
           return Column(
             children: [
               _greyTop(),
@@ -123,18 +122,27 @@ class _SearchUsersState extends State<SearchUsers> {
                   child: ListView.builder(
                       physics: const ScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: selectedWidgetMarker != WidgetMarker.friend ? inviteProvider.searchUser.length :
-                      inviteProvider.searchUser.where((element) => element.connection == "connected").toList().length,
+                      itemCount: selectedWidgetMarker != WidgetMarker.friend
+                          ? inviteProvider.searchUser.length
+                          : inviteProvider.searchUser
+                              .where((element) =>
+                                  element.connection == "connected")
+                              .toList()
+                              .length,
                       itemBuilder: (BuildContext context, int index) {
-                        var people = selectedWidgetMarker != WidgetMarker.friend ? inviteProvider.searchUser.elementAt(index) : inviteProvider.searchUser.where((element) => element.connection == "connected").toList()
-                            .elementAt(index);
+                        final people =
+                            selectedWidgetMarker != WidgetMarker.friend
+                                ? inviteProvider.searchUser.elementAt(index)
+                                : inviteProvider.searchUser
+                                    .where((element) =>
+                                        element.connection == "connected")
+                                    .toList()
+                                    .elementAt(index);
                         // (people.photo["hostname"]);
-                        return
-                          people.name != null
-                            ? People(people.name, people.username,
-                            people.id, people.photo)
-                            :
-                          Container();
+                        return people.name != null
+                            ? People(people.name, people.username, people.id,
+                                'https://${people.photo?.hostname}/${people.photo?.url}')
+                            : Container();
                       }),
                 )
             ],
