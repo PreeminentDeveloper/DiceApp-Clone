@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
@@ -8,7 +6,6 @@ import 'package:dice_app/views/invite/model/find_people/search_users_response.da
 import 'package:dice_app/views/invite/model/my_connections/my_connections_response.dart';
 import 'package:dice_app/views/invite/query/data_query.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart' as http;
 
 class InviteService {
   final DiceGraphQLClient _graphQLClient;
@@ -30,15 +27,18 @@ class InviteService {
     }
   }
 
-
   Future<MyConnectionResponse?> getConnections(
-  {required int pageNumber, required int perPage, required String userID}) async {
+      {required int pageNumber,
+      required int perPage,
+      required String userID}) async {
     try {
       final result = await _graphQLClient.buildClient().query(
-        QueryOptions(
-            document: gql(InviteGQL.listConnections),
-            variables: {"pageNo": pageNumber, "perPage": perPage, "userId": userID}),
-      );
+            QueryOptions(document: gql(InviteGQL.listConnections), variables: {
+              "pageNo": pageNumber,
+              "perPage": perPage,
+              "userId": userID
+            }),
+          );
       print(result.data);
       return MyConnectionResponse.fromJson(result.data!);
     } catch (e) {
@@ -46,16 +46,11 @@ class InviteService {
     }
   }
 
-
-  Future<SearchUserResponse?> findPeople(
-      {required String name}) async {
+  Future<SearchUserResponse?> findPeople({required String name}) async {
     print(name);
     try {
-      final result = await _graphQLClient.buildClient().query(
-        QueryOptions(
-            document: gql(InviteGQL.searchUser),
-            variables: {"search": name})
-      );
+      final result = await _graphQLClient.buildClient().query(QueryOptions(
+          document: gql(InviteGQL.searchUser), variables: {"search": name}));
       return SearchUserResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
