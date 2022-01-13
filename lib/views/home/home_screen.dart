@@ -5,8 +5,10 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
+import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/my_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
+import 'package:dice_app/views/widgets/bottom_sheet.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -20,7 +22,9 @@ import 'package:provider/provider.dart';
 
 import 'package:phoenix_socket/phoenix_socket.dart';
 
+import 'camera/camera_screen.dart';
 import 'find_people.dart';
+import 'widget/chat_widget.dart';
 import 'widget/profile_window.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -142,12 +146,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ...[]
-                                .map((user) => Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [],
+                            ...homeProvider.list!
+                                .map((user) => ChatListWidget(
+                                      slideKey: user.id,
+                                      chatObject: ChatObject(
+                                          image: user.name ?? '',
+                                          name: user.name,
+                                          recentMessage: user.username,
+                                          date: 'timeAgo'),
+                                      onTapProfile: () => PageRouter.gotoWidget(
+                                          OtherProfile(user.id!), context),
+                                      onPressed: () {
+                                        // PageRouter.gotoWidget(
+                                        //     MessageScreen(
+                                        //         data: state.homeEntity
+                                        //                 .conversationData[
+                                        //             index],
+                                        //         user: user,
+                                        //         socket: socket1,
+                                        //         channel: channel1,
+                                        //         online: online),
+                                        //     context);
+                                      },
+                                      onTapDelete: () => showSheet(context,
+                                          child: _deleteDialog()),
+                                      onTapCamera: () async {
+                                        PageRouter.gotoWidget(
+                                            CameraPictureScreen(), context);
+                                      },
                                     ))
                                 .toList()
                           ]);

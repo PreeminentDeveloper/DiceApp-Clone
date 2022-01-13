@@ -1,27 +1,13 @@
 import 'package:dice_app/core/entity/users_entity.dart';
 
 class ListOfConversationResponse {
-  Data? data;
-
-  ListOfConversationResponse({this.data});
-
-  ListOfConversationResponse.fromJson(json) {
-    data = json["data"] == null ? null : Data.fromJson(json["data"]);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (this.data != null) data["data"] = this.data?.toJson();
-    return data;
-  }
-}
-
-class Data {
+  String? typename;
   ListConversations? listConversations;
 
-  Data({this.listConversations});
+  ListOfConversationResponse({this.typename, this.listConversations});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ListOfConversationResponse.fromJson(json) {
+    typename = json["__typename"];
     listConversations = json["listConversations"] == null
         ? null
         : ListConversations.fromJson(json["listConversations"]);
@@ -29,72 +15,85 @@ class Data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (listConversations != null) {
+    data["__typename"] = typename;
+    if (listConversations != null)
       data["listConversations"] = listConversations?.toJson();
-    }
     return data;
   }
 }
 
 class ListConversations {
+  String? typename;
   int? firstPage;
   bool? hasNext;
   bool? hasPrev;
-  List<ListOfData>? list;
   int? nextPage;
   int? page;
   int? prevPage;
+  List<ListOfData>? list;
 
   ListConversations(
-      {this.firstPage,
+      {this.typename,
+      this.firstPage,
       this.hasNext,
       this.hasPrev,
-      this.list,
       this.nextPage,
       this.page,
-      this.prevPage});
+      this.prevPage,
+      this.list});
 
   ListConversations.fromJson(Map<String, dynamic> json) {
+    typename = json["__typename"];
     firstPage = json["firstPage"];
     hasNext = json["hasNext"];
     hasPrev = json["hasPrev"];
-    list = json["list"] == null
-        ? null
-        : (json["list"] as List).map((e) => ListOfData.fromJson(e)).toList();
     nextPage = json["nextPage"];
     page = json["page"];
     prevPage = json["prevPage"];
+    list = json["list"] == null
+        ? null
+        : (json["list"] as List).map((e) => ListOfData.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data["__typename"] = typename;
     data["firstPage"] = firstPage;
     data["hasNext"] = hasNext;
     data["hasPrev"] = hasPrev;
-    if (list != null) {
-      data["list"] = list?.map((e) => e.toJson()).toList();
-    }
     data["nextPage"] = nextPage;
     data["page"] = page;
     data["prevPage"] = prevPage;
+    if (list != null) data["list"] = list?.map((e) => e.toJson()).toList();
     return data;
   }
 }
 
 class ListOfData {
+  String? typename;
   String? id;
-  dynamic name;
+  dynamic? name;
+  String? status;
   String? type;
   String? updatedAt;
   String? userId;
   List<User>? users;
 
   ListOfData(
-      {this.id, this.name, this.type, this.updatedAt, this.userId, this.users});
+      {this.typename,
+      this.id,
+      this.name,
+      this.status,
+      this.type,
+      this.updatedAt,
+      this.userId,
+      this.users});
 
   ListOfData.fromJson(Map<String, dynamic> json) {
+    typename = json["__typename"];
     id = json["id"];
     name = json["name"];
+    status = json["status"];
     type = json["type"];
     updatedAt = json["updatedAt"];
     userId = json["userId"];
@@ -105,14 +104,14 @@ class ListOfData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data["__typename"] = typename;
     data["id"] = id;
     data["name"] = name;
+    data["status"] = status;
     data["type"] = type;
     data["updatedAt"] = updatedAt;
     data["userId"] = userId;
-    if (users != null) {
-      data["users"] = users?.map((e) => e.toJson()).toList();
-    }
+    if (users != null) data["users"] = users?.map((e) => e.toJson()).toList();
     return data;
   }
 }

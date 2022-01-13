@@ -1,6 +1,7 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/data/model/list_of_conversation_response.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class HomeProvider extends ChangeNotifier {
   HomeEnum homeEnum = HomeEnum.initial;
   final HomeService _homeService;
 
-  List<dynamic>? list = [];
+  List<User>? list = [];
 
   HomeProvider(this._homeService);
 
@@ -27,7 +28,7 @@ class HomeProvider extends ChangeNotifier {
           perPage: perPage,
           search: search,
           userID: userID);
-      list = _response.data?.listConversations?.list ?? [];
+      _response.listConversations?.list?.map((e) => list = e.users).toList();
       homeEnum = HomeEnum.idle;
     } catch (e) {
       logger.e(e);
