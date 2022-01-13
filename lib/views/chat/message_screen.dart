@@ -6,6 +6,7 @@ import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
+import 'package:dice_app/core/event_bus/events/online_event.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -56,6 +57,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final ScrollController _scrollController = ScrollController();
 // Keep track of whether a scroll is needed.
   bool _needsScroll = false;
+  bool _isOnline = false;
 
   @override
   void initState() {
@@ -67,20 +69,28 @@ class _MessageScreenState extends State<MessageScreen> {
 
   void _fetchConversations() {
     _chatBloc.add(ListChatEvent(
-        pageIndex: 2,
+        pageIndex: 1,
         userID: _profileProvider?.user?.id,
         conversationID: widget.conversationID));
   }
 
   _listenToChatEvents() {
-    eventBus.on<ChatEventBus>().listen((event) {
-      if (event.key!.contains(widget.conversationID!)) {
+    eventBus.on().listen((event) {
+      if (event is ChatEventBus &&
+          event.key!.contains(widget.conversationID!)) {
         _localChats.add(LocalChatModel(
             conversationID: event.payload?.data?.message?.conversationId,
             id: event.payload?.data?.message?.id,
             userID: event.payload?.data?.message?.userId,
             message: event.payload?.data?.message?.message,
             time: ''));
+      }
+
+      if (event is OnlineEvent &&
+          event.onlineEvent!.containsKey(widget.conversationID!)) {
+        _isOnline = true;
+      } else {
+        _isOnline = false;
       }
       _needsScroll = true;
       setState(() {});
@@ -250,7 +260,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       ),
                       SizedBox(width: 2.5.h),
                       TextWidget(
-                        text: "Offline",
+                        text: _isOnline ? "Online" : "Offline",
                         appcolor: DColors.primaryAccentColor,
                         weight: FontWeight.w500,
                         size: FontSize.s12,

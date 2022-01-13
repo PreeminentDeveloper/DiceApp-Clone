@@ -1,6 +1,7 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
+import 'package:dice_app/core/event_bus/events/online_event.dart';
 import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
@@ -26,6 +27,10 @@ class PhonixManager {
       phoenixChannel?.join();
       phoenixChannel?.messages.listen((event) {
         // presence_state
+
+        if (event.event.value == 'presence_state') {
+          eventBus.fire(OnlineEvent(event.payload));
+        }
         if (event.event.value.contains(event.event.value)) {
           eventBus.fire(ChatEventBus(
               event.event.value, ChatEventModel.fromJson(event.payload)));
