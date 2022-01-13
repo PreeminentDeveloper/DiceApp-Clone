@@ -2,15 +2,15 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
+import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:dice_app/views/widgets/circle_image.dart';
-
 class People extends StatelessWidget {
-  final String? text, subText, personId, photo;
+  final String? text, subText, personId;
+  final photo;
   const People(this.text, this.subText, this.personId, this.photo);
   @override
   Widget build(BuildContext context) {

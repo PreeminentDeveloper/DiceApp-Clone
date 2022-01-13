@@ -83,4 +83,16 @@ class ProfileService {
       logger.e(e);
     }
   }
+
+  Future<dynamic> acceptConnection(
+      {String? msg, String? senderID, String? receiverID}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(_model.acceptConnectionRequest(
+              message: msg, requesterId: senderID, userId: receiverID))));
+      logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
 }
