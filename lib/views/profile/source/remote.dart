@@ -35,7 +35,8 @@ class ProfileService {
     }
   }
 
-  Future<void> getUsersProfile(ProfileSetupModel model) async {
+  Future<GetUserDataResponse?> getUsersProfile(ProfileSetupModel model,
+      {bool isMyProfile = true}) async {
     try {
       final _user = await _graphQLClient.client.query(
         QueryOptions(
@@ -45,8 +46,11 @@ class ProfileService {
       );
 
       final _data = GetUserDataResponse.fromJson(_user.data);
-      SessionManager.instance.usersData =
-          _data.getProfile?.toJson() as Map<String, dynamic>;
+      if (isMyProfile) {
+        SessionManager.instance.usersData =
+            _data.getProfile?.toJson() as Map<String, dynamic>;
+      }
+      return _data;
     } catch (e) {
       logger.e(e);
     }

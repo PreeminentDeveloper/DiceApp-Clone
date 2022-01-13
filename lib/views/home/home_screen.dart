@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _listConversations() async {
     _profileProvider?.getUsersInformations();
-    _homeProvider?.listConversations(pageNumber: 1, search: '');
+    // _homeProvider?.listConversations(pageNumber: 1, search: '');
   }
 
   @override

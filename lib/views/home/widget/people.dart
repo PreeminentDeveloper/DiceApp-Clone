@@ -1,6 +1,7 @@
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,8 +48,8 @@ class People extends StatelessWidget {
           ),
           GestureDetector(
               onTap: () {
-                logger.d(personId);
-                // Navigator.push(context, MaterialPageRoute(builder: (_)=> OtherProfile(personId)));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => OtherProfile(personId!)));
               },
               child: SvgPicture.asset("assets/arrow-forward.svg")),
         ],

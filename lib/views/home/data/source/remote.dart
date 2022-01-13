@@ -16,17 +16,17 @@ class HomeService {
       required String search,
       required String userID}) async {
     try {
-      final result = await _graphQLClient.buildClient().query(
-            QueryOptions(
-                document: gql(HomeGqlMutation.listConversations),
-                variables: {
-                  "pageNo": pageNumber,
-                  "perPage": perPage,
-                  "search": search,
-                  "userId": userID
-                },
-                fetchPolicy: FetchPolicy.networkOnly),
-          );
+      final result = await _graphQLClient.client.query(
+        QueryOptions(
+            document: gql(HomeGqlMutation.listConversations),
+            variables: {
+              "pageNo": pageNumber,
+              "perPage": perPage,
+              "search": search,
+              "userId": userID
+            },
+            fetchPolicy: FetchPolicy.networkOnly),
+      );
       return ListOfConversationResponse.fromJson(result.data);
     } catch (exception) {
       logger.e(exception);
