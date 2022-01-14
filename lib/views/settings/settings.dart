@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/sign_up.dart';
@@ -143,15 +144,7 @@ class Settings extends StatelessWidget {
                                                 8,
                                         vertical: SizeConfig.sizeMedium!),
                                     child: TextButton(
-                                        onPressed: () async {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          SignUp()),
-                                              (Route<dynamic> route) => false);
-                                        },
+                                        onPressed: () async => _logOut(context),
                                         style: ButtonStyle(
                                             backgroundColor:
                                                 MaterialStateProperty.all<
@@ -270,5 +263,13 @@ class Settings extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _logOut(BuildContext context) async {
+    await SessionManager.instance.logOut();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => SignUp()),
+        (Route<dynamic> route) => false);
   }
 }

@@ -14,6 +14,7 @@ import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
+import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
@@ -26,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
@@ -78,12 +80,14 @@ class _MessageScreenState extends State<MessageScreen> {
     eventBus.on().listen((event) {
       if (event is ChatEventBus &&
           event.key!.contains(widget.conversationID!)) {
-        _localChats.add(LocalChatModel(
+        chatDao!.saveSingleChat(LocalChatModel(
             conversationID: event.payload?.data?.message?.conversationId,
-            id: event.payload?.data?.message?.id,
+            id: event.payload?.data?.message?.id?.toString(),
             userID: event.payload?.data?.message?.userId,
             message: event.payload?.data?.message?.message,
-            time: ''));
+            time: '',
+            insertLocalTime: DateTime.now().toString()));
+        setState(() {});
       }
 
       if (event is OnlineEvent &&
@@ -131,22 +135,29 @@ class _MessageScreenState extends State<MessageScreen> {
             listener: (context, state) {
               if (state is ChatLoadingState) {}
               if (state is ChatSuccessState) {
-                _localChats = state.response;
+                // _localChats = state.response;
                 _needsScroll = true;
                 setState(() {});
               }
               if (state is ChatFailedState) {}
             },
-            child: ListView(
-              controller: _scrollController,
-              children: [
-                ..._localChats
-                    .map((chat) => chat.userID == _profileProvider?.user?.id
-                        ? SenderSide(chat: chat, deleteCallback: () {})
-                        : ReceiverSide(chat: chat, deleteCallback: () {}))
-                    .toList(),
-                SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-              ],
+            child: ValueListenableBuilder(
+              valueListenable: chatDao!.getListenable()!,
+              builder:
+                  (BuildContext context, Box<dynamic> value, Widget? child) {
+                _localChats = chatDao!.convert(value).toList();
+                return ListView(
+                  controller: _scrollController,
+                  children: [
+                    ..._localChats
+                        .map((chat) => chat.userID == _profileProvider?.user?.id
+                            ? SenderSide(chat: chat, deleteCallback: () {})
+                            : ReceiverSide(chat: chat, deleteCallback: () {}))
+                        .toList(),
+                    SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+                  ],
+                );
+              },
             ),
           ),
           Align(
