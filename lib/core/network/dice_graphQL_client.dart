@@ -14,8 +14,7 @@ class DiceGraphQLClient {
   GraphQLClient buildClient({String token = ''}) {
     Link? link;
     AuthLink authLink = AuthLink(
-      getToken: () async => 'Bearer ' + SessionManager.instance.authToken,
-    );
+        getToken: () async => 'Bearer ' + SessionManager.instance.authToken);
     link = authLink.concat(_httpLink!);
 
     _client = GraphQLClient(

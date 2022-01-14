@@ -18,19 +18,21 @@ class HomeProvider extends ChangeNotifier {
   void listConversations({
     required int pageNumber,
     int perPage = 20,
-    required String search,
+    String? search,
     required String userID,
   }) async {
     try {
       homeEnum = HomeEnum.busy;
-      list?.clear();
-      notifyListeners();
       final _response = await _homeService.listConvo(
           pageNumber: pageNumber,
           perPage: perPage,
-          search: search,
+          search: search ?? '',
           userID: userID);
+
       _response.listConversations?.list?.map((e) {
+        if (e.users!.isNotEmpty) {
+          list?.clear();
+        }
         list = e.users;
         conversationID = e.id;
       }).toList();

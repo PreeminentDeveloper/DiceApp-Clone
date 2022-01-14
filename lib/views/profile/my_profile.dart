@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/invite/invite-contacts.dart';
+import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
 import 'package:dice_app/views/invite/provider/invite_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/about_modal.dart';
@@ -37,18 +40,22 @@ class _MyProfileState extends State<MyProfile> {
   bool _loading = false;
   ProfileProvider? _profileProvider;
   InviteProvider? _inviteProvider;
+  HomeProvider? _homeProvider;
 
   @override
   void initState() {
     super.initState();
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _inviteProvider = Provider.of<InviteProvider>(context, listen: false);
+    _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     getMyConnectionRequest();
   }
 
   getMyConnectionRequest() {
     _inviteProvider?.getMyConnectionRequest(
-        pageNumber: 1, id: _profileProvider?.user?.id);
+        homeProvider: _homeProvider,
+        pageNumber: 1,
+        id: _profileProvider?.user?.id);
   }
 
   @override
@@ -344,9 +351,9 @@ void _bottomSheetMore(context, label) {
                         shrinkWrap: true,
                         physics: const ScrollPhysics(),
                         itemBuilder: (context, item) {
-                          var friends = provider.myRequest.elementAt(item);
-                          return FriendList(friends.requester.name,
-                              friends.requester.username, friends.requester.id);
+                          final ListData? friends =
+                              provider.myRequest.elementAt(item);
+                          return FriendList(friends);
                         },
                         itemCount: provider.myRequest.length,
                       )

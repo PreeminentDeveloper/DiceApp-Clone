@@ -1,4 +1,7 @@
 import 'package:dice_app/core/entity/users_entity.dart';
+import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_model.dart';
 import 'package:dice_app/views/invite/model/find_people/search_users_response.dart';
@@ -15,7 +18,7 @@ class InviteProvider extends ChangeNotifier {
 
   List<dynamic>? list = [];
   List<SearchUser> searchUser = [];
-  List myRequest = [];
+  List<ListData> myRequest = [];
 
   InviteProvider(this._inviteService);
 
@@ -60,12 +63,19 @@ class InviteProvider extends ChangeNotifier {
   }
 
   void getMyConnectionRequest(
-      {required int pageNumber, int perPage = 20, required String? id}) async {
+      {@required HomeProvider? homeProvider,
+      required int pageNumber,
+      int perPage = 20,
+      required String? id}) async {
     try {
       inviteEnum = InviteEnum.busy;
       final _response = await _inviteService.myConnectionRequest(
           pageNumber: pageNumber, perPage: perPage, userID: id!);
-      myRequest = (_response?.listConnectionRequest?.list ?? []);
+
+      /// Call this line to perform an updated request
+      homeProvider!.listConversations(pageNumber: 1, userID: id);
+
+      myRequest = (_response?.listConnectionRequest?.listData ?? []);
       inviteEnum = InviteEnum.idle;
     } catch (e) {
       inviteEnum = InviteEnum.idle;
