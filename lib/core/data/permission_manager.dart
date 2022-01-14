@@ -29,19 +29,19 @@ class PermissionManager {
     switch (permissionStatus) {
       case PermissionStatus.denied:
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Access to contact data denied')));
+            const SnackBar(content: Text('Access to contact data denied')));
         break;
       case PermissionStatus.granted:
         break;
       case PermissionStatus.restricted:
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('You are restricted from this action')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('You are restricted from this action')));
         break;
       case PermissionStatus.limited:
         break;
       case PermissionStatus.permanentlyDenied:
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Contact data not available on device')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Contact data not available on device')));
         break;
     }
   }

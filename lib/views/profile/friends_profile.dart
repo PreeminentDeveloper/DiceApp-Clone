@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'widget/friends_background.dart';
+import 'widget/friends_chat.dart';
 import 'widget/friends_profile_window_widget.dart';
 import 'widget/not_a_chatty_user.dart';
 import 'widget/note_window.dart';
@@ -110,7 +111,7 @@ class _OtherProfileState extends State<OtherProfile> {
                   SizedBox(height: 16.h),
                   homeProvider.list!.isEmpty
                       ? const NotAChattyUser()
-                      : const Text('Other things here')
+                      : const FriendsChat()
                 ],
               );
             },

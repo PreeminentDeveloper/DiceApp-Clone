@@ -9,6 +9,8 @@ class UrlConfig {
   static const String live = "";
   static const String _graphql = "graphiql";
   static const String _upload = "upload";
+  static const String phonixSocketBaseURL =
+      "ws://dice-api.reimnet.com/socket/websocket?token=Bearer ";
 
   static final coreBaseUrl = environment == Environment.production
       ? '$live$_graphql'

@@ -4,7 +4,6 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -50,10 +49,10 @@ class ChatListWidget extends StatelessWidget {
     return Slidable(
       controller: slidableController,
       dismissal: SlidableDismissal(
-        child: SlidableDrawerDismissal(),
+        child: const SlidableDrawerDismissal(),
         onDismissed: onDismissed,
       ),
-      actionPane: SlidableDrawerActionPane(),
+      actionPane: const SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       actions: [
         SlideAction(
@@ -84,7 +83,7 @@ class ChatListWidget extends StatelessWidget {
                   Assets.eye,
                   height: 12.h,
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 TextWidget(
                   text: "1",
                   size: FontSize.s10,

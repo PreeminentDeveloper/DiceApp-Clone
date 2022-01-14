@@ -1,8 +1,10 @@
 import 'package:dice_app/core/data/permission_manager.dart';
+import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/chat/message_screen.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
@@ -35,8 +37,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   SlidableController? _slidableController;
 
-  var online;
-
   ScrollController _scrollController = ScrollController();
   bool upDirection = false, flag = false;
   HomeProvider? _homeProvider;
@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     PermissionManager.requestPermission(context);
+    phonixManager.initializePhonix();
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _initializeController();
@@ -153,16 +154,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTapProfile: () => PageRouter.gotoWidget(
                                   OtherProfile(user.id!), context),
                               onPressed: () {
-                                // PageRouter.gotoWidget(
-                                //     MessageScreen(
-                                //         data: state.homeEntity
-                                //                 .conversationData[
-                                //             index],
-                                //         user: user,
-                                //         socket: socket1,
-                                //         channel: channel1,
-                                //         online: online),
-                                //     context);
+                                PageRouter.gotoWidget(
+                                    MessageScreen(
+                                        user: user,
+                                        conversationID:
+                                            homeProvider.conversationID),
+                                    context);
                               },
                               onTapDelete: () =>
                                   showSheet(context, child: _deleteDialog()),

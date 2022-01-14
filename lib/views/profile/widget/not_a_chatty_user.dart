@@ -32,6 +32,6 @@ class NotAChattyUser extends StatelessWidget {
         ),
       ),
     );
-    ;
+    
   }
 }
