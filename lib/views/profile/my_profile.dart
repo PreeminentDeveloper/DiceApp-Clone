@@ -11,6 +11,7 @@ import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/about_modal.dart';
 import 'package:dice_app/views/profile/widget/bottomsheet_header.dart';
 import 'package:dice_app/views/profile/widget/image_modal.dart';
+import 'package:dice_app/views/settings/settings.dart';
 import 'package:dice_app/views/widgets/bottom_sheet.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
@@ -58,7 +59,9 @@ class _MyProfileState extends State<MyProfile> {
         appBar: defaultAppBar(context, title: 'Profile', actions: [
           Container(
             margin: EdgeInsets.only(right: 16.w),
-            child: const ImageLoader(
+            child: ImageLoader(
+              onTap: () => PageRouter.gotoWidget(Settings(), context)
+                  .whenComplete(() => setState(() {})),
               imageLink: Assets.settings,
             ),
           )

@@ -23,6 +23,8 @@ class HomeProvider extends ChangeNotifier {
   }) async {
     try {
       homeEnum = HomeEnum.busy;
+      list?.clear();
+      notifyListeners();
       final _response = await _homeService.listConvo(
           pageNumber: pageNumber,
           perPage: perPage,

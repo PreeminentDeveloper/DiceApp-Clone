@@ -24,7 +24,7 @@ class ChatService {
 
   Future<ListOoChatResponse> chatList(
       {int? pageNo = 1,
-      int? perPage = 20,
+      int? perPage = 200,
       String? userID,
       String? conversationID}) async {
     try {
