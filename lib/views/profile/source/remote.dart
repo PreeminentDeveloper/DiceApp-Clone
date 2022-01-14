@@ -95,4 +95,15 @@ class ProfileService {
       logger.e(e);
     }
   }
+
+  Future<dynamic> ignoreUser({String? userID, String? receiverID}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document:
+              gql(_model.ignoreUser(userId: userID, ignoredId: receiverID))));
+      logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
 }

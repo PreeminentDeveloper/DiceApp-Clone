@@ -90,4 +90,15 @@ class ProfileSetupModel {
       }
     """;
   }
+
+  String ignoreUser({String? userId, String? ignoredId}) {
+    return """
+      mutation{
+          ignoreUser(userId: "$userId", ignoredId: "$ignoredId"){
+            ignoredId
+            userId
+          }
+      }
+    """;
+  }
 }
