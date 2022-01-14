@@ -10,11 +10,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'account_actions.dart';
-import 'acct_settings/account_settings.dart';
 import 'additional_service.dart';
 import 'chat_settings.dart';
 import 'legal.dart';
 import 'privacy.dart';
+import 'widget/acct_settings/account_settings.dart';
 
 class Settings extends StatelessWidget {
   @override
@@ -82,8 +82,8 @@ class Settings extends StatelessWidget {
               SizedBox(height: SizeConfig.sizeExtraSmall),
               GestureDetector(
                 onTap: () {
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (_) => AccountActions()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => AccountActions()));
                 },
                 child: _card(
                   "assets/reload.svg",

@@ -91,4 +91,16 @@ class ProfileProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /// ignore a user
+  void ignoreUser({required String? receiverID}) async {
+    try {
+      await _profileService.ignoreUser(
+          userID: user!.id!, receiverID: receiverID);
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
 }

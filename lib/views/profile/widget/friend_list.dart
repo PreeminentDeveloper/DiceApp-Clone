@@ -74,6 +74,8 @@ class FriendList extends StatelessWidget {
                               ),
                               GestureDetector(
                                   onTap: () {
+                                    _profileProvider?.ignoreUser(
+                                        receiverID: listData?.requester?.id);
                                     Navigator.pop(context);
                                   },
                                   child: SvgPicture.asset("assets/remove.svg"))
@@ -135,7 +137,12 @@ class FriendList extends StatelessWidget {
                                     width:
                                         MediaQuery.of(context).size.width / 3.2,
                                     child: TextButton(
-                                        onPressed: () async {},
+                                        onPressed: () async {
+                                          _profileProvider?.ignoreUser(
+                                              receiverID:
+                                                  listData?.requester?.id);
+                                          Navigator.pop(context);
+                                        },
                                         style: ButtonStyle(
                                             shape: MaterialStateProperty.all<
                                                     RoundedRectangleBorder>(
