@@ -65,7 +65,6 @@ class ProfileService {
       final _result = await _graphQLClient.client.mutate(MutationOptions(
           document: gql(_model.updateUserInfo(key, value, id))));
       final _response = UpdateUserDataResponse.fromJson(_result.data);
-      logger.d(_response.toJson());
       SessionManager.instance.usersData =
           _response.updateUser?.user?.toJson() as Map<String, dynamic>;
       return _response;
