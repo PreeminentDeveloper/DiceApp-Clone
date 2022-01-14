@@ -6,7 +6,6 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/auth/data/model/profile/get_user_data_response.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
-import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:dice_app/views/profile/source/remote.dart';
 import 'package:flutter/material.dart';
 
@@ -74,6 +73,17 @@ class ProfileProvider extends ChangeNotifier {
   void requestConnection({String? msg, required String? receiverID}) async {
     try {
       await _profileService.requestConnection(
+          msg: msg, senderID: user!.id!, receiverID: receiverID);
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void acceptConnection({String? msg, required String? receiverID}) async {
+    try {
+      await _profileService.acceptConnection(
           msg: msg, senderID: user!.id!, receiverID: receiverID);
     } catch (e) {
       logger.e(e);
