@@ -46,6 +46,8 @@ class ProfileProvider extends ChangeNotifier {
 
       await _profileService.updateUsersInfo(key, value, user!.id!);
       getUsersInformations(notifyListeners: true);
+      message = '';
+      notifyListeners();
       profileEnum = ProfileEnum.idle;
       PageRouter.goBack(context);
     } catch (e) {
@@ -97,6 +99,22 @@ class ProfileProvider extends ChangeNotifier {
     try {
       await _profileService.ignoreUser(
           userID: user!.id!, receiverID: receiverID);
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  String? message = '';
+
+  void verifyUserName(String username) async {
+    try {
+      final _response = await _profileService.verifyUserName(username);
+      message = _response!.codeNameExists!
+          ? 'Oops! Taken already'
+          : 'Congrats! Username is available.';
+      profileEnum = ProfileEnum.idle;
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;

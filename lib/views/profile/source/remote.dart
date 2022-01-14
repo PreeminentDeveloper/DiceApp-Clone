@@ -6,6 +6,7 @@ import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/auth/data/model/profile/get_user_data_response.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
+import 'package:dice_app/views/profile/model/codename_verification.dart';
 import 'package:dice_app/views/profile/model/update_profile_response.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -64,6 +65,7 @@ class ProfileService {
       final _result = await _graphQLClient.client.mutate(MutationOptions(
           document: gql(_model.updateUserInfo(key, value, id))));
       final _response = UpdateUserDataResponse.fromJson(_result.data);
+      logger.d(_response.toJson());
       SessionManager.instance.usersData =
           _response.updateUser?.user?.toJson() as Map<String, dynamic>;
       return _response;
@@ -102,6 +104,18 @@ class ProfileService {
           document:
               gql(_model.ignoreUser(userId: userID, ignoredId: receiverID))));
       logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<CodeNameVerification?> verifyUserName(String username) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+        document: gql(_model.codeNameExists),
+        variables: {"codeName": username},
+      ));
+      return CodeNameVerification.fromJson(_result.data!);
     } catch (e) {
       logger.e(e);
     }

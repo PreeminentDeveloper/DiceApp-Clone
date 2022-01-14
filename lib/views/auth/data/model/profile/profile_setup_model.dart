@@ -101,4 +101,10 @@ class ProfileSetupModel {
       }
     """;
   }
+
+  String codeNameExists = '''
+  query (\$codeName: String!){
+    codeNameExists(codeName: \$codeName)
+  }
+  ''';
 }
