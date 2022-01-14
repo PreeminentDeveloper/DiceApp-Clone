@@ -1,6 +1,9 @@
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
+import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +11,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class FriendList extends StatelessWidget {
-  final String text, subText, personId;
-  FriendList(this.text, this.subText, this.personId, {Key? key})
-      : super(key: key);
+  final ListData? listData;
+  FriendList(this.listData, {Key? key}) : super(key: key);
 
   ProfileProvider? _profileProvider;
 
@@ -26,22 +28,25 @@ class FriendList extends StatelessWidget {
               "assets/remove.svg",
             ),
             const SizedBox(width: 20),
-            const CircleAvatar(
-                // radius: 15.0,
-                ),
+            CircleImageHandler(
+              'https://${listData?.requester?.photo?.hostname}/${listData?.requester?.photo?.url}',
+              showInitialText: listData?.requester?.photo?.url?.isEmpty ?? true,
+              initials: Helpers.getInitials(listData?.requester?.name ?? ''),
+              radius: 20,
+            ),
             const SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextWidget(
-                  text: text,
+                  text: listData?.requester?.name ?? '',
                   size: FontSize.s16,
                   weight: FontWeight.w500,
                   appcolor: DColors.mildDark,
                 ),
                 const SizedBox(height: 3),
                 TextWidget(
-                  text: "@" + subText,
+                  text: '@${listData?.requester?.username ?? ''}',
                   size: FontSize.s10,
                   weight: FontWeight.w500,
                   appcolor: DColors.lightGrey,
@@ -49,13 +54,6 @@ class FriendList extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            // GestureDetector(
-            //     onTap: (){
-            //       Navigator.push(context, MaterialPageRoute(builder: (_)=> OtherProfile(personId)));
-            //     },
-            //     child: SvgPicture.asset("assets/arrow-forward.svg")
-            // ),
-
             TextButton(
                 onPressed: () {
                   // Navigator.push(context, MaterialPageRoute(builder: (_)=> OtherProfile(personId)));
@@ -90,7 +88,15 @@ class FriendList extends StatelessWidget {
                                       const EdgeInsets.symmetric(vertical: 10),
                                   child: Row(
                                     children: [
-                                      const CircleAvatar(),
+                                      CircleImageHandler(
+                                        'https://${listData?.requester?.photo?.hostname}/${listData?.requester?.photo?.url}',
+                                        showInitialText: listData?.requester
+                                                ?.photo?.url?.isEmpty ??
+                                            true,
+                                        initials: Helpers.getInitials(
+                                            listData?.requester?.name ?? ''),
+                                        radius: 20,
+                                      ),
                                       const SizedBox(
                                         width: 20,
                                       ),
@@ -99,14 +105,16 @@ class FriendList extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           TextWidget(
-                                            text: text,
+                                            text:
+                                                listData?.requester?.name ?? '',
                                             size: FontSize.s16,
                                             weight: FontWeight.w500,
                                             appcolor: DColors.mildDark,
                                           ),
                                           const SizedBox(height: 3),
                                           TextWidget(
-                                            text: "@" + subText,
+                                            text:
+                                                '@${listData?.requester?.username ?? ''}',
                                             size: FontSize.s10,
                                             weight: FontWeight.w500,
                                             appcolor: DColors.lightGrey,
@@ -127,12 +135,7 @@ class FriendList extends StatelessWidget {
                                     width:
                                         MediaQuery.of(context).size.width / 3.2,
                                     child: TextButton(
-                                        onPressed: () async {
-                                          // otherProfileBloc.add(IgnoreAUser(
-                                          //     userId: myId,
-                                          //     blockedId: personId));
-                                          // Navigator.pop(context);
-                                        },
+                                        onPressed: () async {},
                                         style: ButtonStyle(
                                             shape: MaterialStateProperty.all<
                                                     RoundedRectangleBorder>(
@@ -159,7 +162,8 @@ class FriendList extends StatelessWidget {
                                     child: TextButton(
                                         onPressed: () async {
                                           _profileProvider?.acceptConnection(
-                                              receiverID: personId);
+                                              receiverID:
+                                                  listData?.requester?.id);
                                           Navigator.pop(context);
                                         },
                                         style: ButtonStyle(

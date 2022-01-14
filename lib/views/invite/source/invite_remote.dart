@@ -68,7 +68,6 @@ class InviteService {
             "perPage": perPage,
             "userId": userID
           }));
-      print(result.data);
       return ConnectionRequestResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

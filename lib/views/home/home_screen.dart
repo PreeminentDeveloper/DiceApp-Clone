@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _initializeController();
-    _listConversations();
     super.initState();
   }
 
@@ -77,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     SizeConfig().init(context);
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
+    _listConversations();
     return Scaffold(
         backgroundColor: DColors.white,
         appBar: defaultAppBar(context,
