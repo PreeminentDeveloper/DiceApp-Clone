@@ -12,6 +12,8 @@ import 'package:dice_app/views/invite/provider/invite_provider.dart';
 import 'package:dice_app/views/invite/source/invite_remote.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/source/remote.dart';
+import 'package:dice_app/views/settings/provider/setup_provider.dart';
+import 'package:dice_app/views/settings/source/remote.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -45,6 +47,7 @@ void _initProviders() {
   inject
       .registerLazySingleton<ProfileProvider>(() => ProfileProvider(inject()));
   inject.registerLazySingleton<InviteProvider>(() => InviteProvider(inject()));
+  inject.registerLazySingleton<SetUpProvider>(() => SetUpProvider(inject()));
 }
 
 /// Initialize bloc's here
@@ -73,6 +76,8 @@ void _initServices() {
       () => InviteService(networkService: inject()));
   inject.registerLazySingleton<ChatService>(
       () => ChatService(networkService: inject()));
+  inject.registerLazySingleton<SetUpService>(
+      () => SetUpService(networkService: inject()));
 }
 
 /// Initialize usecases here
