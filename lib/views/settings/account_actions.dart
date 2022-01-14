@@ -17,7 +17,6 @@ class AccountActions extends StatefulWidget {
 }
 
 class _AccountActionsState extends State<AccountActions> {
-  var blocked, ignored;
   HomeProvider? _homeProvider;
   SetUpProvider? _setUpProvider;
 
@@ -47,94 +46,94 @@ class _AccountActionsState extends State<AccountActions> {
         backgroundColor: DColors.white,
         appBar: defaultAppBar(context, title: 'Account Actions'),
         body: Consumer<SetUpProvider>(builder: (context, provider, child) {
-          return (blocked != null && ignored != null)
-              ? Column(
+          return Column(
+            children: [
+              GreyContainer(title: "Chats and Caches"),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
                   children: [
-                    GreyContainer(title: "Chats and Caches"),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Row(
-                        children: [
-                          TextWidget(
-                            text: "Cache",
-                            weight: FontWeight.w500,
-                            appcolor: const Color(0xff333333),
-                            size: FontSize.s16,
-                            type: "Objectivity",
-                          ),
-                          SizedBox(width: SizeConfig.sizeXXL),
-                          TextWidget(
-                            text: "53.56MB",
-                            type: "Objectivity",
-                            size: FontSize.s14,
-                            weight: FontWeight.w700,
-                            appcolor: DColors.primaryColor,
-                          ),
-                          const Spacer(),
-                          TextButton(
-                              onPressed: () {},
-                              style: style,
-                              child: TextWidget(
-                                text: "Clear",
-                                type: "Objectivity",
-                                size: FontSize.s10,
-                                weight: FontWeight.w700,
-                                appcolor: DColors.primaryAccentColor,
-                              ))
-                        ],
-                      ),
+                    TextWidget(
+                      text: "Cache",
+                      weight: FontWeight.w500,
+                      appcolor: const Color(0xff333333),
+                      size: FontSize.s16,
+                      type: "Objectivity",
                     ),
-                    _convo(),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Row(
-                        children: [
-                          TextWidget(
-                            text: "Ignored Accounts",
-                            weight: FontWeight.w500,
-                            appcolor: const Color(0xff333333),
-                            size: FontSize.s16,
-                            type: "Objectivity",
-                          ),
-                          SizedBox(width: SizeConfig.sizeXXL),
-                          TextWidget(
-                            text: ignored.length.toString(),
-                            type: "Objectivity",
-                            size: FontSize.s14,
-                            weight: FontWeight.w700,
-                            appcolor: Colors.red,
-                          ),
-                          const Spacer(),
-                          TextButton(
-                              onPressed: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (_) => IgnoredList(
-                                //             ignored: ignored,
-                                //             callback: () {
-                                //               setUpBloc.add(ListBlockedUsers(
-                                //                   pageNo: 1,
-                                //                   perPage: 10,
-                                //                   search: "",
-                                //                   userId: appState?.id));
-                                //             })));
-                              },
-                              style: style,
-                              child: TextWidget(
-                                text: "view",
-                                type: "Objectivity",
-                                size: FontSize.s10,
-                                weight: FontWeight.w700,
-                                appcolor: DColors.primaryAccentColor,
-                              ))
-                        ],
-                      ),
+                    SizedBox(width: SizeConfig.sizeXXL),
+                    TextWidget(
+                      text: "53.56MB",
+                      type: "Objectivity",
+                      size: FontSize.s14,
+                      weight: FontWeight.w700,
+                      appcolor: DColors.primaryColor,
                     ),
-                    GreyContainer(title: "Media and Auto-Download"),
+                    const Spacer(),
+                    TextButton(
+                        onPressed: () {},
+                        style: style,
+                        child: TextWidget(
+                          text: "Clear",
+                          type: "Objectivity",
+                          size: FontSize.s10,
+                          weight: FontWeight.w700,
+                          appcolor: DColors.primaryAccentColor,
+                        ))
                   ],
-                )
-              : Container();
+                ),
+              ),
+              _convo(),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  children: [
+                    TextWidget(
+                      text: "Ignored Accounts",
+                      weight: FontWeight.w500,
+                      appcolor: const Color(0xff333333),
+                      size: FontSize.s16,
+                      type: "Objectivity",
+                    ),
+                    SizedBox(width: SizeConfig.sizeXXL),
+                    TextWidget(
+                      text: provider.setUpEnum == SetUpEnum.idle
+                          ? _setUpProvider?.list?.length.toString()
+                          : "",
+                      type: "Objectivity",
+                      size: FontSize.s14,
+                      weight: FontWeight.w700,
+                      appcolor: Colors.red,
+                    ),
+                    const Spacer(),
+                    TextButton(
+                        onPressed: () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (_) => IgnoredList(
+                          //             ignored: ignored,
+                          //             callback: () {
+                          //               setUpBloc.add(ListBlockedUsers(
+                          //                   pageNo: 1,
+                          //                   perPage: 10,
+                          //                   search: "",
+                          //                   userId: appState?.id));
+                          //             })));
+                        },
+                        style: style,
+                        child: TextWidget(
+                          text: "view",
+                          type: "Objectivity",
+                          size: FontSize.s10,
+                          weight: FontWeight.w700,
+                          appcolor: DColors.primaryAccentColor,
+                        ))
+                  ],
+                ),
+              ),
+              GreyContainer(title: "Media and Auto-Download"),
+            ],
+          );
         }));
   }
 
@@ -195,7 +194,8 @@ class _AccountActionsState extends State<AccountActions> {
             ),
             SizedBox(width: SizeConfig.sizeXXL),
             TextWidget(
-              text: blocked.length.toString(),
+              text: "",
+              // blocked.length.toString(),
               type: "Objectivity",
               size: FontSize.s14,
               weight: FontWeight.w700,
