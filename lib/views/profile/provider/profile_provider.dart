@@ -42,11 +42,10 @@ class ProfileProvider extends ChangeNotifier {
   void updateUsersInfo(BuildContext context, String key, String value) async {
     try {
       profileEnum = ProfileEnum.busy;
-      notifyListeners();
 
       await _profileService.updateUsersInfo(key, value, user!.id!);
       getUsersInformations(notifyListeners: true);
-      message = '';
+      isExists = false;
       notifyListeners();
       profileEnum = ProfileEnum.idle;
       PageRouter.goBack(context);
@@ -106,15 +105,14 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? message = '';
+  bool isExists = false;
 
   void verifyUserName(String username) async {
     try {
       final _response = await _profileService.verifyUserName(username);
-      message = _response!.codeNameExists!
-          ? 'Oops! Taken already'
-          : 'Congrats! Username is available.';
+      isExists = _response!.codeNameExists!;
       profileEnum = ProfileEnum.idle;
+      notifyListeners();
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;

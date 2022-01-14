@@ -17,7 +17,7 @@ class ChangeUsername extends StatefulWidget {
 }
 
 class _ChangeUsernameState extends State<ChangeUsername> {
-  final _usernameController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
   final GlobalKey<FormState> usernameKey = GlobalKey<FormState>();
   bool checker = false;
   String output = "";
@@ -28,7 +28,14 @@ class _ChangeUsernameState extends State<ChangeUsername> {
   @override
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _initializeName();
     super.initState();
+  }
+
+  void _initializeName() {
+    _usernameController =
+        TextEditingController(text: _profileProvider?.user?.username ?? '');
+    setState(() {});
   }
 
   @override
@@ -101,7 +108,9 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                         alignment: Alignment.center,
                         margin: EdgeInsets.only(top: 8),
                         child: TextWidget(
-                          text: provider.message ?? '',
+                          text: provider.isExists
+                              ? 'Oops! Taken already'
+                              : 'Congrats! Username is available.',
                           size: FontSize.s11,
                           appcolor: result ? Colors.red : DColors.primaryColor,
                         )),
@@ -127,13 +136,13 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                           horizontal: MediaQuery.of(context).size.width / 4),
                       child: TextButton(
                           onPressed: () {
-                            if (!provider.message!.contains('Oops!')) {
+                            if (!provider.isExists) {
                               _profileProvider?.updateUsersInfo(context,
                                   "username", _usernameController.text);
                             }
                           },
                           style: ButtonStyle(
-                              backgroundColor: checker && !result
+                              backgroundColor: checker && !provider.isExists
                                   ? MaterialStateProperty.all<Color>(
                                       DColors.primaryColor)
                                   : MaterialStateProperty.all<Color>(
@@ -149,8 +158,9 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                             text: provider.profileEnum == ProfileEnum.busy
                                 ? "LOADING..."
                                 : "SAVE",
-                            appcolor:
-                                checker ? Colors.white : DColors.lightGrey,
+                            appcolor: checker && !provider.isExists
+                                ? Colors.white
+                                : DColors.lightGrey,
                             size: FontSize.s14,
                             weight: FontWeight.w700,
                           )),
