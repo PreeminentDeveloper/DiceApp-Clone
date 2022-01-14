@@ -3,21 +3,20 @@ import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class FriendList extends StatelessWidget {
   final String text, subText, personId;
-  FriendList(this.text, this.subText, this.personId);
+  FriendList(this.text, this.subText, this.personId, {Key? key})
+      : super(key: key);
 
   ProfileProvider? _profileProvider;
 
   @override
   Widget build(BuildContext context) {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-
     return Consumer<ProfileProvider>(builder: (context, provider, child) {
       return Container(
         margin: EdgeInsets.all(SizeConfig.appPadding!),
@@ -26,11 +25,11 @@ class FriendList extends StatelessWidget {
             SvgPicture.asset(
               "assets/remove.svg",
             ),
-            SizedBox(width: 20),
-            CircleAvatar(
+            const SizedBox(width: 20),
+            const CircleAvatar(
                 // radius: 15.0,
                 ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -40,7 +39,7 @@ class FriendList extends StatelessWidget {
                   weight: FontWeight.w500,
                   appcolor: DColors.mildDark,
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 TextWidget(
                   text: "@" + subText,
                   size: FontSize.s10,
@@ -49,7 +48,7 @@ class FriendList extends StatelessWidget {
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             // GestureDetector(
             //     onTap: (){
             //       Navigator.push(context, MaterialPageRoute(builder: (_)=> OtherProfile(personId)));
@@ -82,16 +81,17 @@ class FriendList extends StatelessWidget {
                                   child: SvgPicture.asset("assets/remove.svg"))
                             ],
                           ),
-                          content: Container(
+                          content: SizedBox(
                             height: 160,
                             child: Column(
                               children: [
                                 Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 10),
                                   child: Row(
                                     children: [
-                                      CircleAvatar(),
-                                      SizedBox(
+                                      const CircleAvatar(),
+                                      const SizedBox(
                                         width: 20,
                                       ),
                                       Column(
@@ -104,7 +104,7 @@ class FriendList extends StatelessWidget {
                                             weight: FontWeight.w500,
                                             appcolor: DColors.mildDark,
                                           ),
-                                          SizedBox(height: 3),
+                                          const SizedBox(height: 3),
                                           TextWidget(
                                             text: "@" + subText,
                                             size: FontSize.s10,
@@ -116,12 +116,13 @@ class FriendList extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Container(
-                                    margin: EdgeInsets.symmetric(vertical: 15),
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 15),
                                     child: CustomeDivider()),
                                 Row(children: [
-                                  Container(
+                                  SizedBox(
                                     height: 35,
                                     width:
                                         MediaQuery.of(context).size.width / 3.2,
@@ -140,7 +141,7 @@ class FriendList extends StatelessWidget {
                                                         BorderRadius.circular(
                                                             SizeConfig
                                                                 .sizeXXL!),
-                                                    side: BorderSide(
+                                                    side: const BorderSide(
                                                         color: DColors
                                                             .primaryColor)))),
                                         child: TextWidget(
@@ -150,18 +151,16 @@ class FriendList extends StatelessWidget {
                                           weight: FontWeight.w700,
                                         )),
                                   ),
-                                  SizedBox(width: 10),
-                                  Container(
+                                  const SizedBox(width: 10),
+                                  SizedBox(
                                     height: 35,
                                     width:
                                         MediaQuery.of(context).size.width / 3.2,
                                     child: TextButton(
                                         onPressed: () async {
-                                          // otherProfileBloc.add(AcceptConnection(
-                                          //     id: personId,
-                                          //     message: "",
-                                          //     requesterId: myId));
-                                          // Navigator.pop(context);
+                                          _profileProvider?.acceptConnection(
+                                              receiverID: personId);
+                                          Navigator.pop(context);
                                         },
                                         style: ButtonStyle(
                                             backgroundColor:
@@ -172,7 +171,7 @@ class FriendList extends StatelessWidget {
                                                 RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(
                                                         SizeConfig.sizeXXL!),
-                                                    side: BorderSide(
+                                                    side: const BorderSide(
                                                         color: DColors
                                                             .primaryColor)))),
                                         child: TextWidget(
@@ -186,7 +185,6 @@ class FriendList extends StatelessWidget {
                               ],
                             ),
                           ),
-                          actions: [],
                         );
                       });
                 },
