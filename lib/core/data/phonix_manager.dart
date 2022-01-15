@@ -32,6 +32,8 @@ class PhonixManager {
           eventBus.fire(OnlineEvent(event.payload));
         }
         if (event.event.value.contains(event.event.value)) {
+          logger.d('Called event=> ${event.payload}');
+
           eventBus.fire(ChatEventBus(
               event.event.value, ChatEventModel.fromJson(event.payload)));
         }

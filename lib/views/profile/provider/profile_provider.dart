@@ -42,10 +42,11 @@ class ProfileProvider extends ChangeNotifier {
   void updateUsersInfo(BuildContext context, String key, String value) async {
     try {
       profileEnum = ProfileEnum.busy;
-      notifyListeners();
 
       await _profileService.updateUsersInfo(key, value, user!.id!);
       getUsersInformations(notifyListeners: true);
+      isExists = false;
+      notifyListeners();
       profileEnum = ProfileEnum.idle;
       PageRouter.goBack(context);
     } catch (e) {
@@ -97,6 +98,21 @@ class ProfileProvider extends ChangeNotifier {
     try {
       await _profileService.ignoreUser(
           userID: user!.id!, receiverID: receiverID);
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  bool isExists = false;
+
+  void verifyUserName(String username) async {
+    try {
+      final _response = await _profileService.verifyUserName(username);
+      isExists = _response!.codeNameExists!;
+      profileEnum = ProfileEnum.idle;
+      notifyListeners();
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;

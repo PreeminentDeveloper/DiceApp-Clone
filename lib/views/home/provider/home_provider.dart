@@ -1,6 +1,7 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/data/source/dao.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class HomeProvider extends ChangeNotifier {
     required String userID,
   }) async {
     try {
-      homeEnum = HomeEnum.busy;
+      if (list!.isEmpty) homeEnum = HomeEnum.busy;
       final _response = await _homeService.listConvo(
           pageNumber: pageNumber,
           perPage: perPage,
@@ -34,6 +35,8 @@ class HomeProvider extends ChangeNotifier {
           list?.clear();
         }
         list = e.users;
+        listOfConversationsDao!.myconversations(e.users);
+
         conversationID = e.id;
       }).toList();
       homeEnum = HomeEnum.idle;

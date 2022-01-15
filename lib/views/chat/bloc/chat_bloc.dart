@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/chat/data/models/local_chats_model.dart';
+import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/data/sources/chat_sources.dart';
 import 'package:meta/meta.dart';
 
@@ -23,14 +25,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             pageNo: event.pageIndex,
             userID: event.userID,
             conversationID: event.conversationID);
+        _localChats.clear();
         response.listMessages?.list?.map((list) {
           _localChats.add(LocalChatModel(
-              conversationID: "5aa9ba4a-6f55-4227-971d-bfae5f5d24a5",
-              id: int.parse(list.id!),
+              conversationID: "conversation_id",
+              id: list.id?.toString(),
               userID: list.user?.id,
               time: list.insertedAt,
-              message: list.message));
+              message: list.message,
+              insertLocalTime: DateTime.now().toString()
+              ));
         }).toList();
+
+        chatDao!.saveMyChats(event.conversationID, _localChats);
         yield ChatSuccessState(response: _localChats);
       } catch (e) {
         yield ChatFailedState(message: e.toString());
