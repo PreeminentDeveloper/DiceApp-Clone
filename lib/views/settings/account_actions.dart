@@ -1,6 +1,7 @@
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/settings/provider/setup_provider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/grey_card.dart';
@@ -18,6 +19,7 @@ class AccountActions extends StatefulWidget {
 
 class _AccountActionsState extends State<AccountActions> {
   HomeProvider? _homeProvider;
+  ProfileProvider? _profileProvider;
   SetUpProvider? _setUpProvider;
 
   var style = ButtonStyle(
@@ -35,8 +37,11 @@ class _AccountActionsState extends State<AccountActions> {
     super.initState();
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _setUpProvider = Provider.of<SetUpProvider>(context, listen: false);
-    _setUpProvider?.listIgnoredUsers(
-        pageNumber: 1, userID: "087a51cb-0aaf-42eb-8708-eb76bb5ff051");
+    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+
+    _profileProvider?.getUsersInformations();
+    _setUpProvider?.listIgnoredAndBlockedUsers(
+        pageNumber: 1, userID: _profileProvider!.user!.id!);
   }
 
   @override
@@ -46,6 +51,9 @@ class _AccountActionsState extends State<AccountActions> {
         backgroundColor: DColors.white,
         appBar: defaultAppBar(context, title: 'Account Actions'),
         body: Consumer<SetUpProvider>(builder: (context, provider, child) {
+          if (provider.setUpEnum == SetUpEnum.busy) {
+            return const Center(child: CircularProgressIndicator());
+          }
           return Column(
             children: [
               GreyContainer(title: "Chats and Caches"),
@@ -96,9 +104,7 @@ class _AccountActionsState extends State<AccountActions> {
                     ),
                     SizedBox(width: SizeConfig.sizeXXL),
                     TextWidget(
-                      text: provider.setUpEnum == SetUpEnum.idle
-                          ? _setUpProvider?.list?.length.toString()
-                          : "",
+                      text: provider.blockedList?.length.toString(),
                       type: "Objectivity",
                       size: FontSize.s14,
                       weight: FontWeight.w700,
@@ -152,7 +158,7 @@ class _AccountActionsState extends State<AccountActions> {
             ),
             SizedBox(width: SizeConfig.sizeXXL),
             TextWidget(
-              text: (_homeProvider?.list?.length.toString()) ?? "",
+              text: "",
               type: "Objectivity",
               size: FontSize.s14,
               weight: FontWeight.w700,

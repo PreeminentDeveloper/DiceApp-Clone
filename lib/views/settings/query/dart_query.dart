@@ -18,4 +18,24 @@ class SetUpGql {
     }
   }
   ''';
+
+  static String listBlockedUsers = '''
+  query (\$pageNo: int!, \$perPage: int!, \$search: String!, \$userId: String!){
+    listBlockedUsers(pageNo: \$pageNo, perPage: \$perPage, search: \$search, userId: \$userId){
+      firstPage
+      hasNext
+      hasPrev
+      nextPage
+      page
+      prevPage
+      list{
+        name
+        id
+        phone
+        username
+        photo
+      }
+    }
+  }
+  ''';
 }

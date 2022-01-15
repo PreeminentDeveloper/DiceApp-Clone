@@ -1,5 +1,6 @@
 import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/settings/model/blocked_user_response.dart';
 import 'package:dice_app/views/settings/model/list_ignore_users_response.dart';
 import 'package:dice_app/views/settings/query/dart_query.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -33,7 +34,7 @@ class SetUpService {
     }
   }
 
-  Future<IgnoreUsersResponse> blockIgnoreUser(
+  Future<BlockedUsersResponse> listBlockedUser(
       {required int pageNumber,
       int perPage = 20,
       required String search,
@@ -41,7 +42,7 @@ class SetUpService {
     try {
       final _result = await _graphQLClient.client.query(
         QueryOptions(
-            document: gql(SetUpGql.listIgnoredUsers),
+            document: gql(SetUpGql.listBlockedUsers),
             variables: {
               "pageNo": pageNumber,
               "perPage": perPage,
@@ -50,7 +51,7 @@ class SetUpService {
             },
             fetchPolicy: FetchPolicy.networkOnly),
       );
-      return IgnoreUsersResponse.fromJson(_result.data!);
+      return BlockedUsersResponse.fromJson(_result.data!);
     } catch (exception) {
       logger.e(exception);
       rethrow;

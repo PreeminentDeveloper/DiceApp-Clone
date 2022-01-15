@@ -87,7 +87,7 @@ class ListData {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["__typename"] = typename;
     if (list != null) {
-      data["requester"] = list?.toJson();
+      data["list"] = list?.toJson();
     }
     return data;
   }
