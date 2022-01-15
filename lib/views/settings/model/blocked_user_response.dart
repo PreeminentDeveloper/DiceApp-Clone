@@ -2,28 +2,28 @@ import 'package:dice_app/core/entity/users_entity.dart';
 
 class BlockedUsersResponse {
   String? typename;
-  ListBlockedUser? listBlockedUser;
+  ListBlockedUsers? listBlockedUsers;
 
-  BlockedUsersResponse({this.typename, this.listBlockedUser});
+  BlockedUsersResponse({this.typename, this.listBlockedUsers});
 
   BlockedUsersResponse.fromJson(Map<String, dynamic> json) {
     typename = json["__typename"];
-    listBlockedUser = json["listBlockedUser"] == null
+    listBlockedUsers = json["listBlockedUsers"] == null
         ? null
-        : ListBlockedUser.fromJson(json["listBlockedUser"]);
+        : ListBlockedUsers.fromJson(json["listBlockedUsers"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["__typename"] = typename;
-    if (listBlockedUser != null) {
-      data["listBlockedUser"] = listBlockedUser?.toJson();
+    if (listBlockedUsers != null) {
+      data["listBlockedUsers"] = listBlockedUsers?.toJson();
     }
     return data;
   }
 }
 
-class ListBlockedUser {
+class ListBlockedUsers {
   String? typename;
   int? firstPage;
   bool? hasNext;
@@ -31,9 +31,9 @@ class ListBlockedUser {
   int? nextPage;
   int? page;
   int? prevPage;
-  List<ListData>? listData;
+  List<User>? listData;
 
-  ListBlockedUser(
+  ListBlockedUsers(
       {this.typename,
       this.firstPage,
       this.hasNext,
@@ -43,7 +43,7 @@ class ListBlockedUser {
       this.prevPage,
       this.listData});
 
-  ListBlockedUser.fromJson(Map<String, dynamic> json) {
+  ListBlockedUsers.fromJson(Map<String, dynamic> json) {
     typename = json["__typename"];
     firstPage = json["firstPage"];
     hasNext = json["hasNext"];
@@ -53,7 +53,7 @@ class ListBlockedUser {
     prevPage = json["prevPage"];
     listData = json["list"] == null
         ? null
-        : (json["list"] as List).map((e) => ListData.fromJson(e)).toList();
+        : (json["list"] as List).map((e) => User.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -72,13 +72,13 @@ class ListBlockedUser {
   }
 }
 
-class ListData {
+class BlockedData {
   String? typename;
   User? list;
 
-  ListData({this.typename, this.list});
+  BlockedData({this.typename, this.list});
 
-  ListData.fromJson(Map<String, dynamic> json) {
+  BlockedData.fromJson(Map<String, dynamic> json) {
     typename = json["__typename"];
     list = json["list"] == null ? null : User.fromJson(json["list"]);
   }

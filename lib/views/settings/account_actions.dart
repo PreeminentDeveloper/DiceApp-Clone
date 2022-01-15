@@ -10,6 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'widget/account_actions/blocked_list.dart';
+import 'widget/account_actions/conversations.dart';
+import 'widget/account_actions/ignored_list.dart';
+
 class AccountActions extends StatefulWidget {
   const AccountActions({Key? key}) : super(key: key);
 
@@ -104,7 +108,7 @@ class _AccountActionsState extends State<AccountActions> {
                     ),
                     SizedBox(width: SizeConfig.sizeXXL),
                     TextWidget(
-                      text: provider.blockedList?.length.toString(),
+                      text: provider.ignoreList?.length.toString(),
                       type: "Objectivity",
                       size: FontSize.s14,
                       weight: FontWeight.w700,
@@ -113,18 +117,10 @@ class _AccountActionsState extends State<AccountActions> {
                     const Spacer(),
                     TextButton(
                         onPressed: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (_) => IgnoredList(
-                          //             ignored: ignored,
-                          //             callback: () {
-                          //               setUpBloc.add(ListBlockedUsers(
-                          //                   pageNo: 1,
-                          //                   perPage: 10,
-                          //                   search: "",
-                          //                   userId: appState?.id));
-                          //             })));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const IgnoredList()));
                         },
                         style: style,
                         child: TextWidget(
@@ -158,7 +154,7 @@ class _AccountActionsState extends State<AccountActions> {
             ),
             SizedBox(width: SizeConfig.sizeXXL),
             TextWidget(
-              text: "",
+              text: (_homeProvider?.list?.length.toString()) ?? "",
               type: "Objectivity",
               size: FontSize.s14,
               weight: FontWeight.w700,
@@ -167,13 +163,8 @@ class _AccountActionsState extends State<AccountActions> {
             const Spacer(),
             TextButton(
                 onPressed: () {
-                  // if (state is HomeLoaded)
-                  //   Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (_) => Conversation(
-                  //               data:
-                  //                   state.homeEntity.conversationData)));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => Conversation()));
                 },
                 style: style,
                 child: TextWidget(
@@ -200,8 +191,7 @@ class _AccountActionsState extends State<AccountActions> {
             ),
             SizedBox(width: SizeConfig.sizeXXL),
             TextWidget(
-              text: "",
-              // blocked.length.toString(),
+              text: _setUpProvider?.blockedList?.length.toString(),
               type: "Objectivity",
               size: FontSize.s14,
               weight: FontWeight.w700,
@@ -210,19 +200,8 @@ class _AccountActionsState extends State<AccountActions> {
             const Spacer(),
             TextButton(
                 onPressed: () {
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (_) => BlockedList(
-                  //             blocked: blocked,
-                  //             callback: () {
-                  //               setUpBloc.add(ListBlockedUsers(
-                  //                   pageNo: 1,
-                  //                   perPage: 10,
-                  //                   search: "",
-                  //                   userId: appState?.id));
-                  //             }))
-                  // );
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const BlockedList()));
                 },
                 style: style,
                 child: TextWidget(

@@ -2,28 +2,28 @@ import 'package:dice_app/core/entity/users_entity.dart';
 
 class IgnoreUsersResponse {
   String? typename;
-  ListIgnoreUser? listIgnoreUser;
+  ListIgnoredUsers? listIgnoredUsers;
 
-  IgnoreUsersResponse({this.typename, this.listIgnoreUser});
+  IgnoreUsersResponse({this.typename, this.listIgnoredUsers});
 
   IgnoreUsersResponse.fromJson(Map<String, dynamic> json) {
     typename = json["__typename"];
-    listIgnoreUser = json["listIgnoreUser"] == null
+    listIgnoredUsers = json["listIgnoredUsers"] == null
         ? null
-        : ListIgnoreUser.fromJson(json["listIgnoreUser"]);
+        : ListIgnoredUsers.fromJson(json["listIgnoredUsers"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["__typename"] = typename;
-    if (listIgnoreUser != null) {
-      data["listIgnoreUser"] = listIgnoreUser?.toJson();
+    if (listIgnoredUsers != null) {
+      data["listIgnoredUsers"] = listIgnoredUsers?.toJson();
     }
     return data;
   }
 }
 
-class ListIgnoreUser {
+class ListIgnoredUsers {
   String? typename;
   int? firstPage;
   bool? hasNext;
@@ -31,9 +31,9 @@ class ListIgnoreUser {
   int? nextPage;
   int? page;
   int? prevPage;
-  List<ListData>? listData;
+  List<User>? ignoredData;
 
-  ListIgnoreUser(
+  ListIgnoredUsers(
       {this.typename,
       this.firstPage,
       this.hasNext,
@@ -41,9 +41,9 @@ class ListIgnoreUser {
       this.nextPage,
       this.page,
       this.prevPage,
-      this.listData});
+      this.ignoredData});
 
-  ListIgnoreUser.fromJson(Map<String, dynamic> json) {
+  ListIgnoredUsers.fromJson(Map<String, dynamic> json) {
     typename = json["__typename"];
     firstPage = json["firstPage"];
     hasNext = json["hasNext"];
@@ -51,9 +51,9 @@ class ListIgnoreUser {
     nextPage = json["nextPage"];
     page = json["page"];
     prevPage = json["prevPage"];
-    listData = json["list"] == null
+    ignoredData = json["list"] == null
         ? null
-        : (json["list"] as List).map((e) => ListData.fromJson(e)).toList();
+        : (json["list"] as List).map((e) => User.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -65,30 +65,30 @@ class ListIgnoreUser {
     data["nextPage"] = nextPage;
     data["page"] = page;
     data["prevPage"] = prevPage;
-    if (listData != null) {
-      data["list"] = listData?.map((e) => e.toJson()).toList();
+    if (ignoredData != null) {
+      data["list"] = ignoredData?.map((e) => e.toJson()).toList();
     }
     return data;
   }
 }
 
-class ListData {
-  String? typename;
-  User? list;
-
-  ListData({this.typename, this.list});
-
-  ListData.fromJson(Map<String, dynamic> json) {
-    typename = json["__typename"];
-    list = json["list"] == null ? null : User.fromJson(json["list"]);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data["__typename"] = typename;
-    if (list != null) {
-      data["list"] = list?.toJson();
-    }
-    return data;
-  }
-}
+// class IgnoredData {
+//   String? typename;
+//   User? list;
+//
+//   IgnoredData({this.typename, this.list});
+//
+//   IgnoredData.fromJson(Map<String, dynamic> json) {
+//     typename = json["__typename"];
+//     list = json["list"] == null ? null : User.fromJson(json["list"]);
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data["__typename"] = typename;
+//     if (list != null) {
+//       data["list"] = list?.toJson();
+//     }
+//     return data;
+//   }
+// }

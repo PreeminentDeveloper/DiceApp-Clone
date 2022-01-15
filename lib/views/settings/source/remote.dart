@@ -51,10 +51,33 @@ class SetUpService {
             },
             fetchPolicy: FetchPolicy.networkOnly),
       );
+
       return BlockedUsersResponse.fromJson(_result.data!);
     } catch (exception) {
       logger.e(exception);
       rethrow;
+    }
+  }
+
+  Future<dynamic> unignoreUser({String? userID, String? receiverID}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(
+              SetUpGql.unignoreUser(userId: userID, ignoredId: receiverID))));
+      logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<dynamic> unblockUser({String? userID, String? receiverID}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(
+              SetUpGql.unblockUser(userId: userID, blockedId: receiverID))));
+      logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
     }
   }
 }

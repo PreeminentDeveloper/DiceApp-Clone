@@ -38,4 +38,26 @@ class SetUpGql {
     }
   }
   ''';
+
+  static String unblockUser({String? userId, String? blockedId}) {
+    return """
+      mutation{
+          unblockUser(userId: "$userId", blockedId: "$blockedId"){
+            blockedId
+            userId
+          }
+      }
+    """;
+  }
+
+  static String unignoreUser({String? userId, String? ignoredId}) {
+    return """
+      mutation{
+          unignoreUser(userId: "$userId", ignoredId: "$ignoredId"){
+            ignoredId
+            userId
+          }
+      }
+    """;
+  }
 }
