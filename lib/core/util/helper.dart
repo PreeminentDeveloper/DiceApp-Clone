@@ -54,6 +54,14 @@ class Helpers {
     return '$_formatTime, $_formatDate';
   }
 
+  static String chatTime(String? date) {
+    if (date!.isEmpty) return '';
+    DateTime _dt = DateTime.parse(date);
+    String _formatTime = DateFormat("hh:mm a").format(_dt);
+
+    return _formatTime;
+  }
+
   static String getInitials(String value) {
     List<String> _values = [];
     try {

@@ -94,21 +94,6 @@ class _MessageScreenState extends State<MessageScreen> {
   /// returns body view
   Stack _bodyView() => Stack(
         children: [
-          // Consumer<ChatProvider>(
-          //   builder: (context, chatProvider, child) {
-          //     return FutureBuilder(
-          //       future: chatDao!.getListenable()!,
-          //       builder: (BuildContext context,
-          //           AsyncSnapshot<ValueListenable<Box>?> snapshot) {
-          //         if (snapshot.connectionState == ConnectionState.waiting ||
-          //             !snapshot.hasData) {
-          //           return Container();
-          //         }
-          //         return ;
-          //       },
-          //     );
-          //   },
-          // ),
           ValueListenableBuilder(
             valueListenable: chatDao!.getListenable()!,
             builder: (BuildContext context, Box<dynamic> value, Widget? child) {
@@ -212,7 +197,7 @@ class _MessageScreenState extends State<MessageScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CircleImageHandler(
-              'https://${widget.user?.photo?.hostname}/${widget.user?.photo?.hostname}',
+              'https://${widget.user?.photo?.hostname}/${widget.user?.photo?.url}',
               radius: 20,
               showInitialText: widget.user?.photo?.url?.isEmpty ?? true,
               initials: Helpers.getInitials(widget.user?.name ?? ''),

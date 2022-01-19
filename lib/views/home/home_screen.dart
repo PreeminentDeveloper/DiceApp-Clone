@@ -151,7 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .map((user) => ChatListWidget(
                                           slideKey: user.id,
                                           chatObject: ChatObject(
-                                              image: user.name ?? '',
+                                              image:
+                                                  'https://${user.photo?.hostname}/${user.photo?.url}',
                                               name: user.name,
                                               recentMessage: user.username,
                                               date: 'timeAgo'),

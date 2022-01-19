@@ -1,4 +1,5 @@
 import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/data/models/chat_menus.dart';
@@ -61,8 +62,7 @@ class ReceiverSide extends StatelessWidget {
             margin: const EdgeInsets.only(left: 50),
             alignment: Alignment.centerLeft,
             child: TextWidget(
-              text: 'TimeAgo',
-              // text: timeAgo(message.insertedAt),
+              text: Helpers.chatTime(chat?.insertLocalTime ?? ''),
               size: FontSize.s8,
             ),
           )
