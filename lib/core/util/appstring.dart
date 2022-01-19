@@ -384,4 +384,6 @@ SUPPORT AND CONCERNS
 Support@dicemessenger.com''';
 
   static const aboutDice = "https://dicemessenger.com/";
+
+  static var supportURL = 'support@dicemessanger.com';
 }

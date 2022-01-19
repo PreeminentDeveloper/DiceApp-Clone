@@ -19,11 +19,11 @@ class ChatProvider extends ChangeNotifier {
   void loadCachedMessages(String key, String userID) async {
     localChats = await chatDao!.convert(key);
 
+    // auto scroll when done getting local messages
+    _scrollDown();
+
     /// listen to chat events
     _listenToChatEvents(key, userID);
-
-    /// auto scroll when done getting local messages
-    _scrollDown();
 
     /// notify listeners
     notifyListeners();
@@ -31,10 +31,10 @@ class ChatProvider extends ChangeNotifier {
 
   /// Adds message to local database
   void addMessageToLocalDB(LocalChatModel? localChatModel) {
-    chatDao!.saveSingleChat(localChatModel?.conversationID, localChatModel);
+    chatDao!.saveSingleChat(localChatModel!.conversationID!, localChatModel);
 
     /// cached messages
-    loadCachedMessages(localChatModel!.conversationID!, localChatModel.userID!);
+    loadCachedMessages(localChatModel.conversationID!, localChatModel.userID!);
 
     /// Send message to server
     _addMessageToLiveDB(localChatModel.conversationID, localChatModel.message);
@@ -60,18 +60,17 @@ class ChatProvider extends ChangeNotifier {
     eventBus.on().listen((event) {
       if (_isTargetMet(event, key, userID)) {
         logger.i('Cache response from a chat here: ${event.payload!.toJson()}');
-        chatDao!.saveSingleChat(
-            key,
-            LocalChatModel(
-                conversationID: event.payload?.data?.message?.conversationId,
-                id: event.payload?.data?.message?.id?.toString(),
-                userID: event.payload?.data?.message?.userId,
-                message: event.payload?.data?.message?.message,
-                time: '',
-                insertLocalTime: DateTime.now().toString()));
+        // chatDao!.saveSingleChat(
+        //     LocalChatModel(
+        //         conversationID: event.payload?.data?.message?.conversationId,
+        //         id: event.payload?.data?.message?.id?.toString(),
+        //         userID: event.payload?.data?.message?.userId,
+        //         message: event.payload?.data?.message?.message,
+        //         time: '',
+        //         insertLocalTime: DateTime.now().toString()));
       }
     });
-    loadCachedMessages(key, userID);
+    // loadCachedMessages(key, userID);
   }
 
   ///Auto scroll chat to bottom of the list

@@ -111,7 +111,7 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
                         valueListenable: chatDao!.getListenable()!,
                         builder: (BuildContext context, Box<dynamic> value,
                             Widget? child) {
-                          _localChats = chatDao!.convert(value).toList();
+                          // _localChats = chatDao!.convert(value).toList();
 
                           return NotificationListener<ScrollEndNotification>(
                             // onNotification: (scrollEnd) {

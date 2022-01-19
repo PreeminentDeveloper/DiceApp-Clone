@@ -7,11 +7,19 @@ import 'package:flutter/material.dart';
 
 enum HomeEnum { initial, busy, idle }
 
+class ConversationList {
+  final String? conversationID;
+  final List<User> user;
+
+  ConversationList(this.conversationID, this.user);
+}
+
 class HomeProvider extends ChangeNotifier {
   HomeEnum homeEnum = HomeEnum.initial;
   final HomeService _homeService;
 
   List<User>? list = [];
+  List<ConversationList>? conversationList = [];
   String? conversationID;
 
   HomeProvider(this._homeService);
@@ -30,16 +38,16 @@ class HomeProvider extends ChangeNotifier {
           search: search ?? '',
           userID: userID);
 
-      _response.listConversations?.list?.map((e) {
-        if (e.users!.isNotEmpty) {
-          list?.clear();
-        }
-        list = e.users;
-        listOfConversationsDao!.myconversations(e.users);
-
-        conversationID = e.id;
+      if (_response.listConversations!.list!.isNotEmpty) {
+        conversationList!.clear();
+      }
+      _response.listConversations?.list?.map((listData) {
+        conversationList?.add(ConversationList(listData.id, listData.users!));
+        notifyListeners();
       }).toList();
+
       homeEnum = HomeEnum.idle;
+      notifyListeners();
     } catch (e) {
       logger.e(e);
       homeEnum = HomeEnum.idle;

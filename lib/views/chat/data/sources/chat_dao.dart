@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dice_app/core/data/hive_manager.dart';
+import 'package:dice_app/core/util/helper.dart';
 
 import 'package:dice_app/views/chat/data/models/local_chats_model.dart';
 import 'package:flutter/foundation.dart';
@@ -35,12 +36,16 @@ class ChatDao {
     await _box!.putAll(map);
   }
 
-  void saveSingleChat(LocalChatModel? localChatModel) async {
-    await _box?.add(localChatModel!.toMap());
+  void saveSingleChat(String key, LocalChatModel? localChatModel) async {
+    final _boxMap = await Hive.openBox<Map>(key);
+
+    await _boxMap.add(localChatModel!.toMap());
   }
 
-  List<LocalChatModel> convert(Box box) {
-    Map<dynamic, dynamic> raw = Map<dynamic, dynamic>.from(box.toMap());
+  Future<List<LocalChatModel>> convert(String key) async {
+    final _boxMap = await Hive.openBox<Map>(key);
+
+    Map<dynamic, dynamic> raw = Map<dynamic, dynamic>.from(_boxMap.toMap());
 
     List<LocalChatModel> _value = raw.values
         .map((e) => LocalChatModel.fromMap(json.decode(json.encode(e))))

@@ -34,6 +34,7 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 
 import 'data/models/chat_menus.dart';
 import 'data/models/local_chats_model.dart';
+import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
 
@@ -54,6 +55,7 @@ class _MessageScreenState extends State<MessageScreen> {
   List<AssetEntity> results = [];
   final _chatBloc = ChatBloc(inject());
   ProfileProvider? _profileProvider;
+  ChatProvider? _chatProvider;
   final _messageController = TextEditingController();
   List<LocalChatModel> _localChats = [];
   final ScrollController _scrollController = ScrollController();
@@ -64,8 +66,11 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-    _fetchConversations();
-    _listenToChatEvents();
+    _chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    _chatProvider!.loadCachedMessages(
+        widget.conversationID!, _profileProvider!.user!.id!);
+    // _fetchConversations();
+    // _listenToChatEvents();
     super.initState();
   }
 
@@ -77,28 +82,28 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   _listenToChatEvents() {
-    eventBus.on().listen((event) {
-      if (event is ChatEventBus &&
-          event.key!.contains(widget.conversationID!)) {
-        chatDao!.saveSingleChat(LocalChatModel(
-            conversationID: event.payload?.data?.message?.conversationId,
-            id: event.payload?.data?.message?.id?.toString(),
-            userID: event.payload?.data?.message?.userId,
-            message: event.payload?.data?.message?.message,
-            time: '',
-            insertLocalTime: DateTime.now().toString()));
-        setState(() {});
-      }
+    // eventBus.on().listen((event) {
+    //   if (event is ChatEventBus &&
+    //       event.key!.contains(widget.conversationID!)) {
+    //     chatDao!.saveSingleChat(LocalChatModel(
+    //         conversationID: event.payload?.data?.message?.conversationId,
+    //         id: event.payload?.data?.message?.id?.toString(),
+    //         userID: event.payload?.data?.message?.userId,
+    //         message: event.payload?.data?.message?.message,
+    //         time: '',
+    //         insertLocalTime: DateTime.now().toString()));
+    //     setState(() {});
+    //   }
 
-      if (event is OnlineEvent &&
-          event.onlineEvent!.containsKey(widget.conversationID!)) {
-        _isOnline = true;
-      } else {
-        _isOnline = false;
-      }
-      _needsScroll = true;
-      setState(() {});
-    });
+    //   if (event is OnlineEvent &&
+    //       event.onlineEvent!.containsKey(widget.conversationID!)) {
+    //     _isOnline = true;
+    //   } else {
+    //     _isOnline = false;
+    //   }
+    //   _needsScroll = true;
+    //   setState(() {});
+    // });
   }
 
   void _scrollDown() {
@@ -108,10 +113,10 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_needsScroll) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollDown());
-      _needsScroll = false;
-    }
+    // if (_needsScroll) {
+    //   WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollDown());
+    //   _needsScroll = false;
+    // }
 
     return PageStorage(
       bucket: bucketGlobal,
@@ -130,35 +135,20 @@ class _MessageScreenState extends State<MessageScreen> {
   /// returns body view
   Stack _bodyView() => Stack(
         children: [
-          BlocListener<ChatBloc, ChatState>(
-            bloc: _chatBloc,
-            listener: (context, state) {
-              if (state is ChatLoadingState) {}
-              if (state is ChatSuccessState) {
-                // _localChats = state.response;
-                _needsScroll = true;
-                setState(() {});
-              }
-              if (state is ChatFailedState) {}
+          Consumer<ChatProvider>(
+            builder: (context, chatProvider, child) {
+              return ListView(
+                controller: chatProvider.scrollController,
+                children: [
+                  ..._chatProvider!.localChats!
+                      .map((chat) => chat.userID == _profileProvider?.user?.id
+                          ? SenderSide(chat: chat, deleteCallback: () {})
+                          : ReceiverSide(chat: chat, deleteCallback: () {}))
+                      .toList(),
+                  SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+                ],
+              );
             },
-            child: ValueListenableBuilder(
-              valueListenable: chatDao!.getListenable()!,
-              builder:
-                  (BuildContext context, Box<dynamic> value, Widget? child) {
-                _localChats = chatDao!.convert(value).toList();
-                return ListView(
-                  controller: _scrollController,
-                  children: [
-                    ..._localChats
-                        .map((chat) => chat.userID == _profileProvider?.user?.id
-                            ? SenderSide(chat: chat, deleteCallback: () {})
-                            : ReceiverSide(chat: chat, deleteCallback: () {}))
-                        .toList(),
-                    SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-                  ],
-                );
-              },
-            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -178,11 +168,14 @@ class _MessageScreenState extends State<MessageScreen> {
       );
 
   void _addMessage() {
-    final _push = phonixManager.phoenixChannel?.push(
-        "create_message-${widget.conversationID}",
-        {"message": _messageController.text});
-    if (_push!.sent) _messageController.text = '';
-    _needsScroll = true;
+    _chatProvider!.addMessageToLocalDB(LocalChatModel(
+        conversationID: widget.conversationID,
+        id: '',
+        userID: _profileProvider!.user!.id,
+        time: '',
+        message: _messageController.text,
+        insertLocalTime: DateTime.now().toString()));
+    _messageController.text = '';
     setState(() {});
   }
 

@@ -133,42 +133,51 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             body: Consumer<HomeProvider>(
               builder: (context, homeProvider, child) {
-                if (homeProvider.homeEnum == HomeEnum.busy) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (homeProvider.list!.isEmpty) {
+                // if (homeProvider.homeEnum == HomeEnum.busy) {
+                //   return const Center(child: CircularProgressIndicator());
+                // }
+                if (homeProvider.conversationList!.isEmpty) {
                   return const EmptyFriendsWidget();
                 }
                 return ListView(
                   children: [
                     CustomeDivider(thickness: .3),
                     SizedBox(height: 8.h),
-                    ...homeProvider.list!
-                        .map((user) => ChatListWidget(
-                              slideKey: user.id,
-                              chatObject: ChatObject(
-                                  image: user.name ?? '',
-                                  name: user.name,
-                                  recentMessage: user.username,
-                                  date: 'timeAgo'),
-                              onTapProfile: () => PageRouter.gotoWidget(
-                                  OtherProfile(user.id!), context),
-                              onPressed: () {
-                                PageRouter.gotoWidget(
-                                    MessageScreen(
-                                        user: user,
-                                        conversationID:
-                                            homeProvider.conversationID),
-                                    context);
-                              },
-                              onTapDelete: () =>
-                                  showSheet(context, child: _deleteDialog()),
-                              onTapCamera: () async {
-                                PageRouter.gotoWidget(
-                                    CameraPictureScreen(), context);
-                              },
+                    ...homeProvider.conversationList!
+                        .map((conversation) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ...conversation.user
+                                    .map((user) => ChatListWidget(
+                                          slideKey: user.id,
+                                          chatObject: ChatObject(
+                                              image: user.name ?? '',
+                                              name: user.name,
+                                              recentMessage: user.username,
+                                              date: 'timeAgo'),
+                                          onTapProfile: () =>
+                                              PageRouter.gotoWidget(
+                                                  OtherProfile(user.id!),
+                                                  context),
+                                          onPressed: () {
+                                            PageRouter.gotoWidget(
+                                                MessageScreen(
+                                                    user: user,
+                                                    conversationID: conversation
+                                                        .conversationID),
+                                                context);
+                                          },
+                                          onTapDelete: () => showSheet(context,
+                                              child: _deleteDialog()),
+                                          onTapCamera: () async {
+                                            PageRouter.gotoWidget(
+                                                CameraPictureScreen(), context);
+                                          },
+                                        ))
+                                    .toList()
+                              ],
                             ))
-                        .toList()
+                        .toList(),
                   ],
                 );
               },
