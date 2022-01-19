@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1084942977304",
+    "project_id": "dice-messenger",
+    "storage_bucket": "dice-messenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084942977304:android:9e129adbfd5b0c89fef66d",
+        "android_client_info": {
+          "package_name": "com.dicemessager.dice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084942977304-nan4eukku9at9i3raiog63f2b2dqpitl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dicemessager.dice",
+            "certificate_hash": "4653d358fa4b598303f1b0a709497f938908b58f"
+          }
+        },
+        {
+          "client_id": "1084942977304-rtas1uodq2q0749v0rfd6dks4dal1i23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzi6qtHmfs0m0cCn4ox6fDEjueQRE3__M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084942977304-rtas1uodq2q0749v0rfd6dks4dal1i23.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1084942977304-bubcjmmrjf1nvj34732a9mvdo09dof2s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dicemessager.dice"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
