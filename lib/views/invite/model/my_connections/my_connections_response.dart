@@ -26,7 +26,7 @@ class ListConnections {
   int? firstPage;
   bool? hasNext;
   bool? hasPrev;
-  List? list;
+  List<ListOfData>? list;
   int? nextPage;
   int? page;
   int? prevPage;

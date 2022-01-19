@@ -13,10 +13,8 @@ class ChatProvider extends ChangeNotifier {
   List<LocalChatModel>? localChats = [];
 
   /// Load messages fro local database
-  void loadCachedMessages(String key, String userID) async {
-    // localChats = await chatDao!.convert(key);
-    /// notify listeners
-    notifyListeners();
+  void loadCachedMessages(String key) async {
+    await chatDao!.openBox(key: 'asdad');
   }
 
   /// sends message to the live server when there's network

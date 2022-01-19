@@ -2,6 +2,7 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/search_people.dart';
+import 'package:dice_app/views/invite/model/my_connections/my_connections_response.dart';
 import 'package:dice_app/views/invite/provider/invite_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
@@ -109,13 +110,9 @@ class _FindPeopleState extends State<FindPeople> {
                         shrinkWrap: true,
                         itemCount: inviteProvider.list?.length,
                         itemBuilder: (BuildContext context, int index) {
-                          var connections =
+                          ListOfData? connections =
                               inviteProvider.list?.elementAt(index);
-                          return People(
-                              connections?.name,
-                              connections?.username,
-                              connections?.id,
-                              connections?.photo);
+                          return People(connections);
                         })
                     : Column(
                         children: [

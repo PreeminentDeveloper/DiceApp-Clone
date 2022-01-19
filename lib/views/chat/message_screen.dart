@@ -68,8 +68,7 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    _chatProvider!.loadCachedMessages(
-        widget.conversationID!, _profileProvider!.user!.id!);
+    _chatProvider!.loadCachedMessages(widget.conversationID!);
     _chatProvider!.listenToChatEvents(
         widget.conversationID!, _profileProvider!.user!.id!);
     super.initState();

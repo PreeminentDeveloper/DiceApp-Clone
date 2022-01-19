@@ -140,8 +140,7 @@ class _SearchUsersState extends State<SearchUsers> {
                                     .elementAt(index);
                         // (people.photo["hostname"]);
                         return people.name != null
-                            ? People(people.name, people.username, people.id,
-                                'https://${people.photo?.hostname}/${people.photo?.url}')
+                            ? People(people)
                             : Container();
                       }),
                 )

@@ -16,16 +16,16 @@ class ChatDao {
 
   Box<Map>? get box => _box;
 
-  ChatDao() {
-    _openBox().then((value) => _box = value);
+  ChatDao({String? key}) {
+    openBox().then((value) => _box = value);
   }
 
-  Future<Box<Map>> _openBox({String? key = HiveBoxes.chats}) =>
+  Future<Box<Map>> openBox({String? key = HiveBoxes.chats}) =>
       HiveBoxes.openBox<Map>(key!);
 
   Future<void> saveMyChats(String? key, List<LocalChatModel>? list) async {
     /// open hive box for this particular chat
-    _openBox(key: key);
+    openBox(key: key);
 
     await truncate();
 
@@ -37,6 +37,7 @@ class ChatDao {
   }
 
   void saveSingleChat(String key, LocalChatModel? localChatModel) async {
+    openBox(key: key);
     await _box!.add(localChatModel!.toMap());
   }
 

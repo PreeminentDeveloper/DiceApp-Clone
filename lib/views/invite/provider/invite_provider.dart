@@ -4,6 +4,7 @@ import 'package:dice_app/views/invite/model/connection_request/connection_reques
 import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_model.dart';
 import 'package:dice_app/views/invite/model/find_people/search_users_response.dart';
+import 'package:dice_app/views/invite/model/my_connections/my_connections_response.dart';
 import 'package:dice_app/views/invite/source/invite_remote.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +16,8 @@ class InviteProvider extends ChangeNotifier {
   User? user;
   List<Contacts>? mContacts = [];
 
-  List<dynamic>? list = [];
-  List<SearchUser> searchUser = [];
+  List<ListOfData>? list = [];
+  List<ListOfData> searchUser = [];
   List<ListData> myRequest = [];
 
   InviteProvider(this._inviteService);
