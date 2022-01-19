@@ -12,36 +12,15 @@ class ChatProvider extends ChangeNotifier {
   /// handles list of local messages from the database
   List<LocalChatModel>? localChats = [];
 
-  /// controller for auto scrolling
-  final ScrollController scrollController = ScrollController();
-
   /// Load messages fro local database
   void loadCachedMessages(String key, String userID) async {
     // localChats = await chatDao!.convert(key);
-
-    // auto scroll when done getting local messages
-    _scrollDown();
-
-    /// notify listeners
-    notifyListeners();
-  }
-
-  /// Adds message to local database
-  void addMessageToLocalDB(LocalChatModel? localChatModel) {
-    // chatDao!.saveSingleChat(localChatModel!.conversationID!, localChatModel);
-
-    /// cached messages
-    // loadCachedMessages(localChatModel.conversationID!, localChatModel.userID!);
-
-    /// Send message to server
-    _addMessageToLiveDB(localChatModel!.conversationID, localChatModel.message);
-
     /// notify listeners
     notifyListeners();
   }
 
   /// sends message to the live server when there's network
-  void _addMessageToLiveDB(String? conversationID, String? message) {
+  Future<void>? addMessageToLiveDB(String? conversationID, String? message) {
     try {
       final _push = phonixManager.phoenixChannel
           ?.push("create_message-$conversationID", {"message": message});
@@ -73,13 +52,6 @@ class ChatProvider extends ChangeNotifier {
       }
     });
     // loadCachedMessages(key, userID);
-  }
-
-  ///Auto scroll chat to bottom of the list
-  void _scrollDown() {
-    scrollController.animateTo(scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-    notifyListeners();
   }
 
   /// clear list of the user

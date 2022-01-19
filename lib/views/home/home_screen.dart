@@ -171,7 +171,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   image:
                                                       'https://${user.photo?.hostname}/${user.photo?.url}',
                                                   name: user.name,
-                                                  recentMessage: user.username,
+                                                  recentMessage:
+                                                      '@${user.username}',
                                                   date: 'timeAgo'),
                                               onTapProfile: () =>
                                                   PageRouter.gotoWidget(

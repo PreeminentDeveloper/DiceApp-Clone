@@ -75,8 +75,15 @@ class _MessageScreenState extends State<MessageScreen> {
     super.initState();
   }
 
+  ///Auto scroll chat to bottom of the list
+  void _scrollDown() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollDown());
     return PageStorage(
       bucket: bucketGlobal,
       child: Scaffold(
@@ -99,7 +106,7 @@ class _MessageScreenState extends State<MessageScreen> {
             builder: (BuildContext context, Box<dynamic> value, Widget? child) {
               final _response = chatDao!.convert(value).toList();
               return ListView(
-                // controller: chatProvider.scrollController,
+                controller: _scrollController,
                 children: [
                   ..._response
                       .map((chat) => chat.userID == _profileProvider?.user?.id
@@ -128,14 +135,9 @@ class _MessageScreenState extends State<MessageScreen> {
         ],
       );
 
-  void _addMessage() {
-    _chatProvider!.addMessageToLocalDB(LocalChatModel(
-        conversationID: widget.conversationID,
-        id: '',
-        userID: _profileProvider!.user!.id,
-        time: '',
-        message: _messageController.text,
-        insertLocalTime: DateTime.now().toString()));
+  void _addMessage() async {
+    await _chatProvider!
+        .addMessageToLiveDB(widget.conversationID, _messageController.text);
     _messageController.text = '';
     setState(() {});
   }
@@ -168,31 +170,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Widget _getTitleWidget() => GestureDetector(
-        onTap: () async {
-          // if(channel1.state == PhoenixChannelState.joined){
-          //   // logger.d('msg1=> p');
-          //
-          //   // await for (var message in channel1.messages) {
-          //   //   if(message.event.value == "create_message-44301f9a-af4f-437a-abe1-957dcb1be73a")continue;
-          //   //   logger.d('msg9=> ${message}');
-          //   //   logger.d('msg10=> p');
-          //   // }
-          //   // channel1.push("create_message-${widget.data.conversationId}",  {"message":"Hello br0"});
-          // channel1.messages.listen((event) {
-          //   print("pppp");
-          //   logger.d("mk => ${event.payload}");
-          // });
-          // }
-
-          // widget.socket.openStream.listen((event) async {
-          //   logger.d('Stream opened');
-          //   // setState(() {
-          //     // socket1.addChannel(topic: "chat_room:after_joined");
-          //     logger.d('Listening=> $event');
-          //     logger.d(widget.socket.streamForTopic("chat_room:after_joined").first);
-          //   // });
-          // });
-        },
+        onTap: () async {},
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -202,9 +180,7 @@ class _MessageScreenState extends State<MessageScreen> {
               showInitialText: widget.user?.photo?.url?.isEmpty ?? true,
               initials: Helpers.getInitials(widget.user?.name ?? ''),
             ),
-            SizedBox(
-              width: 10,
-            ),
+            SizedBox(width: 10.w),
             Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -239,8 +215,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
   PopMenuWidget _blockUser() => PopMenuWidget(
         primaryWidget: Container(
-            margin: EdgeInsets.only(right: 16),
-            child: Icon(Icons.more_horiz, color: DColors.lightGrey)),
+            margin: const EdgeInsets.only(right: 16),
+            child: const Icon(Icons.more_horiz, color: DColors.lightGrey)),
         menuItems: ChatMenu.blocUser(),
         menuCallback: (option) {
           // controller.hideMenu();
