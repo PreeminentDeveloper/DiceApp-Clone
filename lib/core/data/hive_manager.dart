@@ -24,7 +24,7 @@ class HiveManager {
 class HiveBoxes {
   static const listofConversations = 'listofConversations';
   static const contacts = 'contacts';
-  static const chats = 'on-to-one-chat';
+  static const chats = 'te';
 
   static Future openAllBox() async {
     listOfConversationsDao = ListOfConversationsDao();

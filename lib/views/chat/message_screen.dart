@@ -23,6 +23,7 @@ import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,55 +70,13 @@ class _MessageScreenState extends State<MessageScreen> {
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
     _chatProvider!.loadCachedMessages(
         widget.conversationID!, _profileProvider!.user!.id!);
-    // _fetchConversations();
-    // _listenToChatEvents();
+    _chatProvider!.listenToChatEvents(
+        widget.conversationID!, _profileProvider!.user!.id!);
     super.initState();
-  }
-
-  void _fetchConversations() {
-    _chatBloc.add(ListChatEvent(
-        pageIndex: 1,
-        userID: _profileProvider?.user?.id,
-        conversationID: widget.conversationID));
-  }
-
-  _listenToChatEvents() {
-    // eventBus.on().listen((event) {
-    //   if (event is ChatEventBus &&
-    //       event.key!.contains(widget.conversationID!)) {
-    //     chatDao!.saveSingleChat(LocalChatModel(
-    //         conversationID: event.payload?.data?.message?.conversationId,
-    //         id: event.payload?.data?.message?.id?.toString(),
-    //         userID: event.payload?.data?.message?.userId,
-    //         message: event.payload?.data?.message?.message,
-    //         time: '',
-    //         insertLocalTime: DateTime.now().toString()));
-    //     setState(() {});
-    //   }
-
-    //   if (event is OnlineEvent &&
-    //       event.onlineEvent!.containsKey(widget.conversationID!)) {
-    //     _isOnline = true;
-    //   } else {
-    //     _isOnline = false;
-    //   }
-    //   _needsScroll = true;
-    //   setState(() {});
-    // });
-  }
-
-  void _scrollDown() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (_needsScroll) {
-    //   WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollDown());
-    //   _needsScroll = false;
-    // }
-
     return PageStorage(
       bucket: bucketGlobal,
       child: Scaffold(
@@ -135,12 +94,29 @@ class _MessageScreenState extends State<MessageScreen> {
   /// returns body view
   Stack _bodyView() => Stack(
         children: [
-          Consumer<ChatProvider>(
-            builder: (context, chatProvider, child) {
+          // Consumer<ChatProvider>(
+          //   builder: (context, chatProvider, child) {
+          //     return FutureBuilder(
+          //       future: chatDao!.getListenable()!,
+          //       builder: (BuildContext context,
+          //           AsyncSnapshot<ValueListenable<Box>?> snapshot) {
+          //         if (snapshot.connectionState == ConnectionState.waiting ||
+          //             !snapshot.hasData) {
+          //           return Container();
+          //         }
+          //         return ;
+          //       },
+          //     );
+          //   },
+          // ),
+          ValueListenableBuilder(
+            valueListenable: chatDao!.getListenable()!,
+            builder: (BuildContext context, Box<dynamic> value, Widget? child) {
+              final _response = chatDao!.convert(value).toList();
               return ListView(
-                controller: chatProvider.scrollController,
+                // controller: chatProvider.scrollController,
                 children: [
-                  ..._chatProvider!.localChats!
+                  ..._response
                       .map((chat) => chat.userID == _profileProvider?.user?.id
                           ? SenderSide(chat: chat, deleteCallback: () {})
                           : ReceiverSide(chat: chat, deleteCallback: () {}))

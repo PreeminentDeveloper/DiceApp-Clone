@@ -101,65 +101,65 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
             child: Stack(
               children: [
                 BlocListener<ChatBloc, ChatState>(
-                    bloc: _chatBloc,
-                    listener: (context, state) async {
-                      if (state is ChatLoadingState) {}
-                      if (state is ChatSuccessState) {}
-                      if (state is ChatFailedState) {}
-                    },
-                    child: ValueListenableBuilder(
-                        valueListenable: chatDao!.getListenable()!,
-                        builder: (BuildContext context, Box<dynamic> value,
-                            Widget? child) {
-                          // _localChats = chatDao!.convert(value).toList();
+                  bloc: _chatBloc,
+                  listener: (context, state) async {
+                    if (state is ChatLoadingState) {}
+                    if (state is ChatSuccessState) {}
+                    if (state is ChatFailedState) {}
+                  },
+                  // child: ValueListenableBuilder(
+                  //     valueListenable: chatDao!.getListenable()!,
+                  //     builder: (BuildContext context, Box<dynamic> value,
+                  //         Widget? child) {
+                  //       // _localChats = chatDao!.convert(value).toList();
 
-                          return NotificationListener<ScrollEndNotification>(
-                            // onNotification: (scrollEnd) {
-                            //   final metrics = scrollEnd.metrics;
-                            //   if (metrics.atEdge) {
-                            //     bool isTop = metrics.pixels == 0;
-                            //     if (isTop) {
-                            //       _paginate = false;
-                            //     } else {
-                            //       _paginate = true;
-                            //     }
-                            //     setState(() {});
-                            //   }
-                            //   return true;
-                            // },
-                            child: SingleChildScrollView(
-                              key: const PageStorageKey<String>('chat'),
-                              child: Column(
-                                children: [
-                                  SizedBox(height: 22.h),
-                                  Row(
-                                    children: [
-                                      Expanded(child: CustomeDivider()),
-                                      TextWidget(
-                                        text: 'Today',
-                                        type: "Circular",
-                                        size: FontSize.s12,
-                                        appcolor: DColors.lightGrey,
-                                      ),
-                                      Expanded(child: CustomeDivider()),
-                                    ],
-                                  ),
-                                  SizedBox(height: 22.h),
-                                  ..._localChats
-                                      .map((chat) => chat.userID ==
-                                              _profileProvider?.user?.id
-                                          ? SenderSide(
-                                              chat: chat, deleteCallback: () {})
-                                          : ReceiverSide(
-                                              chat: chat,
-                                              deleteCallback: () {}))
-                                      .toList(),
-                                  SizedBox(height: 40.h)
-                                ],
-                              ),
-                            ),
-                          );
-                        })),
+                  //       return NotificationListener<ScrollEndNotification>(
+                  //         // onNotification: (scrollEnd) {
+                  //         //   final metrics = scrollEnd.metrics;
+                  //         //   if (metrics.atEdge) {
+                  //         //     bool isTop = metrics.pixels == 0;
+                  //         //     if (isTop) {
+                  //         //       _paginate = false;
+                  //         //     } else {
+                  //         //       _paginate = true;
+                  //         //     }
+                  //         //     setState(() {});
+                  //         //   }
+                  //         //   return true;
+                  //         // },
+                  //         child: SingleChildScrollView(
+                  //           key: const PageStorageKey<String>('chat'),
+                  //           child: Column(
+                  //             children: [
+                  //               SizedBox(height: 22.h),
+                  //               Row(
+                  //                 children: [
+                  //                   Expanded(child: CustomeDivider()),
+                  //                   TextWidget(
+                  //                     text: 'Today',
+                  //                     type: "Circular",
+                  //                     size: FontSize.s12,
+                  //                     appcolor: DColors.lightGrey,
+                  //                   ),
+                  //                   Expanded(child: CustomeDivider()),
+                  //                 ],
+                  //               ),
+                  //               SizedBox(height: 22.h),
+                  //               ..._localChats
+                  //                   .map((chat) => chat.userID ==
+                  //                           _profileProvider?.user?.id
+                  //                       ? SenderSide(
+                  //                           chat: chat, deleteCallback: () {})
+                  //                       : ReceiverSide(
+                  //                           chat: chat, deleteCallback: () {}))
+                  //                   .toList(),
+                  //               SizedBox(height: 40.h)
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }),
+                ),
                 TextersInfoWidget(_animateValue, _animation!),
                 _getBottomStackedView(),
               ],

@@ -17,13 +17,10 @@ class ChatProvider extends ChangeNotifier {
 
   /// Load messages fro local database
   void loadCachedMessages(String key, String userID) async {
-    localChats = await chatDao!.convert(key);
+    // localChats = await chatDao!.convert(key);
 
     // auto scroll when done getting local messages
     _scrollDown();
-
-    /// listen to chat events
-    _listenToChatEvents(key, userID);
 
     /// notify listeners
     notifyListeners();
@@ -31,13 +28,13 @@ class ChatProvider extends ChangeNotifier {
 
   /// Adds message to local database
   void addMessageToLocalDB(LocalChatModel? localChatModel) {
-    chatDao!.saveSingleChat(localChatModel!.conversationID!, localChatModel);
+    // chatDao!.saveSingleChat(localChatModel!.conversationID!, localChatModel);
 
     /// cached messages
-    loadCachedMessages(localChatModel.conversationID!, localChatModel.userID!);
+    // loadCachedMessages(localChatModel.conversationID!, localChatModel.userID!);
 
     /// Send message to server
-    _addMessageToLiveDB(localChatModel.conversationID, localChatModel.message);
+    _addMessageToLiveDB(localChatModel!.conversationID, localChatModel.message);
 
     /// notify listeners
     notifyListeners();
@@ -60,7 +57,7 @@ class ChatProvider extends ChangeNotifier {
   ///
   /// when listening for chat event, if the UserID that is been returned is not equivalent to the senders UserID
   /// then the message should be cached locally
-  _listenToChatEvents(String key, String userID) {
+  listenToChatEvents(String key, String userID) {
     eventBus.on().listen((event) {
       if (_isTargetMet(event, key, userID)) {
         Data _data = event.payload.data;
@@ -94,8 +91,6 @@ class ChatProvider extends ChangeNotifier {
   /// Returns true if the event type is a ChatEventBus,
   /// contains the chat conversation id and also the message is not from the sender
   bool _isTargetMet(event, key, userID) {
-    return event is ChatEventBus &&
-        event.key!.contains(key) &&
-        event.payload?.data?.message?.userId != userID;
+    return event is ChatEventBus && event.key!.contains(key);
   }
 }

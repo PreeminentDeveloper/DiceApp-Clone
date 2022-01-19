@@ -37,15 +37,11 @@ class ChatDao {
   }
 
   void saveSingleChat(String key, LocalChatModel? localChatModel) async {
-    final _boxMap = await Hive.openBox<Map>(key);
-
-    await _boxMap.add(localChatModel!.toMap());
+    await _box!.add(localChatModel!.toMap());
   }
 
-  Future<List<LocalChatModel>> convert(String key) async {
-    final _boxMap = await Hive.openBox<Map>(key);
-
-    Map<dynamic, dynamic> raw = Map<dynamic, dynamic>.from(_boxMap.toMap());
+  List<LocalChatModel> convert(Box box) {
+    Map<dynamic, dynamic> raw = Map<dynamic, dynamic>.from(box.toMap());
 
     List<LocalChatModel> _value = raw.values
         .map((e) => LocalChatModel.fromMap(json.decode(json.encode(e))))
