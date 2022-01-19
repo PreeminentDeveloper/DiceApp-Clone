@@ -1,9 +1,12 @@
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 final _imageOne =
     "https://images.unsplash.com/photo-1636942099353-f8d8edac22c7?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60";
@@ -15,70 +18,77 @@ class TextersImagePreview extends StatelessWidget {
   const TextersImagePreview({Key? key, this.userInfo}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: SizeConfig.getDeviceWidth(context) * .4,
-          child: Stack(
-            alignment: Alignment.center,
-            clipBehavior: Clip.antiAlias,
-            children: <Widget>[
-              Stack(
-                children: [
-                  CircleImageHandler("https://" + userInfo.photo),
-                  Positioned(
-                    top: 37,
-                    right: 36,
-                    child: CircleAvatar(
-                      radius: 8.r,
-                      backgroundColor: DColors.white,
-                      child: CircleAvatar(
-                          radius: 5.r,
-                          backgroundColor: DColors.primaryAccentColor),
-                    ),
-                  )
-                ],
-              ),
-              Positioned(
-                left: 95.w,
-                child: Stack(
+    return Consumer2<ProfileProvider, HomeProvider>(
+        builder: (context, provider, homeProvider, child) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: SizeConfig.getDeviceWidth(context) * .4,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.antiAlias,
+              children: <Widget>[
+                Stack(
                   children: [
                     CircleImageHandler(
-                      _imageTwo,
-                      borderWidth: 5,
-                      radius: 30.r,
-                    ),
+                        'https://${provider.user?.photo?.hostname}/${provider.user?.photo?.url}'
+
+                        // "https://" + userInfo.photo
+                        ),
                     Positioned(
-                      top: 40,
-                      left: 40,
+                      top: 37,
+                      right: 36,
                       child: CircleAvatar(
                         radius: 8.r,
                         backgroundColor: DColors.white,
                         child: CircleAvatar(
-                            radius: 5.r, backgroundColor: DColors.amber),
+                            radius: 5.r,
+                            backgroundColor: DColors.primaryAccentColor),
                       ),
                     )
                   ],
                 ),
-              ),
-            ],
+                Positioned(
+                  left: 95.w,
+                  child: Stack(
+                    children: [
+                      CircleImageHandler(
+                        _imageTwo,
+                        borderWidth: 5,
+                        radius: 30.r,
+                      ),
+                      Positioned(
+                        top: 40,
+                        left: 40,
+                        child: CircleAvatar(
+                          radius: 8.r,
+                          backgroundColor: DColors.white,
+                          child: CircleAvatar(
+                              radius: 5.r, backgroundColor: DColors.amber),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 7.h),
-        Container(
-          width: SizeConfig.getDeviceWidth(context) * .4,
-          margin:
-              EdgeInsets.only(left: SizeConfig.getDeviceWidth(context) / 10),
-          alignment: Alignment.center,
-          child: TextWidget(
-              text: userInfo.name,
-              appcolor: DColors.black,
-              align: TextAlign.center,
-              size: FontSize.s14),
-        )
-      ],
-    );
+          SizedBox(height: 7.h),
+          Container(
+            width: SizeConfig.getDeviceWidth(context) * .4,
+            margin:
+                EdgeInsets.only(left: SizeConfig.getDeviceWidth(context) / 10),
+            alignment: Alignment.center,
+            child: TextWidget(
+                text: provider.user?.name,
+                appcolor: DColors.black,
+                align: TextAlign.center,
+                size: FontSize.s14),
+          )
+        ],
+      );
+    });
   }
 }
