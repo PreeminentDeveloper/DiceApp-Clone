@@ -45,10 +45,14 @@ class ChatProvider extends ChangeNotifier {
 
   /// sends message to the live server when there's network
   void _addMessageToLiveDB(String? conversationID, String? message) {
-    final _push = phonixManager.phoenixChannel
-        ?.push("create_message-$conversationID", {"message": message});
-    if (_push!.sent) {
-      logger.i('Message Sent: Update Ticker to sent icon');
+    try {
+      final _push = phonixManager.phoenixChannel
+          ?.push("create_message-$conversationID", {"message": message});
+      if (_push!.sent) {
+        logger.i('Message Sent: Update Ticker to sent icon');
+      }
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -59,15 +63,16 @@ class ChatProvider extends ChangeNotifier {
   _listenToChatEvents(String key, String userID) {
     eventBus.on().listen((event) {
       if (_isTargetMet(event, key, userID)) {
-        logger.i('Cache response from a chat here: ${event.payload!.toJson()}');
-        // chatDao!.saveSingleChat(
-        //     LocalChatModel(
-        //         conversationID: event.payload?.data?.message?.conversationId,
-        //         id: event.payload?.data?.message?.id?.toString(),
-        //         userID: event.payload?.data?.message?.userId,
-        //         message: event.payload?.data?.message?.message,
-        //         time: '',
-        //         insertLocalTime: DateTime.now().toString()));
+        Data _data = event.payload.data;
+        chatDao!.saveSingleChat(
+            key,
+            LocalChatModel(
+                conversationID: _data.message?.conversationId,
+                id: _data.message?.id?.toString(),
+                userID: _data.message?.userId,
+                message: _data.message?.message,
+                time: '',
+                insertLocalTime: DateTime.now().toString()));
       }
     });
     // loadCachedMessages(key, userID);
