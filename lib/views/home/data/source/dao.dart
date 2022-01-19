@@ -3,7 +3,9 @@
 import 'dart:convert';
 
 import 'package:dice_app/core/data/hive_manager.dart';
-import 'package:dice_app/core/entity/users_entity.dart';
+import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/data/model/conversation_list.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,23 +23,24 @@ class ListOfConversationsDao {
   Future<Box<Map>> openBox() =>
       HiveBoxes.openBox<Map>(HiveBoxes.listofConversations);
 
-  Future<void> myconversations(List<User>? list) async {
-    final map = {for (var g in list!) (g as User).id: (g as User).toJson()};
+  Future<void> myconversations(List<ConversationList> list) async {
+    if (list.isNotEmpty) await truncate();
+    final map = {
+      for (var g in list)
+        (g as ConversationList).id: (g as ConversationList).toMap()
+    };
     await _box!.putAll(map);
   }
 
-  List<User> convert(Box box) {
+  List<ConversationList> convert(Box box) {
     Map<String, dynamic> raw = Map<String, dynamic>.from(box.toMap());
-    return raw.values
-        .map((e) => User.fromJson(json.decode(json.encode(e))))
-        .toList();
+    return raw.values.map((e) => ConversationList.fromMap(e)).toList();
   }
 
-  ValueListenable<Box>? getListenable({List<String>? keys}) {
+  Future<ValueListenable<Box>?>? getListenable({List<String>? keys}) async {
+    await openBox();
     return keys == null ? _box?.listenable() : _box?.listenable(keys: keys);
   }
-
-  
 
   Future truncate() async {
     await _box?.clear();

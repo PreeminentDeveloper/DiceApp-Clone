@@ -22,7 +22,7 @@ class User {
       this.photo,
       this.conversation});
 
-  User.fromJson(Map<String, dynamic> json) {
+  User.fromJson(json) {
     typename = json["__typename"];
     connection = json["connection"];
     name = json["name"];
@@ -58,7 +58,7 @@ class Photo {
 
   Photo({this.hostname, this.type, this.url});
 
-  Photo.fromJson(Map<String, dynamic> json) {
+  Photo.fromJson(json) {
     hostname = json["hostname"];
     type = json["type"];
     url = json["url"];

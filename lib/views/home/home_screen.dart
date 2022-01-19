@@ -5,6 +5,7 @@ import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/message_screen.dart';
+import 'package:dice_app/views/home/data/source/dao.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
@@ -14,17 +15,20 @@ import 'package:dice_app/views/widgets/bottom_sheet.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'package:phoenix_socket/phoenix_socket.dart';
 
 import 'camera/camera_screen.dart';
+import 'data/model/conversation_list.dart';
 import 'find_people.dart';
 import 'widget/chat_widget.dart';
 import 'widget/profile_window.dart';
@@ -131,55 +135,73 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ];
             },
-            body: Consumer<HomeProvider>(
-              builder: (context, homeProvider, child) {
-                // if (homeProvider.homeEnum == HomeEnum.busy) {
-                //   return const Center(child: CircularProgressIndicator());
-                // }
-                if (homeProvider.conversationList!.isEmpty) {
-                  return const EmptyFriendsWidget();
+            body: FutureBuilder(
+              future: listOfConversationsDao?.getListenable(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<ValueListenable<Box>?> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return Container();
                 }
-                return ListView(
-                  children: [
-                    CustomeDivider(thickness: .3),
-                    SizedBox(height: 8.h),
-                    ...homeProvider.conversationList!
-                        .map((conversation) => Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ...conversation.user
-                                    .map((user) => ChatListWidget(
-                                          slideKey: user.id,
-                                          chatObject: ChatObject(
-                                              image:
-                                                  'https://${user.photo?.hostname}/${user.photo?.url}',
-                                              name: user.name,
-                                              recentMessage: user.username,
-                                              date: 'timeAgo'),
-                                          onTapProfile: () =>
-                                              PageRouter.gotoWidget(
-                                                  OtherProfile(user.id!),
-                                                  context),
-                                          onPressed: () {
-                                            PageRouter.gotoWidget(
-                                                MessageScreen(
-                                                    user: user,
-                                                    conversationID: conversation
-                                                        .conversationID),
-                                                context);
-                                          },
-                                          onTapDelete: () => showSheet(context,
-                                              child: _deleteDialog()),
-                                          onTapCamera: () async {
-                                            PageRouter.gotoWidget(
-                                                CameraPictureScreen(), context);
-                                          },
-                                        ))
-                                    .toList()
-                              ],
-                            ))
-                        .toList(),
-                  ],
+
+                return ValueListenableBuilder(
+                  valueListenable: snapshot.data!,
+                  builder: (_, Box<dynamic> value, __) {
+                    List<ConversationList>? _conversationList =
+                        listOfConversationsDao!
+                            .convert(listOfConversationsDao!.box!)
+                            .toList();
+
+                    if (_conversationList.isEmpty) {
+                      return const EmptyFriendsWidget();
+                    }
+
+                    return ListView(
+                      children: [
+                        CustomeDivider(thickness: .3),
+                        SizedBox(height: 8.h),
+                        ..._conversationList
+                            .map((conversation) => Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ...conversation.user!
+                                        .map((user) => ChatListWidget(
+                                              slideKey: user.id,
+                                              chatObject: ChatObject(
+                                                  image:
+                                                      'https://${user.photo?.hostname}/${user.photo?.url}',
+                                                  name: user.name,
+                                                  recentMessage: user.username,
+                                                  date: 'timeAgo'),
+                                              onTapProfile: () =>
+                                                  PageRouter.gotoWidget(
+                                                      OtherProfile(user.id!),
+                                                      context),
+                                              onPressed: () {
+                                                PageRouter.gotoWidget(
+                                                    MessageScreen(
+                                                        user: user,
+                                                        conversationID:
+                                                            conversation
+                                                                .conversationID),
+                                                    context);
+                                              },
+                                              onTapDelete: () => showSheet(
+                                                  context,
+                                                  child: _deleteDialog()),
+                                              onTapCamera: () async {
+                                                PageRouter.gotoWidget(
+                                                    CameraPictureScreen(),
+                                                    context);
+                                              },
+                                            ))
+                                        .toList()
+                                  ],
+                                ))
+                            .toList(),
+                      ],
+                    );
+                  },
                 );
               },
             )));

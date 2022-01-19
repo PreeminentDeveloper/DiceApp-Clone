@@ -1,18 +1,16 @@
+import 'dart:convert';
+
+import 'package:dice_app/views/home/data/model/conversation_list.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/home/data/source/dao.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
-import 'package:flutter/material.dart';
 
 enum HomeEnum { initial, busy, idle }
-
-class ConversationList {
-  final String? conversationID;
-  final List<User> user;
-
-  ConversationList(this.conversationID, this.user);
-}
 
 class HomeProvider extends ChangeNotifier {
   HomeEnum homeEnum = HomeEnum.initial;
@@ -42,11 +40,16 @@ class HomeProvider extends ChangeNotifier {
         conversationList!.clear();
       }
       _response.listConversations?.list?.map((listData) {
-        conversationList?.add(ConversationList(listData.id, listData.users!));
+        conversationList?.add(ConversationList(
+            id: DateTime.now().toString(),
+            conversationID: listData.id,
+            user: listData.users));
         notifyListeners();
       }).toList();
 
+      listOfConversationsDao!.myconversations(conversationList!);
       homeEnum = HomeEnum.idle;
+
       notifyListeners();
     } catch (e) {
       logger.e(e);
