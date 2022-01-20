@@ -3,6 +3,7 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/chat/message_screen.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -132,7 +133,7 @@ class _OtherProfileState extends State<OtherProfile> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 23.w),
-            child: _buttonIconDetector(getProfile?.connection),
+            child: _buttonIconDetector(getProfile),
           ),
         ),
       ),
@@ -140,8 +141,8 @@ class _OtherProfileState extends State<OtherProfile> {
   }
 
   /// RETURNS ICONS FOR BUTTON
-  Widget? _buttonIconDetector(String? value) {
-    switch (value?.toLowerCase()) {
+  Widget? _buttonIconDetector(User? value) {
+    switch (value?.connection?.toLowerCase()) {
       case 'unconnected':
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -167,23 +168,31 @@ class _OtherProfileState extends State<OtherProfile> {
           color: DColors.primaryColor,
         );
       default:
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextWidget(
-              text: "Chat",
-              appcolor: DColors.primaryColor,
-              weight: FontWeight.w700,
-              type: "Objectivity",
-              size: FontSize.s16,
-            ),
-            SizedBox(width: SizeConfig.sizeExtraSmall),
-            SvgPicture.asset(
-              "assets/message.svg",
-              color: DColors.primaryColor,
-            )
-          ],
+        return GestureDetector(
+          onTap: () => PageRouter.gotoWidget(
+              MessageScreen(
+                user: value,
+                conversationID: '', // Todo: Return connection  ID here
+              ),
+              context),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextWidget(
+                text: "Chat",
+                appcolor: DColors.primaryColor,
+                weight: FontWeight.w700,
+                type: "Objectivity",
+                size: FontSize.s16,
+              ),
+              SizedBox(width: SizeConfig.sizeExtraSmall),
+              SvgPicture.asset(
+                "assets/message.svg",
+                color: DColors.primaryColor,
+              )
+            ],
+          ),
         );
     }
   }

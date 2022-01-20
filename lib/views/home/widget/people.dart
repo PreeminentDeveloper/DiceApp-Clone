@@ -14,51 +14,48 @@ class People extends StatelessWidget {
   const People(this.connection);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(SizeConfig.appPadding!),
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //  connections?.name,
-          //                     connections?.username,
-          //                     connections?.id,
-          //                     connections?.photo
-          CircleImageHandler(
-            'https://${connection?.photo?.hostname}/${connection?.photo?.url}',
-            radius: 20.r,
-            showInitialText: connection?.photo?.url?.isEmpty ?? true,
-            initials: Helpers.getInitials(connection?.name ?? ''),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextWidget(
-                  text: connection?.name ?? '',
-                  size: FontSize.s16,
-                  weight: FontWeight.w500,
-                  appcolor: DColors.mildDark,
-                ),
-                const SizedBox(height: 5),
-                TextWidget(
-                  text: '@${connection?.username ?? ''}',
-                  size: FontSize.s10,
-                  weight: FontWeight.w500,
-                  appcolor: DColors.lightGrey,
-                ),
-              ],
+    return GestureDetector(
+      onTap: () => Navigator.push(context,
+          MaterialPageRoute(builder: (_) => OtherProfile(connection!.id!))),
+      child: Container(
+        margin: EdgeInsets.all(SizeConfig.appPadding!),
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //  connections?.name,
+            //                     connections?.username,
+            //                     connections?.id,
+            //                     connections?.photo
+            CircleImageHandler(
+              'https://${connection?.photo?.hostname}/${connection?.photo?.url}',
+              radius: 20.r,
+              showInitialText: connection?.photo?.url?.isEmpty ?? true,
+              initials: Helpers.getInitials(connection?.name ?? ''),
             ),
-          ),
-          GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => OtherProfile(connection!.id!)));
-              },
-              child: SvgPicture.asset("assets/arrow-forward.svg")),
-        ],
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextWidget(
+                    text: connection?.name ?? '',
+                    size: FontSize.s16,
+                    weight: FontWeight.w500,
+                    appcolor: DColors.mildDark,
+                  ),
+                  const SizedBox(height: 5),
+                  TextWidget(
+                    text: '@${connection?.username ?? ''}',
+                    size: FontSize.s10,
+                    weight: FontWeight.w500,
+                    appcolor: DColors.lightGrey,
+                  ),
+                ],
+              ),
+            ),
+            SvgPicture.asset("assets/arrow-forward.svg"),
+          ],
+        ),
       ),
     );
   }
