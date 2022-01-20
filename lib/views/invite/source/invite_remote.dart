@@ -40,6 +40,7 @@ class InviteService {
           "userId": userID
         }),
       );
+      logger.d(result.data!);
       return MyConnectionResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

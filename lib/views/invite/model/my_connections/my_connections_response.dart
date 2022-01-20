@@ -1,6 +1,5 @@
 class MyConnectionResponse {
   String? typename;
-
   ListConnections? listConnections;
 
   MyConnectionResponse({this.typename, this.listConnections});
@@ -23,102 +22,91 @@ class MyConnectionResponse {
 }
 
 class ListConnections {
+  String? typename;
   int? firstPage;
   bool? hasNext;
   bool? hasPrev;
-  List<ListOfData>? list;
   int? nextPage;
   int? page;
   int? prevPage;
+  List<ListOfData>? listOfData;
 
   ListConnections(
-      {this.firstPage,
+      {this.typename,
+      this.firstPage,
       this.hasNext,
       this.hasPrev,
-      this.list,
       this.nextPage,
       this.page,
-      this.prevPage});
+      this.prevPage,
+      this.listOfData});
 
   ListConnections.fromJson(Map<String, dynamic> json) {
+    typename = json["__typename"];
     firstPage = json["firstPage"];
     hasNext = json["hasNext"];
     hasPrev = json["hasPrev"];
-
-    list = json["list"] == null
-        ? null
-        : (json["list"]).map((e) => ListOfData.fromJson(e)).toList();
     nextPage = json["nextPage"];
     page = json["page"];
     prevPage = json["prevPage"];
+    listOfData = json["list"] == null
+        ? null
+        : (json["list"] as List).map((e) => ListOfData.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data["__typename"] = typename;
     data["firstPage"] = firstPage;
     data["hasNext"] = hasNext;
     data["hasPrev"] = hasPrev;
-    if (list != null) {
-      data["list"] = list?.map((e) => e.toJson()).toList();
-    }
     data["nextPage"] = nextPage;
     data["page"] = page;
     data["prevPage"] = prevPage;
+    if (listOfData != null) {
+      data["list"] = listOfData?.map((e) => e.toJson()).toList();
+    }
     return data;
   }
 }
 
 class ListOfData {
-  String? age;
-  String? bio;
-  dynamic connection;
-  String? deviceId;
-  String? id;
+  String? typename;
   String? name;
+  String? id;
   String? phone;
-  Photo? photo;
-  String? status;
   String? username;
+  dynamic connection;
+  Photo? photo;
 
   ListOfData(
-      {this.age,
-      this.bio,
-      this.connection,
-      this.deviceId,
-      this.id,
+      {this.typename,
       this.name,
+      this.id,
       this.phone,
-      this.photo,
-      this.status,
-      this.username});
+      this.username,
+      this.connection,
+      this.photo});
 
   ListOfData.fromJson(Map<String, dynamic> json) {
-    age = json["age"];
-    bio = json["bio"];
-    connection = json["connection"];
-    deviceId = json["deviceId"];
-    id = json["id"];
+    typename = json["__typename"];
     name = json["name"];
+    id = json["id"];
     phone = json["phone"];
-    photo = json["photo"] == null ? null : Photo.fromJson(json["photo"]);
-    status = json["status"];
     username = json["username"];
+    connection = json["connection"];
+    photo = json["photo"] == null ? null : Photo.fromJson(json["photo"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["age"] = age;
-    data["bio"] = bio;
-    data["connection"] = connection;
-    data["deviceId"] = deviceId;
-    data["id"] = id;
+    data["__typename"] = typename;
     data["name"] = name;
+    data["id"] = id;
     data["phone"] = phone;
-    if (photo != null) {
-      data["photo"] = photo?.toJson();
-    }
-    data["status"] = status;
     data["username"] = username;
+    data["connection"] = connection;
+    if (photo != null) data["photo"] = photo?.toJson();
     return data;
   }
 }

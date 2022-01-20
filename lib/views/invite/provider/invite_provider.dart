@@ -42,7 +42,7 @@ class InviteProvider extends ChangeNotifier {
       inviteEnum = InviteEnum.busy;
       final _response = await _inviteService.getConnections(
           pageNumber: pageNumber, perPage: perPage, userID: id!);
-      list = ((_response?.listConnections?.list ?? []));
+      list = ((_response?.listConnections?.listOfData ?? []));
       inviteEnum = InviteEnum.idle;
     } catch (e) {
       inviteEnum = InviteEnum.idle;

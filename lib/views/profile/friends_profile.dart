@@ -79,7 +79,7 @@ class _OtherProfileState extends State<OtherProfile> {
                                 SizedBox(width: SizeConfig.sizeExtraSmall),
                                 TextWidget(
                                   text:
-                                      '@ ${profile.getUserDataResponse?.getProfile?.username ?? ''}',
+                                      '@${profile.getUserDataResponse?.getProfile?.username ?? ''}',
                                   appcolor: DColors.lightGrey,
                                   weight: FontWeight.w500,
                                   type: "Objectivity",
