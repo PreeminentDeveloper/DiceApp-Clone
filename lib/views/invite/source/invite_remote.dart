@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/network/dice_graphQL_client.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
@@ -64,11 +65,10 @@ class InviteService {
     try {
       final result = await _graphQLClient.client.query(QueryOptions(
           document: gql(InviteGQL.listConnectionRequest),
-          variables: {
-            "pageNo": pageNumber,
-            "perPage": perPage,
-            "userId": userID
-          }));
+          variables: {"pageNo": pageNumber, "perPage": 200, "userId": userID}));
+      logger.d(userID);
+      logger.d(SessionManager.instance.authToken);
+      logger.d(result.data);
       return ConnectionRequestResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

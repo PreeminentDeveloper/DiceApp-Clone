@@ -2,6 +2,7 @@ import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
@@ -73,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _listConversations() async {
     _profileProvider?.getUsersInformations();
+    logger.d(_profileProvider!.user!.id!);
     _homeProvider?.listConversations(
         pageNumber: 1, search: '', userID: _profileProvider!.user!.id!);
   }

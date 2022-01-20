@@ -24,7 +24,7 @@ class ListOfConversationsDao {
       HiveBoxes.openBox<Map>(HiveBoxes.listofConversations);
 
   Future<void> myconversations(List<ConversationList> list) async {
-    if (list.isNotEmpty) await truncate();
+    await truncate();
     final map = {
       for (var g in list)
         (g as ConversationList).id: (g as ConversationList).toMap()

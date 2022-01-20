@@ -1,6 +1,7 @@
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
@@ -15,10 +16,12 @@ class FriendList extends StatelessWidget {
   FriendList(this.listData, {Key? key}) : super(key: key);
 
   ProfileProvider? _profileProvider;
+  HomeProvider? _homeProvider;
 
   @override
   Widget build(BuildContext context) {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     return Consumer<ProfileProvider>(builder: (context, provider, child) {
       return Container(
         margin: EdgeInsets.all(SizeConfig.appPadding!),
@@ -169,8 +172,10 @@ class FriendList extends StatelessWidget {
                                     child: TextButton(
                                         onPressed: () async {
                                           _profileProvider?.acceptConnection(
+                                              homeProvider: _homeProvider,
                                               receiverID:
                                                   listData?.requester?.id);
+                                          Navigator.pop(context);
                                           Navigator.pop(context);
                                         },
                                         style: ButtonStyle(
