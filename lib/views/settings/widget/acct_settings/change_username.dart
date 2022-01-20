@@ -21,9 +21,10 @@ class _ChangeUsernameState extends State<ChangeUsername> {
   final GlobalKey<FormState> usernameKey = GlobalKey<FormState>();
   bool checker = false;
   String output = "";
-  bool result = true;
+  bool _result = true;
   ProfileProvider? _profileProvider;
   final _debouncer = Debouncer(milliseconds: 900);
+  String? _validationError;
 
   @override
   void initState() {
@@ -70,14 +71,7 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                       controller: _usernameController,
                       validator: validatePhone,
                       onChanged: (input) {
-                        _debouncer
-                            .run(() => _profileProvider?.verifyUserName(input));
-                        if (input.trim().isNotEmpty) {
-                          checker = true;
-                        } else {
-                          checker = false;
-                        }
-                        setState(() {});
+                        _validateUser(context, input);
                       },
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
@@ -106,13 +100,15 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                   children: [
                     Container(
                         alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: 8),
+                        margin: const EdgeInsets.only(top: 8),
                         child: TextWidget(
-                          text: provider.isExists
-                              ? 'Oops! Taken already'
-                              : 'Congrats! Username is available.',
+                          text: output.isNotEmpty
+                              ? output
+                              : provider.isExists
+                                  ? 'Oops! Taken already'
+                                  : 'Congrats! Username is available.',
                           size: FontSize.s11,
-                          appcolor: result ? Colors.red : DColors.primaryColor,
+                          appcolor: _result ? Colors.red : DColors.primaryColor,
                         )),
 
                     Container(
@@ -136,17 +132,18 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                           horizontal: MediaQuery.of(context).size.width / 4),
                       child: TextButton(
                           onPressed: () {
-                            if (!provider.isExists) {
+                            if (output.isEmpty && !provider.isExists) {
                               _profileProvider?.updateUsersInfo(context,
                                   "username", _usernameController.text);
                             }
                           },
                           style: ButtonStyle(
-                              backgroundColor: checker && !provider.isExists
-                                  ? MaterialStateProperty.all<Color>(
-                                      DColors.primaryColor)
-                                  : MaterialStateProperty.all<Color>(
-                                      Color(0xFFF2F0F0)),
+                              backgroundColor:
+                                  output.isEmpty && !provider.isExists
+                                      ? MaterialStateProperty.all<Color>(
+                                          DColors.primaryColor)
+                                      : MaterialStateProperty.all<Color>(
+                                          Color(0xFFF2F0F0)),
                               shape: MaterialStateProperty.all<
                                       RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -158,7 +155,7 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                             text: provider.profileEnum == ProfileEnum.busy
                                 ? "LOADING..."
                                 : "SAVE",
-                            appcolor: checker && !provider.isExists
+                            appcolor: output.isEmpty && !provider.isExists
                                 ? Colors.white
                                 : DColors.lightGrey,
                             size: FontSize.s14,
@@ -173,5 +170,33 @@ class _ChangeUsernameState extends State<ChangeUsername> {
         ),
       ),
     );
+  }
+
+  bool _isUsernameCompliant(String _username, [int minLength = 6]) {
+    if (_username.isEmpty) {
+      return false;
+    }
+    if (_username.contains(RegExp(r'[A-Z]'))) {
+      output = 'Username can\'t contain Upper case letters';
+      _result = true;
+      setState(() {});
+      return false;
+    }
+    if (_username.contains(RegExp(r'[!@#$%^&*(),?" " ":{}|<>]'))) {
+      output = 'Username can\'t contain white spaces';
+      _result = true;
+      setState(() {});
+      return false;
+    }
+    output = '';
+    _result = false;
+    setState(() {});
+    return true;
+  }
+
+  void _validateUser(BuildContext context, String val) {
+    if (_isUsernameCompliant(val)) {
+      _debouncer.run(() => _profileProvider?.verifyUserName(val));
+    }
   }
 }
