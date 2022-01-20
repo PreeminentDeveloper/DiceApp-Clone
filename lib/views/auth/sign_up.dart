@@ -10,6 +10,7 @@ import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/otp.dart';
 import 'package:dice_app/views/widgets/back_arrow.dart';
 import 'package:dice_app/views/widgets/custom_country_picker.dart';
+import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dice_app/views/widgets/validate.dart';
 import 'package:flutter/material.dart';
@@ -113,6 +114,7 @@ class _SignUpState extends State<SignUp> {
                                   alphabetSelectedBackgroundColor:
                                       DColors.primaryAccentColor),
                               initialSelection: '+234',
+                              appBar: defaultAppBar(context, title: 'Country'),
                               onChanged: (CountryCode code) {
                                 setState(() {
                                   dialCode = code.dialCode!;
@@ -188,8 +190,7 @@ class _SignUpState extends State<SignUp> {
                         child: TextButton(
                             onPressed: () async {
                               // _onLoginButtonPressed();
-                              FocusScope.of(context)
-                                  .requestFocus(FocusNode());
+                              FocusScope.of(context).requestFocus(FocusNode());
                               if (phoneKey.currentState!.validate()) {
                                 _deviceID = await _getId();
                                 setState(() {});
