@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations
+// ignore_for_file: unnecessary_string_interpolations, invalid_use_of_visible_for_testing_member
 
 import 'dart:io';
 import 'dart:math';
@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 
 final Logger logger = Logger();
 
@@ -99,6 +100,15 @@ class Helpers {
       } else {
         throw 'Could not launch $link';
       }
+    }
+  }
+
+  // send message
+  static void sendSMStoFriend(String message, String contact) async {
+    try {
+      await sendSMS(message: message, recipients: [contact]);
+    } catch (e) {
+      logger.e(e);
     }
   }
 

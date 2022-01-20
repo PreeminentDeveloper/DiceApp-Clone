@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -129,13 +131,14 @@ class _InviteContactsState extends State<InviteContacts> {
                                     SizedBox(height: 16.h),
                                     ..._cachedContacts
                                         .map((contact) => FriendsInviteWidget(
-                                              profilePic: '',
-                                              text: contact.displayName ?? '',
-                                              subText: "Send Invite",
-                                              buttonText: 'Invite',
-                                              onTap: () => Helpers.launchURL(
-                                                  'sms:${contact.phones?.first.value}?body=Get this app and enjoy chatting like never before. dicemessenger.com'),
-                                            ))
+                                            profilePic: '',
+                                            text: contact.displayName ?? '',
+                                            subText: "Send Invite",
+                                            buttonText: 'Invite',
+                                            onTap: () => Helpers.sendSMStoFriend(
+                                                'Get this app and enjoy chatting like never before. dicemessenger.com',
+                                                contact.phones?.first.value ??
+                                                    '')))
                                         .toList()
                                   ],
                                 );
