@@ -17,7 +17,11 @@ class ChatDao {
   Box<Map>? get box => _box;
 
   ChatDao({String? key}) {
-    openBox().then((value) => _box = value);
+    // openBox().then((value) => _box = value);
+  }
+
+  void openChatBox(String key) {
+    openBox(key: key).then((value) => _box = value);
   }
 
   Future<Box<Map>> openBox({String? key = HiveBoxes.chats}) =>
@@ -25,7 +29,7 @@ class ChatDao {
 
   Future<void> saveMyChats(String? key, List<LocalChatModel>? list) async {
     /// open hive box for this particular chat
-    openBox(key: key);
+    // openBox(key: key);
 
     await truncate();
 
@@ -37,7 +41,7 @@ class ChatDao {
   }
 
   void saveSingleChat(String key, LocalChatModel? localChatModel) async {
-    openBox(key: key);
+    // openBox(key: key);
     await _box!.add(localChatModel!.toMap());
   }
 
@@ -58,7 +62,9 @@ class ChatDao {
     return DateTime.parse(date);
   }
 
-  ValueListenable<Box>? getListenable({List<String>? keys}) {
+  Future<ValueListenable<Box>?> getListenable(String? messageKey,
+      {List<String>? keys}) async {
+    await openBox(key: messageKey);
     return keys == null ? _box?.listenable() : _box?.listenable(keys: keys);
   }
 

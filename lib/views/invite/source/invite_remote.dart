@@ -66,9 +66,6 @@ class InviteService {
       final result = await _graphQLClient.client.query(QueryOptions(
           document: gql(InviteGQL.listConnectionRequest),
           variables: {"pageNo": pageNumber, "perPage": 200, "userId": userID}));
-      logger.d(userID);
-      logger.d(SessionManager.instance.authToken);
-      logger.d(result.data);
       return ConnectionRequestResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

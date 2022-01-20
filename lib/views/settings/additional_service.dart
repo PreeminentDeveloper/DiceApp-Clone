@@ -1,5 +1,6 @@
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/support/support_screen.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/grey_card.dart';
@@ -23,7 +24,13 @@ class AdditionalService extends StatelessWidget {
           children: [
             GreyContainer(title: "More Information on Using Dice"),
             SizedBox(height: SizeConfig.sizeLarge),
-            _item("Support"),
+            GestureDetector(
+              child: _item("Support"),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => SupportScreen()));
+              },
+            ),
             SizedBox(height: 6.9.h),
             CustomeDivider(),
             SizedBox(height: 6.9.h),
