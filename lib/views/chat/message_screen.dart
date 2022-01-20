@@ -81,11 +81,6 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollDown());
     return PageStorage(
@@ -105,33 +100,20 @@ class _MessageScreenState extends State<MessageScreen> {
   /// returns body view
   Stack _bodyView() => Stack(
         children: [
-          FutureBuilder(
-            future: chatDao!.getListenable(widget.conversationID),
-            builder: (BuildContext context,
-                AsyncSnapshot<ValueListenable<Box>?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting ||
-                  !snapshot.hasData) {
-                return Container();
-              }
-
-              return ValueListenableBuilder(
-                valueListenable: snapshot.data!,
-                builder:
-                    (BuildContext context, Box<dynamic> value, Widget? child) {
-                  final _response = chatDao!.convert(value).toList();
-                  return ListView(
-                    controller: _scrollController,
-                    children: [
-                      ..._response
-                          .map((chat) => chat.userID ==
-                                  _profileProvider?.user?.id
-                              ? SenderSide(chat: chat, deleteCallback: () {})
-                              : ReceiverSide(chat: chat, deleteCallback: () {}))
-                          .toList(),
-                      SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-                    ],
-                  );
-                },
+          ValueListenableBuilder(
+            valueListenable: chatDao!.getListenable()!,
+            builder: (BuildContext context, Box<dynamic> value, Widget? child) {
+              final _response = chatDao!.convert(value).toList();
+              return ListView(
+                controller: _scrollController,
+                children: [
+                  ..._response
+                      .map((chat) => chat.userID == _profileProvider?.user?.id
+                          ? SenderSide(chat: chat, deleteCallback: () {})
+                          : ReceiverSide(chat: chat, deleteCallback: () {}))
+                      .toList(),
+                  SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+                ],
               );
             },
           ),
