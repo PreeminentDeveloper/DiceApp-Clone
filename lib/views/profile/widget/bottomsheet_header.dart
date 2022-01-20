@@ -13,7 +13,9 @@ class BottomSheetHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SvgPicture.asset(icon, color: DColors.amber),
+        icon.contains('png')
+            ? Image.asset(icon)
+            : SvgPicture.asset(icon, color: DColors.amber),
         SizedBox(width: SizeConfig.sizeLarge),
         TextWidget(
           text: header,

@@ -209,7 +209,7 @@ class _MyProfileState extends State<MyProfile> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  // _bottomSheetMore(context, "chat");
+                                  _bottomSheetMore(context, "chat");
                                 },
                                 child: _items("assets/chat.svg", "Chat"),
                               ),
@@ -221,7 +221,7 @@ class _MyProfileState extends State<MyProfile> {
                                       "assets/add-friend.svg", "Add Friends")),
                               GestureDetector(
                                   onTap: () {
-                                    // _bottomSheetMore(context, "trophy");
+                                    _bottomSheetMore(context, "trophy");
                                   },
                                   child:
                                       _items("assets/trophy.svg", "Trophies"))
@@ -337,10 +337,10 @@ void _bottomSheetMore(context, label) {
                           : label == "friend"
                               ? const BottomSheetHeader(
                                   header: "Friends",
-                                  icon: "assets/add-friend.svg")
+                                  icon: "assets/add-friend-colored.svg")
                               : const BottomSheetHeader(
                                   header: "Trophies",
-                                  icon: "assets/favorite.svg"),
+                                  icon: "assets/favourite.svg"),
                     ),
                     SizedBox(height: SizeConfig.sizeSmall),
                     CustomeDivider(),
