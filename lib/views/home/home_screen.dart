@@ -74,7 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _listConversations() async {
     _profileProvider?.getUsersInformations();
-    logger.d(_profileProvider!.user!.id!);
     _homeProvider?.listConversations(
         pageNumber: 1, search: '', userID: _profileProvider!.user!.id!);
   }
@@ -182,7 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   PageRouter.gotoWidget(
                                                       OtherProfile(user.id!),
                                                       context),
-                                              onPressed: () {
+                                              onPressed: () async {
+                                                chatDao!.openABox(conversation
+                                                    .conversationID!);
                                                 PageRouter.gotoWidget(
                                                     MessageScreen(
                                                         user: user,

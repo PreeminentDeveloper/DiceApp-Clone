@@ -54,15 +54,10 @@ class _MessageScreenState extends State<MessageScreen> {
   bool _switchView = false;
   bool isEnabled = false;
   List<AssetEntity> results = [];
-  final _chatBloc = ChatBloc(inject());
   ProfileProvider? _profileProvider;
   ChatProvider? _chatProvider;
   final _messageController = TextEditingController();
-  List<LocalChatModel> _localChats = [];
   final ScrollController _scrollController = ScrollController();
-// Keep track of whether a scroll is needed.
-  bool _needsScroll = false;
-  bool _isOnline = false;
 
   @override
   void initState() {
@@ -71,7 +66,16 @@ class _MessageScreenState extends State<MessageScreen> {
     _chatProvider!.loadCachedMessages(widget.conversationID!);
     _chatProvider!.listenToChatEvents(
         widget.conversationID!, _profileProvider!.user!.id!);
+    eventBus.on<ChatEventBus>().listen((event) => _scrollDown());
+    _ensureThatDbIsoOpened();
     super.initState();
+  }
+
+  void _ensureThatDbIsoOpened() async {
+    if (chatDao!.getListenable(widget.conversationID!) == null) {
+      await chatDao!.openABox(widget.conversationID!);
+    }
+    setState(() {});
   }
 
   ///Auto scroll chat to bottom of the list
@@ -81,8 +85,16 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollDown());
+    if (chatDao!.getListenable(widget.conversationID!) == null) {
+      return Container();
+    }
     return PageStorage(
       bucket: bucketGlobal,
       child: Scaffold(
@@ -101,7 +113,7 @@ class _MessageScreenState extends State<MessageScreen> {
   Stack _bodyView() => Stack(
         children: [
           ValueListenableBuilder(
-            valueListenable: chatDao!.getListenable()!,
+            valueListenable: chatDao!.getListenable(widget.conversationID!)!,
             builder: (BuildContext context, Box<dynamic> value, Widget? child) {
               final _response = chatDao!.convert(value).toList();
               return ListView(
@@ -135,8 +147,8 @@ class _MessageScreenState extends State<MessageScreen> {
       );
 
   void _addMessage() async {
-    await _chatProvider!
-        .addMessageToLiveDB(widget.conversationID, _messageController.text);
+    await _chatProvider!.addMessageToLiveDB(_profileProvider!.user!.id!,
+        widget.conversationID, _messageController.text);
     _messageController.text = '';
     setState(() {});
   }
@@ -200,7 +212,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       ),
                       SizedBox(width: 2.5.h),
                       TextWidget(
-                        text: _isOnline ? "Online" : "Offline",
+                        text: "Offline",
                         appcolor: DColors.primaryAccentColor,
                         weight: FontWeight.w500,
                         size: FontSize.s12,

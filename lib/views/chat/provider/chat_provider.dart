@@ -14,16 +14,26 @@ class ChatProvider extends ChangeNotifier {
 
   /// Load messages fro local database
   void loadCachedMessages(String key) async {
-    await chatDao!.openBox(key: 'asdad');
+    // await chatDao!.openBox(key: 'asdad');
   }
 
   /// sends message to the live server when there's network
-  Future<void>? addMessageToLiveDB(String? conversationID, String? message) {
+  Future<void>? addMessageToLiveDB(
+      String userID, String? conversationID, String? message) {
     try {
       final _push = phonixManager.phoenixChannel
           ?.push("create_message-$conversationID", {"message": message});
       if (_push!.sent) {
         logger.i('Message Sent: Update Ticker to sent icon');
+        chatDao!.saveSingleChat(
+            conversationID!,
+            LocalChatModel(
+                conversationID: conversationID,
+                id: '',
+                userID: userID,
+                message: message,
+                time: '',
+                insertLocalTime: DateTime.now().toString()));
       }
     } catch (e) {
       logger.e(e);
@@ -61,6 +71,8 @@ class ChatProvider extends ChangeNotifier {
   /// Returns true if the event type is a ChatEventBus,
   /// contains the chat conversation id and also the message is not from the sender
   bool _isTargetMet(event, key, userID) {
-    return event is ChatEventBus && event.key!.contains(key);
+    return event is ChatEventBus &&
+        event.key!.contains(key) &&
+        event.payload?.data?.message?.userId != userID;
   }
 }

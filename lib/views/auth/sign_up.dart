@@ -195,10 +195,14 @@ class _SignUpState extends State<SignUp> {
                                 _deviceID = await _getId();
                                 setState(() {});
 
+                                String _phone = _phoneController.text[0] == '0'
+                                    ? _phoneController.text
+                                        .replaceFirst('0', '')
+                                    : _phoneController.text;
+
                                 _bloc.add(StartLoginEvent(
                                     loginModel: LoginModel(
-                                        dialCode + _phoneController.text,
-                                        _deviceID)));
+                                        dialCode + _phone, _deviceID)));
                               }
                             },
                             style: ButtonStyle(
