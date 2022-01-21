@@ -1,28 +1,34 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/network/app_config.dart';
+import 'package:dice_app/core/network/network_service.dart';
+import 'package:dice_app/core/network/url_config.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/widget/date_picker.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:http_parser/http_parser.dart';
 
+import 'data/models/feature_model.dart';
+import 'data/models/sending_images.dart';
 import 'widget/chat_field.dart';
 
 class FeatureImages extends StatefulWidget {
   final List<File> results;
   final String receiverName;
-  final String userId;
   final String convoId;
-  const FeatureImages(
-      this.results, this.receiverName, this.userId, this.convoId,
-      {Key? key})
+  const FeatureImages(this.results, this.receiverName, this.convoId, {Key? key})
       : super(key: key);
 
   @override
@@ -30,16 +36,28 @@ class FeatureImages extends StatefulWidget {
 }
 
 class _FeatureImagesState extends State<FeatureImages> {
-  String _fileName = '';
-  final _msgController = new TextEditingController();
+  File? _fileName;
+  final _msgController = TextEditingController();
+  final List<FeatureModel> _featureModel = [];
+  final Map<dynamic, dynamic> _map = <dynamic, dynamic>{};
 
   @override
   void initState() {
+    _convertFileImages();
     super.initState();
+  }
+
+  void _convertFileImages() {
+    widget.results
+        .map((result) =>
+            _featureModel.add(FeatureModel(key: result, value: result.path)))
+        .toList();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    _getCachedValue();
     return Scaffold(
       appBar: defaultAppBar(context,
           titleWidget: TextWidget(
@@ -75,13 +93,13 @@ class _FeatureImagesState extends State<FeatureImages> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextWidget(
-                      text: "${widget.results?.length} image(s) to...",
+                      text: "${widget.results.length} image(s) to...",
                       appcolor: DColors.mildDark,
                       weight: FontWeight.w400,
                       size: FontSize.s12,
                     ),
                     TextWidget(
-                      text: "${widget.receiverName}",
+                      text: widget.receiverName,
                       appcolor: DColors.green700,
                       weight: FontWeight.w600,
                       size: FontSize.s14,
@@ -98,14 +116,14 @@ class _FeatureImagesState extends State<FeatureImages> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ...widget.results
-                          .map((file) => _images(file,
-                              selected: _fileName == file.path,
-                              onTap: () =>
-                                  setState(() => _fileName = file.path),
-                              removeImage: () {
+                      ..._featureModel
+                          .map((file) => _images(file.key,
+                                  selected: _fileName == file.key, onTap: () {
+                                _fileName = file.key;
+                                setState(() {});
+                              }, removeImage: () {
                                 if (widget.results.length == 1) return;
-                                widget.results.remove(file);
+                                _featureModel.remove(file);
                                 setState(() {});
                               }))
                           .toList(),
@@ -120,10 +138,12 @@ class _FeatureImagesState extends State<FeatureImages> {
             child: SizedBox(
               width: SizeConfig.screenWidth,
               child: ChatEditBox(
-                onChanged: (value) {},
+                onChanged: (value) {
+                  _map[_fileName] = value;
+                },
                 isEnabled: true,
                 msgController: _msgController,
-                addMessage: () => pushImage(),
+                addMessage: () => _pushImage(),
                 showGeneralDialog: (value) => null,
                 onMenuPressed: (option) => null,
               ),
@@ -194,27 +214,63 @@ class _FeatureImagesState extends State<FeatureImages> {
     );
   }
 
-  pushImage() async {
-    // var token = await sharedStore.getFromStore("token".toString());
+  final List<FeatureModel> _sendFeatureModel = [];
 
-    // var request = http.MultipartRequest(
-    //     'POST', Uri.parse("http://35.175.175.194/messages"));
+  ImageSending? _imageSending;
 
-    // //Header....
-    // request.headers['Authorization'] = 'Bearer ' + json.decode(token);
-    // request.fields['message[message]'] = _msgController.text;
-    // request.fields['medias[0][caption]'] = _msgController.text;
-    // request.fields['message[conversation_id]'] = widget.convoId;
-    // request.fields['message[user_id]'] = widget.userId;
-    // request.files
-    //     .add(await http.MultipartFile.fromPath('medias[0][file]', _fileName));
-    // var response = await request.send();
-    // print(response.stream);
-    // print(response.statusCode);
-    // final res = await http.Response.fromStream(response);
-    // print(res.body);
-    // if (response.statusCode == 201) {
-    //   _msgController.clear();
-    // }
+  final _networkService = NetworkService(baseUrl: UrlConfig.imageUpload);
+  FeatureModel? _model;
+  List<Medias>? medias = [];
+  List<Message>? message = [];
+
+  void _pushImage() async {
+    final _user = Provider.of<ProfileProvider>(context, listen: false);
+    if (medias!.isNotEmpty) medias!.clear();
+
+    for (int i = 0; i < _featureModel.length; i++) {
+      final _feature = _featureModel[i];
+      _model = FeatureModel(
+        message: '',
+        user_id: _user.user?.id,
+        caption: _map[_feature.key],
+        conversation_id: widget.convoId,
+        file: await MultipartFile.fromFile(_feature.key!.path,
+            filename: _feature.key!.path.split("/").last,
+            contentType: MediaType("image", "png")),
+      );
+      medias?.add(Medias(
+        caption: _map[_feature.key],
+        file: MultipartFile.fromBytes(_feature.key!.readAsBytesSync(),
+            filename: _feature.key!.path.split("/").last,
+            contentType:
+                MediaType("image", _feature.key!.path.split("/").last)),
+        // file: File(_feature.key!.path),
+      ));
+      setState(() {});
+    }
+    _imageSending = ImageSending(
+        medias: medias,
+        message: Message(
+            message: '',
+            conversationID: widget.convoId,
+            userID: _user.user?.id));
+
+    try {
+      final _response = await _networkService.call('', RequestMethod.upload,
+          formData: FormData.fromMap(_imageSending!.toJson()));
+      logger.d(_response.data);
+    } catch (e) {
+      logger.e(e);
+    }
+
+    // _sendFeatureModel.map((e) => logger.d(e.toMap())).toList();
   }
+
+  void _getCachedValue() {
+    _msgController.text = _map[_fileName] ?? '';
+    _msgController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _msgController.text.length));
+  }
+
+  _formartFileImage(File? key) {}
 }

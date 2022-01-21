@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'pop_menu_options.dart';
+import '../pop_menu_options.dart';
 
 class PostsMenuModel {
   String? title;
@@ -14,14 +14,10 @@ class PostsMenuModel {
   static List<PostsMenuModel> chatStickers() {
     List<PostsMenuModel> _itemModels = [];
     PostsMenuModel _item = PostsMenuModel(
-        title: 'Stickers',
-        showdivider: false,
-        options: PopMenuOptions.stickers);
+        title: 'Photos', showdivider: false, options: PopMenuOptions.photo);
     _itemModels.add(_item);
     _item = PostsMenuModel(
-        title: 'Photo & video',
-        showdivider: false,
-        options: PopMenuOptions.photoAndVideo);
+        title: 'Videos', showdivider: false, options: PopMenuOptions.video);
     _itemModels.add(_item);
     return _itemModels;
   }

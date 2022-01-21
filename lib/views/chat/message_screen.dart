@@ -35,6 +35,7 @@ import 'package:phoenix_socket/phoenix_socket.dart';
 
 import 'data/models/chat_menus.dart';
 import 'data/models/local_chats_model.dart';
+import 'feature_images.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
@@ -165,19 +166,16 @@ class _MessageScreenState extends State<MessageScreen> {
   _showDialog(String value) async {
     final _results = await FlutterGallery.pickGallery(
         context: context,
-        title: "",
-        color: Colors.red,
+        title: "Dice",
+        color: DColors.primaryColor,
         limit: 5,
         maximumFileSize: 100 //Size in megabyte
         );
-    if (_results != null) {
-      setState(() => results = _results);
-      final _images = await _convertImages(_results);
-      // PageRouter.gotoWidget(
-      //     FeatureImages(_images, widget.user.name ?? '', appState?.id,
-      //         widget.data.conversationId),
-      //     context);
-    }
+    setState(() => results = _results);
+    final _images = await _convertImages(_results);
+    PageRouter.gotoWidget(
+        FeatureImages(_images, widget.user?.name ?? '', widget.conversationID!),
+        context);
   }
 
   Widget _getTitleWidget() => GestureDetector(

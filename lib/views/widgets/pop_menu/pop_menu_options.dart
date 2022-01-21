@@ -1,1 +1,0 @@
-enum PopMenuOptions { stickers, photoAndVideo}

@@ -7,8 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../textviews.dart';
 import 'custom_pop_menu.dart';
-import 'items.dart';
-import 'pop_menu_options.dart';
 
 final CustomPopupMenuController controller = CustomPopupMenuController();
 

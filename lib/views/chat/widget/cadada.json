@@ -1,0 +1,14 @@
+{
+    "medias": [
+        {
+            "caption": "Caption herre",
+            "file": "file comes here"
+        }
+    ],
+    "message": [
+        {"message": ""},
+        {"conversation_id": ""},
+       { "user_id": ""}
+    ]
+
+}
