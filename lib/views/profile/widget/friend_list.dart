@@ -8,6 +8,7 @@ import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -81,7 +82,8 @@ class FriendList extends StatelessWidget {
                                         receiverID: listData?.requester?.id);
                                     Navigator.pop(context);
                                   },
-                                  child: SvgPicture.asset("assets/remove.svg"))
+                                  child: SvgPicture.asset("assets/remove.svg",
+                                      height: 20.h))
                             ],
                           ),
                           content: SizedBox(

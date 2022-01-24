@@ -1,4 +1,3 @@
-
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -76,8 +75,8 @@ class _StickersViewState extends State<StickersView> {
               color: !isSelected! ? Colors.transparent : DColors.white),
           child: TextWidget(
             text: text,
-            appcolor: DColors.mildDark,
-            weight: FontWeight.w400,
+            appcolor: isSelected ? DColors.primaryColor : DColors.mildDark,
+            weight: isSelected ? FontWeight.w600 : FontWeight.w400,
             size: FontSize.s17,
           ),
         ),

@@ -82,7 +82,7 @@ class _OTPState extends State<OTP> {
                       align: TextAlign.center,
                       size: FontSize.s14,
                       type: "Objectivity",
-                      weight: FontWeight.w200,
+                      weight: FontWeight.w700,
                       appcolor: DColors.faded),
                   Padding(
                     padding:

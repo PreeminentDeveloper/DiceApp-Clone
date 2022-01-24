@@ -1,9 +1,10 @@
-
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/widgets/image_loader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../textviews.dart';
 import 'custom_pop_menu.dart';
@@ -43,10 +44,21 @@ class PopMenuWidget extends StatelessWidget {
                       width: SizeConfig.getDeviceWidth(context) * .4,
                       padding: EdgeInsets.symmetric(
                           horizontal: 23.w, vertical: 10.h),
-                      child: TextWidget(
-                          text: item.title ?? '',
-                          align: TextAlign.left,
-                          appcolor: item?.color ?? DColors.black),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            item.image ?? '',
+                            color: DColors.grey400,
+                            height: 15,
+                          ),
+                          SizedBox(width: 5.w),
+                          TextWidget(
+                              text: item.title ?? '',
+                              align: TextAlign.left,
+                              appcolor: item?.color ?? DColors.grey400),
+                        ],
+                      ),
                     ),
                   ),
                 )
@@ -55,7 +67,7 @@ class PopMenuWidget extends StatelessWidget {
         ),
       ),
       pressType: PressType.singleClick,
-      verticalMargin: -10,
+      verticalMargin: -1,
       controller: controller,
     );
   }

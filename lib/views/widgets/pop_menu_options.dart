@@ -1,1 +1,1 @@
-enum PopMenuOptions { photo, video }
+enum PopMenuOptions { photoAndVideo }

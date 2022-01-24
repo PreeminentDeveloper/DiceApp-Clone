@@ -17,6 +17,7 @@ import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
+import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
@@ -105,7 +106,10 @@ class _MessageScreenState extends State<MessageScreen> {
             titleWidget: _getTitleWidget(),
             onTap: () => setState(() => _switchView = !_switchView),
             actions: [_blockUser()]),
-        body: SafeArea(child: _switchView ? const StickersView() : _bodyView()),
+        body: GestureDetector(
+            onTap: () => _toggleStickerOff(false),
+            child: SafeArea(
+                child: _switchView ? const StickersView() : _bodyView())),
       ),
     );
   }
@@ -141,11 +145,21 @@ class _MessageScreenState extends State<MessageScreen> {
                 addMessage: () => _addMessage(),
                 showGeneralDialog: (value) => _showDialog(value),
                 onMenuPressed: (option) => _showDialog(''),
+                showStickerDialog: (val) => _toggleStickerOff(val),
+                toggleSticekrDialog: _sticker,
+                pickImages: () => _showDialog(''),
               ),
             ),
           )
         ],
       );
+
+  bool _sticker = false;
+
+  void _toggleStickerOff(bool val) {
+    setState(() => _sticker = val);
+    FocusScope.of(context).unfocus();
+  }
 
   void _addMessage() async {
     await _chatProvider!.addMessageToLiveDB(_profileProvider!.user!.id!,
@@ -179,7 +193,8 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Widget _getTitleWidget() => GestureDetector(
-        onTap: () async {},
+        onTap: () =>
+            PageRouter.gotoWidget(OtherProfile(widget.user!.id!), context),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
