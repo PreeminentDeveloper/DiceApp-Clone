@@ -62,12 +62,10 @@ class InviteService {
       required int perPage,
       required String userID}) async {
     try {
-      logger.d(userID);
       final result = await _graphQLClient.client.query(QueryOptions(
           fetchPolicy: FetchPolicy.networkOnly,
           document: gql(InviteGQL.listConnectionRequest),
           variables: {"pageNo": pageNumber, "perPage": 20, "userId": userID}));
-      logger.d(result.data);
 
       return ConnectionRequestResponse.fromJson(result.data!);
     } catch (e) {

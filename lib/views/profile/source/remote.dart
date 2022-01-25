@@ -79,7 +79,6 @@ class ProfileService {
       final _result = await _graphQLClient.client.mutate(MutationOptions(
           document: gql(_model.requestConnection(
               message: msg, requesterId: myID, userId: friendsID))));
-      logger.d(_result.data);
     } catch (e) {
       logger.e(e);
     }

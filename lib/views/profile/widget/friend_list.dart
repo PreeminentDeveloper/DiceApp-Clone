@@ -31,7 +31,10 @@ class FriendList extends StatelessWidget {
         child: Row(
           children: [
             GestureDetector(
-              onTap: ignoreUser,
+              onTap: () {
+                _profileProvider?.ignoreUser(
+                    receiverID: listData?.requester?.id);
+              },
               child: SvgPicture.asset(
                 "assets/remove.svg",
                 height: 20.h,
