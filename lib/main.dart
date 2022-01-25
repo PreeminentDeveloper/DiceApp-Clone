@@ -9,6 +9,7 @@ import 'core/navigation/routes.dart';
 import 'core/network/url_config.dart';
 import 'core/provider/get_provider.dart';
 import 'core/util/injection_container.dart';
+import 'views/home/camera/camera_screen.dart';
 import 'views/home/home_screen.dart';
 
 
@@ -35,8 +36,8 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(primarySwatch: Colors.green),
             routes: Routes.getRoutes,
             home: SessionManager.instance.authLogging
-                ? HomeScreen()
-                : const SignInSplashScreen(),
+                ? CameraPictureScreen()
+                :  CameraPictureScreen(),
           );
         },
       ),

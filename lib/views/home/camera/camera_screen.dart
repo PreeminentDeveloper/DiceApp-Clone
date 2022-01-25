@@ -76,6 +76,23 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
               }
             },
           ),
+          //      Align(x
+          //   alignment: Alignment.bottomCenter,
+          //   child: Container(
+          //     height: 120,
+          //     width: double.infinity,
+          //     padding: EdgeInsets.all(15),
+          //     color: Colors.black,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.start,
+          //       children: <Widget>[
+          //         _cameraToggleRowWidget(),
+          //         _cameraControlWidget(context),
+          //         Spacer()
+          //       ],
+          //     ),
+          //   ),
+          // ),
           CameraButtongs(
             onClose: () => PageRouter.goBack(context),
             onCapture: () => _takePicture(),
@@ -117,21 +134,16 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
   }
 
   Widget _cameraWidget() {
-    // If the Future is complete, display the preview.
     final size = MediaQuery.of(context).size;
-    final deviceRatio = size.width / size.height;
-    final xScale = _controller!.value.aspectRatio / deviceRatio;
-// Modify the yScale if you are in Landscape
-    final double yScale = 1;
 
-    return Container(
-        child: AspectRatio(
-      aspectRatio: deviceRatio,
-      child: Transform(
-        alignment: Alignment.center,
-        transform: Matrix4.diagonal3Values(xScale / 1.5, yScale, .5),
-        child: CameraPreview(_controller!),
+    return Transform.scale(
+      scale: _controller!.value.aspectRatio * 9 / 12,
+      child: Center(
+        child: Container(
+            height: size.height,
+            alignment: Alignment.center,
+            child: Center(child: CameraPreview(_controller!))),
       ),
-    ));
+    );
   }
 }
