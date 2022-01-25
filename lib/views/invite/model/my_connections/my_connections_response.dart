@@ -4,7 +4,7 @@ class MyConnectionResponse {
 
   MyConnectionResponse({this.typename, this.listConnections});
 
-  MyConnectionResponse.fromJson(Map<String, dynamic> json) {
+  MyConnectionResponse.fromJson(json) {
     typename = json["__typename"];
     listConnections = json["listConnections"] == null
         ? null
@@ -41,7 +41,7 @@ class ListConnections {
       this.prevPage,
       this.listOfData});
 
-  ListConnections.fromJson(Map<String, dynamic> json) {
+  ListConnections.fromJson(json) {
     typename = json["__typename"];
     firstPage = json["firstPage"];
     hasNext = json["hasNext"];
@@ -88,7 +88,7 @@ class ListOfData {
       this.connection,
       this.photo});
 
-  ListOfData.fromJson(Map<String, dynamic> json) {
+  ListOfData.fromJson(json) {
     typename = json["__typename"];
     name = json["name"];
     id = json["id"];
@@ -118,7 +118,7 @@ class Photo {
 
   Photo({this.hostname, this.type, this.url});
 
-  Photo.fromJson(Map<String, dynamic> json) {
+  Photo.fromJson(json) {
     hostname = json["hostname"];
     type = json["type"];
     url = json["url"];

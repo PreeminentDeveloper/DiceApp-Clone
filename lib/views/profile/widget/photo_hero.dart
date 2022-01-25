@@ -13,6 +13,7 @@ class DetailScreen extends StatelessWidget {
           backgroundColor: DColors.white,
           elevation: 0.5,
           iconTheme: const IconThemeData(color: DColors.accentColor),
+          automaticallyImplyLeading: false,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(50.0),
             child: Container(

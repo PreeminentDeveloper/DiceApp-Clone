@@ -41,6 +41,8 @@ class AuthService {
               as Map<String, dynamic>;
       SessionManager.instance.authToken =
           _otpResponse.verifyOtp?.authSession?.token;
+      SessionManager.instance.authLogging = true;
+      
       return OtpResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

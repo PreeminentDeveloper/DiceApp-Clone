@@ -177,7 +177,7 @@ class _ChangeUsernameState extends State<ChangeUsername> {
       return false;
     }
     if (_username.contains(RegExp(r'[A-Z]'))) {
-      output = 'Username can\'t contain Upper case letters';
+      output = 'Username can\'t contain upper case letters';
       _result = true;
       setState(() {});
       return false;

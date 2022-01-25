@@ -32,8 +32,8 @@ class _OtherProfileState extends State<OtherProfile> {
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _profileProvider?.getMyFriendsProfile(widget.id);
-    // Provider.of<HomeProvider>(context, listen: false)
-    //     .listConversations(pageNumber: 1, search: '', userID: widget.id);
+    Provider.of<HomeProvider>(context, listen: false)
+        .listConversations(pageNumber: 1, search: '', userID: widget.id);
     super.initState();
   }
 

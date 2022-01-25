@@ -25,6 +25,18 @@ class ProfileProvider extends ChangeNotifier {
     if (notifyListeners) this.notifyListeners();
   }
 
+  void getMyProfile() async {
+    try {
+      getUsersInformations();
+      final _response = await _profileService
+          .getUsersProfile(ProfileSetupModel(id: user?.id), isMyProfile: true);
+      getUserDataResponse = _response;
+    } catch (e) {
+      logger.e(e);
+    }
+    notifyListeners();
+  }
+
   void uploadFile(File? file) async {
     try {
       profileEnum = ProfileEnum.busy;

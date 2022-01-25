@@ -41,7 +41,6 @@ class InviteService {
           "userId": userID
         }),
       );
-      logger.d(result.data!);
       return MyConnectionResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
@@ -65,10 +64,7 @@ class InviteService {
     try {
       final result = await _graphQLClient.client.query(QueryOptions(
           document: gql(InviteGQL.listConnectionRequest),
-          variables: {"pageNo": pageNumber, "perPage": 200, "userId": userID}));
-      logger.d(userID);
-      logger.d(SessionManager.instance.authToken);
-      logger.d(result.data);
+          variables: {"pageNo": pageNumber, "perPage": 20, "userId": userID}));
       return ConnectionRequestResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

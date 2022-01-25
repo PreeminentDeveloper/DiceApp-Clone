@@ -14,7 +14,9 @@ import 'package:provider/provider.dart';
 
 class FriendList extends StatelessWidget {
   final ListData? listData;
-  FriendList(this.listData, {Key? key}) : super(key: key);
+  final Function()? ignoreUser;
+
+  FriendList(this.listData, {this.ignoreUser, Key? key}) : super(key: key);
 
   ProfileProvider? _profileProvider;
   HomeProvider? _homeProvider;
@@ -28,8 +30,12 @@ class FriendList extends StatelessWidget {
         margin: EdgeInsets.all(SizeConfig.appPadding!),
         child: Row(
           children: [
-            SvgPicture.asset(
-              "assets/remove.svg",
+            GestureDetector(
+              onTap: ignoreUser,
+              child: SvgPicture.asset(
+                "assets/remove.svg",
+                height: 20.h,
+              ),
             ),
             const SizedBox(width: 20),
             CircleImageHandler(

@@ -291,6 +291,8 @@ class _MyProfileState extends State<MyProfile> {
 }
 
 void _bottomSheetMore(context, label) {
+  final _listKey = GlobalKey<AnimatedListState>();
+
   showModalBottomSheet(
     context: context,
     enableDrag: true,
@@ -347,16 +349,46 @@ void _bottomSheetMore(context, label) {
                     if (label == "friend"
                     // && provider.myRequest != null
                     )
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemBuilder: (context, item) {
-                          final ListData? friends =
-                              provider.myRequest.elementAt(item);
-                          return FriendList(friends);
-                        },
-                        itemCount: provider.myRequest.length,
-                      )
+                      AnimatedList(
+                          key: _listKey,
+                          shrinkWrap: true,
+                          physics: const ScrollPhysics(),
+                          initialItemCount: provider.myRequest.length,
+                          itemBuilder: (context, index, animation) {
+                            return FriendList(
+                              provider.myRequest[index],
+                              ignoreUser: () {
+                                // provider.myRequest.remove(friends)
+                                //
+                                provider.notifyListeners();
+                              },
+                            );
+                          })
+
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   physics: const ScrollPhysics(),
+                    //   itemBuilder: (context, item) {
+                    //     final ListData? friends =
+                    //         provider.myRequest.elementAt(item);
+                    //     return AnimatedOpacity(
+                    //       opacity:
+                    //           _userID == friends!.requester?.id ? 0.0 : 1.0,
+                    //       duration: Duration(seconds: 500),
+                    //       child: FriendList(
+                    //         friends,
+                    //         ignoreUser: () {
+                    //           _userID = friends.requester?.id;
+                    //           // provider.myRequest.remove(friends)
+                    //           //
+                    //           logger.d(_userID);
+                    //           provider.notifyListeners();
+                    //         },
+                    //       ),
+                    //     );
+                    //   },
+                    //   itemCount: provider.myRequest.length,
+                    // )
                   ],
                 ),
               );

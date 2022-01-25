@@ -35,7 +35,7 @@ class ProfileInfoWindowWidget extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         child: SvgPicture.asset("assets/back.svg",
-                            color: Colors.white)),
+                            height: 20.h, color: Colors.white)),
                     TextWidget(
                       text: "Profile",
                       size: FontSize.s16,
@@ -43,11 +43,16 @@ class ProfileInfoWindowWidget extends StatelessWidget {
                       type: "Objectivity",
                       appcolor: DColors.white,
                     ),
-                    GestureDetector(
-                      onTap: () => null,
-                      child: SvgPicture.asset(
-                        "assets/add-friend.svg",
-                        color: Colors.white,
+                    Visibility(
+                      visible: getProfile?.connection == 'connected',
+                      child: GestureDetector(
+                        onTap: () =>
+                            showSheet(context, child: _pictureModal(context)),
+                        child: SvgPicture.asset(
+                          "assets/add-friend.svg",
+                          height: 20.h,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
@@ -96,7 +101,7 @@ class ProfileInfoWindowWidget extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: SvgPicture.asset("assets/back.svg",
-                        color: Colors.white)),
+                        height: 20.h, color: Colors.white)),
                 TextWidget(
                   text: "Profile",
                   size: FontSize.s16,
@@ -104,12 +109,16 @@ class ProfileInfoWindowWidget extends StatelessWidget {
                   type: "Objectivity",
                   appcolor: DColors.white,
                 ),
-                GestureDetector(
-                  onTap: () =>
-                      showSheet(context, child: _pictureModal(context)),
-                  child: SvgPicture.asset(
-                    "assets/add-friend.svg",
-                    color: Colors.white,
+                Visibility(
+                  visible: getProfile?.connection == 'connected',
+                  child: GestureDetector(
+                    onTap: () =>
+                        showSheet(context, child: _pictureModal(context)),
+                    child: SvgPicture.asset(
+                      "assets/add-friend.svg",
+                      height: 20.h,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

@@ -296,13 +296,13 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
       return false;
     }
     if (_username.contains(RegExp(r'[A-Z]'))) {
-      output = 'Username can\t contain Upper case letters';
+      output = 'Username can\'t contain upper case letters';
       result = true;
       setState(() {});
       return false;
     }
     if (_username.contains(RegExp(r'[!@#$%^&*(),?" " ":{}|<>]'))) {
-      output = 'Username can\t contain special characters';
+      output = 'Username can\'t contain special characters';
       result = true;
       setState(() {});
       return false;

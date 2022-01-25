@@ -78,7 +78,7 @@ class ProfileService {
     try {
       final _result = await _graphQLClient.client.mutate(MutationOptions(
           document: gql(_model.requestConnection(
-              message: msg, requesterId: senderID, userId: receiverID))));
+              message: msg, requesterId: receiverID, userId: senderID))));
       logger.d(_result.data);
     } catch (e) {
       logger.e(e);
