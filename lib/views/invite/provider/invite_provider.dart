@@ -73,7 +73,8 @@ class InviteProvider extends ChangeNotifier {
           pageNumber: pageNumber, perPage: perPage, userID: id!);
 
       /// Call this line to perform an updated request
-      homeProvider!.listConversations(pageNumber: 1, userID: id);
+      homeProvider!
+          .listConversations(pageNumber: 1, userID: id, saveConvo: false);
 
       myRequest = (_response?.listConnectionRequest?.listData ?? []);
       inviteEnum = InviteEnum.idle;

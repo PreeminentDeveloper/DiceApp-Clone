@@ -1,3 +1,6 @@
+// ignore_for_file: unrelated_type_equality_checks
+
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -32,8 +35,8 @@ class _OtherProfileState extends State<OtherProfile> {
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _profileProvider?.getMyFriendsProfile(widget.id);
-    Provider.of<HomeProvider>(context, listen: false)
-        .listConversations(pageNumber: 1, search: '', userID: widget.id);
+    Provider.of<HomeProvider>(context, listen: false).listConversations(
+        pageNumber: 1, search: '', userID: widget.id, saveConvo: false);
     super.initState();
   }
 
@@ -124,7 +127,11 @@ class _OtherProfileState extends State<OtherProfile> {
 
   GestureDetector _requestButton(User? getProfile) {
     return GestureDetector(
-      onTap: () => _makeRequest(getProfile),
+      onTap: () {
+        if (getProfile?.connection?.toLowerCase() == "unconnected") {
+          _makeRequest(getProfile);
+        }
+      },
       child: Container(
         alignment: Alignment.centerRight,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -203,10 +210,10 @@ class _OtherProfileState extends State<OtherProfile> {
       return;
     }
 
-    _showDialog(value);
+    _showDialog();
   }
 
-  void _showDialog(User? user) {
+  void _showDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -219,16 +226,15 @@ class _OtherProfileState extends State<OtherProfile> {
               align: TextAlign.center,
             ),
             content: NoteWindow(
-              justFollow: () => _followThisUser(user?.id),
-              addNote: (String note) => _followThisUser(user?.id, note: note),
+              justFollow: () => _followThisUser(),
+              addNote: (String note) => _followThisUser(note: note),
             ),
           );
         });
   }
 
-  _followThisUser(String? receiverID, {String? note}) {
-    _profileProvider?.requestConnection(msg: note, receiverID: receiverID);
-    _profileProvider?.getMyFriendsProfile(receiverID!);
+  _followThisUser({String? note}) {
+    _profileProvider?.requestConnection(msg: note, friendsID: widget.id);
+    _profileProvider?.getMyFriendsProfile(widget.id);
   }
 }
-// 9999000209

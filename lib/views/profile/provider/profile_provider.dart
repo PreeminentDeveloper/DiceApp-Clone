@@ -84,10 +84,10 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void requestConnection({String? msg, required String? receiverID}) async {
+  void requestConnection({String? msg, required String? friendsID}) async {
     try {
       await _profileService.requestConnection(
-          msg: msg, senderID: user!.id!, receiverID: receiverID);
+          msg: msg, myID: user!.id!, friendsID: friendsID);
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;

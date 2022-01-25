@@ -49,9 +49,7 @@ class ChatListWidget extends StatelessWidget {
     return Slidable(
       controller: slidableController,
       dismissal: SlidableDismissal(
-        child: const SlidableDrawerDismissal(),
-        onDismissed: onDismissed,
-      ),
+          child: const SlidableDrawerDismissal(), onDismissed: onDismissed),
       actionPane: const SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       actions: [

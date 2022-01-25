@@ -22,12 +22,12 @@ class HomeProvider extends ChangeNotifier {
 
   HomeProvider(this._homeService);
 
-  void listConversations({
-    required int pageNumber,
-    int perPage = 20,
-    String? search,
-    required String userID,
-  }) async {
+  void listConversations(
+      {required int pageNumber,
+      int perPage = 20,
+      String? search,
+      required String userID,
+      bool saveConvo = true}) async {
     try {
       if (list!.isEmpty) homeEnum = HomeEnum.busy;
       final _response = await _homeService.listConvo(
@@ -46,8 +46,7 @@ class HomeProvider extends ChangeNotifier {
             user: listData.users));
         notifyListeners();
       }).toList();
-
-      listOfConversationsDao!.myconversations(conversationList!);
+      if (saveConvo) listOfConversationsDao!.myconversations(conversationList!);
       homeEnum = HomeEnum.idle;
 
       notifyListeners();
