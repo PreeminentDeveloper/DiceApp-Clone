@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:flutter/material.dart';
 
 import 'widget/bottom_button.dart';
@@ -126,10 +127,10 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
 
       // Attempt to take a picture and get the file `image`
       // where it was saved.
-      final image = await _controller?.takePicture();
+      final _image = await _controller?.takePicture();
+      logger.d(_image);
     } catch (e) {
-      // If an error occurs, log the error to the console.
-      print(e);
+      logger.e(e);
     }
   }
 
