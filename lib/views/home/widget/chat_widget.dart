@@ -52,7 +52,7 @@ class ChatListWidget extends StatelessWidget {
         child: const SlidableDrawerDismissal(),
         onDismissed: onDismissed,
       ),
-      actionPane: const SlidableDrawerActionPane(),
+      actionPane: const SlidableScrollActionPane(),
       actionExtentRatio: 0.25,
       actions: [
         SlideAction(

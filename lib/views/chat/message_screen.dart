@@ -2,18 +2,13 @@
 
 import 'dart:io';
 
-import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
-import 'package:dice_app/core/event_bus/events/online_event.dart';
-import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
-import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
-import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
@@ -22,19 +17,14 @@ import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-import 'package:phoenix_socket/phoenix_socket.dart';
 
 import 'data/models/chat_menus.dart';
-import 'data/models/local_chats_model.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
@@ -80,8 +70,10 @@ class _MessageScreenState extends State<MessageScreen> {
 
   ///Auto scroll chat to bottom of the list
   void _scrollDown() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+    }
   }
 
   @override

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
-import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
@@ -11,13 +10,11 @@ import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'bloc/chat_bloc.dart';
 import 'data/models/local_chats_model.dart';
 import 'data/sources/chat_dao.dart';
 import 'widget/receiver.dart';
@@ -26,8 +23,9 @@ import 'widget/texters_info_widget.dart';
 import 'widget/texters_preview.dart';
 
 class ThirdPartyChatViewScreen extends StatefulWidget {
-  final data, id, conversationData;
-  ThirdPartyChatViewScreen({this.data, this.id, this.conversationData});
+  final String conversationId;
+  const ThirdPartyChatViewScreen(this.conversationId, {Key? key})
+      : super(key: key);
 
   @override
   _ThirdPartyChatViewScreenState createState() =>
@@ -41,10 +39,8 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
   bool _animateValue = false;
   bool _paginate = false;
 
-  final _chatBloc = ChatBloc(inject());
   ProfileProvider? _profileProvider;
   HomeProvider? _homeProvider;
-
   List<LocalChatModel> _localChats = [];
 
   @override
@@ -52,15 +48,7 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
     _prepareAnimation();
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
-    _fetchConversations();
     super.initState();
-  }
-
-  void _fetchConversations() {
-    _chatBloc.add(ListChatEvent(
-        pageIndex: 1,
-        userID: _profileProvider?.user?.id,
-        conversationID: _homeProvider?.conversationID));
   }
 
   void _prepareAnimation() {
@@ -100,66 +88,60 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
           child: SafeArea(
             child: Stack(
               children: [
-                BlocListener<ChatBloc, ChatState>(
-                  bloc: _chatBloc,
-                  listener: (context, state) async {
-                    if (state is ChatLoadingState) {}
-                    if (state is ChatSuccessState) {}
-                    if (state is ChatFailedState) {}
-                  },
-                  // child: ValueListenableBuilder(
-                  //     valueListenable: chatDao!.getListenable()!,
-                  //     builder: (BuildContext context, Box<dynamic> value,
-                  //         Widget? child) {
-                  //       // _localChats = chatDao!.convert(value).toList();
+                ValueListenableBuilder(
+                    valueListenable:
+                        chatDao!.getListenable(widget.conversationId)!,
+                    builder: (BuildContext context, Box<dynamic> value,
+                        Widget? child) {
+                      _localChats = chatDao!.convert(value).toList();
 
-                  //       return NotificationListener<ScrollEndNotification>(
-                  //         // onNotification: (scrollEnd) {
-                  //         //   final metrics = scrollEnd.metrics;
-                  //         //   if (metrics.atEdge) {
-                  //         //     bool isTop = metrics.pixels == 0;
-                  //         //     if (isTop) {
-                  //         //       _paginate = false;
-                  //         //     } else {
-                  //         //       _paginate = true;
-                  //         //     }
-                  //         //     setState(() {});
-                  //         //   }
-                  //         //   return true;
-                  //         // },
-                  //         child: SingleChildScrollView(
-                  //           key: const PageStorageKey<String>('chat'),
-                  //           child: Column(
-                  //             children: [
-                  //               SizedBox(height: 22.h),
-                  //               Row(
-                  //                 children: [
-                  //                   Expanded(child: CustomeDivider()),
-                  //                   TextWidget(
-                  //                     text: 'Today',
-                  //                     type: "Circular",
-                  //                     size: FontSize.s12,
-                  //                     appcolor: DColors.lightGrey,
-                  //                   ),
-                  //                   Expanded(child: CustomeDivider()),
-                  //                 ],
-                  //               ),
-                  //               SizedBox(height: 22.h),
-                  //               ..._localChats
-                  //                   .map((chat) => chat.userID ==
-                  //                           _profileProvider?.user?.id
-                  //                       ? SenderSide(
-                  //                           chat: chat, deleteCallback: () {})
-                  //                       : ReceiverSide(
-                  //                           chat: chat, deleteCallback: () {}))
-                  //                   .toList(),
-                  //               SizedBox(height: 40.h)
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //     }),
-                ),
+                      return NotificationListener<ScrollEndNotification>(
+                        // onNotification: (scrollEnd) {
+                        //   final metrics = scrollEnd.metrics;
+                        //   if (metrics.atEdge) {
+                        //     bool isTop = metrics.pixels == 0;
+                        //     if (isTop) {
+                        //       _paginate = false;
+                        //     } else {
+                        //       _paginate = true;
+                        //     }
+                        //     setState(() {});
+                        //   }
+                        //   return true;
+                        // },
+                        child: SingleChildScrollView(
+                          key: const PageStorageKey<String>('chat'),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 22.h),
+                              Row(
+                                children: [
+                                  Expanded(child: CustomeDivider()),
+                                  TextWidget(
+                                    text: 'Today',
+                                    type: "Circular",
+                                    size: FontSize.s12,
+                                    appcolor: DColors.lightGrey,
+                                  ),
+                                  Expanded(child: CustomeDivider()),
+                                ],
+                              ),
+                              SizedBox(height: 22.h),
+                              ..._localChats
+                                  .map((chat) =>
+                                      chat.userID == _profileProvider?.user?.id
+                                          ? SenderSide(
+                                              chat: chat, deleteCallback: () {})
+                                          : ReceiverSide(
+                                              chat: chat,
+                                              deleteCallback: () {}))
+                                  .toList(),
+                              SizedBox(height: 40.h)
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
                 TextersInfoWidget(_animateValue, _animation!),
                 _getBottomStackedView(),
               ],

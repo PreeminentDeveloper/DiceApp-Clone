@@ -1,6 +1,5 @@
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
-import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/message_screen.dart';
@@ -110,9 +109,10 @@ class _OtherProfileState extends State<OtherProfile> {
                     size: FontSize.s12,
                   ),
                   SizedBox(height: 16.h),
-                  homeProvider.list!.isEmpty
+                  homeProvider.conversationList!.isEmpty
                       ? const NotAChattyUser()
-                      : const FriendsChat()
+                      : FriendsChat(profile
+                          .getUserDataResponse?.getProfile?.conversation["id"])
                 ],
               );
             },
