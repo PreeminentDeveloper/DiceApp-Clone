@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
@@ -12,6 +13,7 @@ import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
+import 'package:dice_app/views/home/camera/camera_screen.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/settings/provider/setup_provider.dart';
@@ -148,6 +150,10 @@ class _MessageScreenState extends State<MessageScreen> {
                 showStickerDialog: (val) => _toggleStickerOff(val),
                 toggleSticekrDialog: _sticker,
                 pickImages: () => _showDialog(''),
+                takePicture: () => PageRouter.gotoWidget(
+                    CameraPictureScreen(
+                        user: widget.user, convoID: widget.conversationID),
+                    context),
               ),
             ),
           )

@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
             headerSliverBuilder: (context, innerBoxScrolled) {
               return <Widget>[
                 SliverAppBar(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
                   floating: true,
                   elevation: 1,
                   pinned: true,

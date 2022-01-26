@@ -32,24 +32,27 @@ class ProfileWindow extends StatelessWidget {
             ),
             SizedBox(width: 15.w),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextWidget(
-                    text: provider.user?.name ?? '',
-                    size: FontSize.s14,
-                    weight: FontWeight.w700,
-                    appcolor: DColors.mildDark,
-                  ),
-                  SizedBox(height: SizeConfig.sizeExtraSmall),
-                  TextWidget(
-                    text: provider.user?.bio ?? 'About...',
-                    size: FontSize.s12,
-                    weight: FontWeight.w500,
-                    appcolor: DColors.grey,
-                  )
-                ],
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextWidget(
+                      text: provider.user?.name ?? '',
+                      size: FontSize.s14,
+                      weight: FontWeight.w700,
+                      appcolor: DColors.mildDark,
+                    ),
+                    SizedBox(height: SizeConfig.sizeExtraSmall),
+                    TextWidget(
+                      text: provider.user?.bio ?? 'About...',
+                      size: FontSize.s12,
+                      weight: FontWeight.w500,
+                      appcolor: DColors.grey,
+                    )
+                  ],
+                ),
               ),
             ),
             GestureDetector(

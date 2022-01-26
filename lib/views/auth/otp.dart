@@ -1,6 +1,5 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
-import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
@@ -46,12 +45,11 @@ class _OTPState extends State<OTP> {
                 setState(() => _loadingState = false);
                 if (state.response?.verifyOtp?.authSession?.user?.status ==
                     "onboarding") {
-                  // Todo:=> Proceed
                   PageRouter.gotoWidget(Birthday(), context);
                 } else {
                   /// cache login status here if user is not a new user
-                  // SessionManager.instance.authLogging = true;
-                  PageRouter.gotoWidget(ConnectFriends(), context,
+                  SessionManager.instance.authLogging = true;
+                  PageRouter.gotoWidget(const ConnectFriends(), context,
                       clearStack: true);
                 }
               }

@@ -4,6 +4,17 @@ class LoginModel {
 
   LoginModel(this.phone, this.deviceId);
 
+  String beginRegister() {
+    return """
+      mutation{
+          beginRegisteration(phone: "$phone", deviceId: "$deviceId"){
+            phoneVerificationObject{
+              phone
+            }
+          }
+      }
+    """;
+  }
   String beginLogin() {
     return """
       mutation{

@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/pallets.dart';
+import 'package:dice_app/views/home/camera/camera_screen.dart';
 import 'package:dice_app/views/widgets/pop_menu/items.dart';
 import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/pop_menu_options.dart';
@@ -19,6 +21,7 @@ class ChatEditBox extends StatelessWidget {
   final Function(PopMenuOptions option)? onMenuPressed;
   final Function(bool v)? showStickerDialog;
   final Function()? pickImages;
+  final Function()? takePicture;
 
   const ChatEditBox(
       {Key? key,
@@ -29,6 +32,7 @@ class ChatEditBox extends StatelessWidget {
       @required this.showGeneralDialog,
       @required this.onMenuPressed,
       @required this.pickImages,
+      this.takePicture,
       this.showStickerDialog,
       this.toggleSticekrDialog = false})
       : super(key: key);
@@ -108,10 +112,13 @@ class ChatEditBox extends StatelessWidget {
                           child: SvgPicture.asset("assets/add.svg")),
                     ),
                   if (!isEnabled!)
-                    Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        child: SvgPicture.asset("assets/camera.svg")),
+                    GestureDetector(
+                      onTap: takePicture,
+                      child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          child: SvgPicture.asset("assets/camera.svg")),
+                    ),
                 ],
               )),
         ],
