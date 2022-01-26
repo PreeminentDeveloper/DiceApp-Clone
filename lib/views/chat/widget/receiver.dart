@@ -5,6 +5,7 @@ import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/data/models/chat_menus.dart';
 import 'package:dice_app/views/chat/data/models/local_chats_model.dart';
 import 'package:dice_app/views/widgets/image_loader.dart';
+import 'package:dice_app/views/widgets/pop_menu/custom_pop_menu.dart';
 import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,6 +50,7 @@ class ReceiverSide extends StatelessWidget {
                   height: 1.6,
                 )),
             menuItems: ChatMenu.chatMenu(),
+            pressType: PressType.longPress,
             menuCallback: (option) {
               if (ChatOptions.delete == option) {
                 deleteCallback!();

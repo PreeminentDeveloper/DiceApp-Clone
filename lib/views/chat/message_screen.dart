@@ -166,6 +166,7 @@ class _MessageScreenState extends State<MessageScreen> {
     await _chatProvider!.addMessageToLiveDB(_profileProvider!.user!.id!,
         widget.conversationID, _messageController.text);
     _messageController.text = '';
+    isEnabled = false;
     setState(() {});
   }
 

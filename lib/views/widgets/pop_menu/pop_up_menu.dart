@@ -16,11 +16,13 @@ class PopMenuWidget extends StatelessWidget {
   final Widget? primaryWidget;
   List<dynamic>? menuItems;
   Function(dynamic)? menuCallback;
+  PressType? pressType;
 
   PopMenuWidget(
       {Key? key,
       @required this.primaryWidget,
       @required this.menuItems,
+      this.pressType = PressType.singleClick,
       this.menuCallback})
       : super(key: key);
 
@@ -66,7 +68,7 @@ class PopMenuWidget extends StatelessWidget {
           ),
         ),
       ),
-      pressType: PressType.singleClick,
+      pressType: pressType,
       verticalMargin: -1,
       controller: controller,
     );
