@@ -15,7 +15,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class FriendsChat extends StatelessWidget {
-  const FriendsChat({Key? key}) : super(key: key);
+  final String conversationId;
+  const FriendsChat(this.conversationId, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,69 +41,78 @@ class FriendsChat extends StatelessWidget {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    ...provider.list!
-                        .map((user) => GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () => PageRouter.gotoWidget(
-                                  ThirdPartyChatViewScreen(), context,
-                                  animationType:
-                                      PageTransitionType.bottomToTop),
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 50.4.w),
-                                child: Row(
-                                  children: [
-                                    CircleImageHandler(
-                                      'https://${user.photo?.hostname}/${user.photo?.url}',
-                                      radius: 20,
-                                      showInitialText:
-                                          user.photo?.url?.isEmpty ?? true,
-                                      initials:
-                                          Helpers.getInitials(user.name ?? ''),
-                                    ),
-                                    SizedBox(width: 15.w),
-                                    Expanded(
-                                        child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        TextWidget(
-                                          text: user.name ?? 'ad',
-                                          size: FontSize.s16,
-                                          weight: FontWeight.normal,
-                                          align: TextAlign.left,
-                                          type: "Objectivity",
+                    ...provider.conversationList!
+                        .map((list) =>
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                              ...list.user!
+                                  .map((user) => GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () => PageRouter.gotoWidget(
+                                            ThirdPartyChatViewScreen(
+                                                conversationId),
+                                            context,
+                                            animationType:
+                                                PageTransitionType.bottomToTop),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 50.4.w),
+                                          child: Row(
+                                            children: [
+                                              CircleImageHandler(
+                                                'https://${user.photo?.hostname}/${user.photo?.url}',
+                                                radius: 20,
+                                                showInitialText:
+                                                    user.photo?.url?.isEmpty ??
+                                                        true,
+                                                initials: Helpers.getInitials(
+                                                    user.name ?? ''),
+                                              ),
+                                              SizedBox(width: 15.w),
+                                              Expanded(
+                                                  child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  TextWidget(
+                                                    text: user.name ?? 'ad',
+                                                    size: FontSize.s16,
+                                                    weight: FontWeight.normal,
+                                                    align: TextAlign.left,
+                                                    type: "Objectivity",
+                                                  ),
+                                                  SizedBox(height: 3.h),
+                                                  TextWidget(
+                                                    text: user.bio ?? '',
+                                                    size: FontSize.s12,
+                                                    align: TextAlign.left,
+                                                    type: "Objectivity",
+                                                  ),
+                                                ],
+                                              )),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  TextWidget(
+                                                    text: '21',
+                                                    size: FontSize.s12,
+                                                    appcolor:
+                                                        DColors.primaryColor,
+                                                  ),
+                                                  SizedBox(width: 15.w),
+                                                  SvgPicture.asset(
+                                                    Assets.eye,
+                                                    color: DColors.primaryColor,
+                                                    height: 10.h,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(height: 3.h),
-                                        TextWidget(
-                                          text: user.bio ?? '',
-                                          size: FontSize.s12,
-                                          align: TextAlign.left,
-                                          type: "Objectivity",
-                                        ),
-                                      ],
-                                    )),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        TextWidget(
-                                          text: '21',
-                                          size: FontSize.s12,
-                                          appcolor: DColors.primaryColor,
-                                        ),
-                                        SizedBox(width: 15.w),
-                                        SvgPicture.asset(
-                                          Assets.eye,
-                                          color: DColors.primaryColor,
-                                          height: 10.h,
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ))
+                                      ))
+                                  .toList()
+                            ]))
                         .toList(),
                     SizedBox(height: 11.4.h),
                     Padding(

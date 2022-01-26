@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:contacts_service/contacts_service.dart';
-import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
@@ -46,9 +43,9 @@ class _InviteContactsState extends State<InviteContacts> {
       }
     }
     // print(phone.map((val) => (val.toString())));
-    List<String> t = ["+23499990000127", "+23499990000124"];
+    // List<String> t = ["+23499990000127", "+23499990000124"];
     setState(() {});
-    _inviteProvider?.checkIfConnections(t);
+    _inviteProvider?.checkIfConnections(phone);
     // }
   }
 
