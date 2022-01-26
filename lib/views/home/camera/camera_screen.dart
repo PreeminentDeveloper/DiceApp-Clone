@@ -1,6 +1,8 @@
 import 'package:camera/camera.dart';
+import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/camera/widget/display_image.dart';
 import 'package:flutter/material.dart';
 
 import 'widget/bottom_button.dart';
@@ -9,10 +11,14 @@ import 'widget/bottom_button.dart';
 class CameraPictureScreen extends StatefulWidget {
   const CameraPictureScreen({
     Key? key,
-    @required this.camera,
+    this.camera,
+    @required this.user,
+    @required this.convoID,
   }) : super(key: key);
 
   final CameraDescription? camera;
+  final String? convoID;
+  final User? user;
 
   @override
   CameraPictureScreenState createState() => CameraPictureScreenState();
@@ -77,23 +83,6 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
               }
             },
           ),
-          //      Align(x
-          //   alignment: Alignment.bottomCenter,
-          //   child: Container(
-          //     height: 120,
-          //     width: double.infinity,
-          //     padding: EdgeInsets.all(15),
-          //     color: Colors.black,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.start,
-          //       children: <Widget>[
-          //         _cameraToggleRowWidget(),
-          //         _cameraControlWidget(context),
-          //         Spacer()
-          //       ],
-          //     ),
-          //   ),
-          // ),
           CameraButtongs(
             onClose: () => PageRouter.goBack(context),
             onCapture: () => _takePicture(),
@@ -128,7 +117,13 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
       // Attempt to take a picture and get the file `image`
       // where it was saved.
       final _image = await _controller?.takePicture();
-      logger.d(_image);
+      PageRouter.gotoWidget(
+          DisplayPictureScreen(
+              object: ImageObject(
+                  path: _image!.path,
+                  conversationID: widget.convoID,
+                  user: widget.user)),
+          context);
     } catch (e) {
       logger.e(e);
     }

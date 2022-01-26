@@ -30,7 +30,7 @@ class ChatEditBox extends StatelessWidget {
       @required this.onMenuPressed,
       @required this.pickImages,
       this.showStickerDialog,
-      this.toggleSticekrDialog})
+      this.toggleSticekrDialog = false})
       : super(key: key);
 
   @override
@@ -43,7 +43,7 @@ class ChatEditBox extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Visibility(
-            visible: toggleSticekrDialog!,
+            visible: toggleSticekrDialog ?? false,
             child: _stickerDialog(),
           ),
           Container(
@@ -64,7 +64,7 @@ class ChatEditBox extends StatelessWidget {
                       onChanged: onChanged,
                       controller: msgController,
                       maxLines: null,
-                      onTap: () => showStickerDialog!(false),
+                      onTap: () => showStickerDialog ?? (false),
                       decoration: const InputDecoration(
                         hintText: "Type a message...",
                         // fillColor: DColors.white,

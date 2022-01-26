@@ -125,11 +125,17 @@ class _MessageScreenState extends State<MessageScreen> {
               return ListView(
                 controller: _scrollController,
                 children: [
-                  ..._response
-                      .map((chat) => chat.userID == _profileProvider?.user?.id
-                          ? SenderSide(chat: chat, deleteCallback: () {})
-                          : ReceiverSide(chat: chat, deleteCallback: () {}))
-                      .toList(),
+                  ...List.generate(_response.length, (index) {
+                    final chat = _response[index];
+
+                    return chat.userID == _profileProvider?.user?.id
+                        ? SenderSide(
+                            chat: chat,
+                            deleteCallback: () => _removeMessage(index))
+                        : ReceiverSide(
+                            chat: chat,
+                            deleteCallback: () => _removeMessage(index));
+                  }).toList(),
                   SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
                 ],
               );
@@ -167,6 +173,11 @@ class _MessageScreenState extends State<MessageScreen> {
         widget.conversationID, _messageController.text);
     _messageController.text = '';
     isEnabled = false;
+    setState(() {});
+  }
+
+  void _removeMessage(int index) {
+    chatDao!.removeSingleItem(index);
     setState(() {});
   }
 

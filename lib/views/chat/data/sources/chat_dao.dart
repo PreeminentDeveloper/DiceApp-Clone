@@ -44,6 +44,10 @@ class ChatDao {
     await _box!.add(localChatModel!.toMap());
   }
 
+  void removeSingleItem(int index) async {
+    await _box!.deleteAt(index);
+  }
+
   List<LocalChatModel> convert(Box box) {
     Map<dynamic, dynamic> raw = Map<dynamic, dynamic>.from(box.toMap());
 

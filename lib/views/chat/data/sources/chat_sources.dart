@@ -24,13 +24,13 @@ class ChatService {
 
   Future<ListOoChatResponse> chatList(
       {int? pageNo = 1,
-      int? perPage = 200,
+      int? perPage = 20,
       String? userID,
       String? conversationID}) async {
     try {
       final result = await _graphQLClient.client.query(QueryOptions(
           document: gql(ChatModel.listMessages),
-          fetchPolicy: FetchPolicy.cacheAndNetwork,
+          fetchPolicy: FetchPolicy.networkOnly,
           variables: {
             "pageNo": pageNo,
             "perPage": perPage,
@@ -38,6 +38,18 @@ class ChatService {
             "conversationId": conversationID
           }));
       return ListOoChatResponse.fromJson(result.data);
+    } catch (e) {
+      logger.e(e);
+      rethrow;
+    }
+  }
+
+  Future<dynamic> deleteMessage(int msgId, String userId) async {
+    try {
+      final _response = await _graphQLClient.client.query(QueryOptions(
+          document: gql(ChatModel.deleteMessage(msgId, userId)),
+          fetchPolicy: FetchPolicy.networkOnly));
+      logger.d(_response.data);
     } catch (e) {
       logger.e(e);
       rethrow;

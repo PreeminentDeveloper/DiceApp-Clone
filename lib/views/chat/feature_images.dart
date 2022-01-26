@@ -146,6 +146,7 @@ class _FeatureImagesState extends State<FeatureImages> {
                 addMessage: () => _pushImage(),
                 showGeneralDialog: (value) => null,
                 onMenuPressed: (option) => null,
+                pickImages: () {},
               ),
             ),
           )

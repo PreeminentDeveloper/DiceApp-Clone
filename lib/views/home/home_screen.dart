@@ -198,7 +198,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   child: _deleteDialog()),
                                               onTapCamera: () async {
                                                 PageRouter.gotoWidget(
-                                                    CameraPictureScreen(),
+                                                    CameraPictureScreen(
+                                                        user: user,
+                                                        convoID: conversation
+                                                            .conversationID),
                                                     context);
                                               },
                                             ))

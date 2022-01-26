@@ -28,4 +28,14 @@ class ChatModel {
     }
   }
   ''';
+
+  static String deleteMessage(int msgId, String userId) {
+    return """
+      mutation{
+          deleteMessage(messages: [$msgId], userId: "$userId"){
+            message
+          }
+      }
+    """;
+  }
 }

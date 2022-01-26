@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 class ConversationList {
   final String? id;
   final String? conversationID;
-  final List<User>? user;
+  List<User>? user = [];
 
   ConversationList({
     this.id,
@@ -40,7 +40,7 @@ class ConversationList {
       conversationID: map['conversationID'],
       user: map['user'] != null
           ? List<User>.from(map['user']?.map((x) => User.fromJson(x)))
-          : null,
+          : [],
     );
   }
 
