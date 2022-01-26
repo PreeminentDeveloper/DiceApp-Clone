@@ -58,6 +58,15 @@ class SetUpProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void blockUser({required String? userID, required String? receiverID}) async {
+    try {
+      await _setUpService.blockUser(userID: userID, receiverID: receiverID);
+    } catch (e) {
+      logger.e(e);
+    }
+    notifyListeners();
+  }
+
   void unblockUser(
       {required String? userID, required String? receiverID}) async {
     try {

@@ -70,6 +70,17 @@ class SetUpService {
     }
   }
 
+  Future<dynamic> blockUser({String? userID, String? receiverID}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document:
+              gql(SetUpGql.block(userId: userID, blockedId: receiverID))));
+      logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
   Future<dynamic> unblockUser({String? userID, String? receiverID}) async {
     try {
       final _result = await _graphQLClient.client.mutate(MutationOptions(

@@ -19,6 +19,7 @@ import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
+import 'package:dice_app/views/settings/provider/setup_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
@@ -243,7 +244,9 @@ class _MessageScreenState extends State<MessageScreen> {
             child: const Icon(Icons.more_horiz, color: DColors.lightGrey)),
         menuItems: ChatMenu.blocUser(),
         menuCallback: (option) {
-          // controller.hideMenu();
+          Provider.of<SetUpProvider>(context, listen: false).blockUser(
+              userID: _profileProvider?.user?.id, receiverID: widget.user?.id);
+          controller.hideMenu();
         },
       );
 

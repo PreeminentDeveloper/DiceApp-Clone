@@ -47,12 +47,12 @@ class PopMenuWidget extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SvgPicture.asset(
-                            item.image ?? '',
-                            color: DColors.grey400,
-                            height: 15,
-                          ),
-                          SizedBox(width: 5.w),
+                          // SvgPicture.asset(
+                          //   item.image ?? '',
+                          //   color: DColors.grey400,
+                          //   height: 15,
+                          // ),
+                          // SizedBox(width: 5.w),
                           TextWidget(
                               text: item.title ?? '',
                               align: TextAlign.left,

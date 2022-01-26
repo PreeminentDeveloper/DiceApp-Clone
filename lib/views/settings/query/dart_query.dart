@@ -50,6 +50,17 @@ class SetUpGql {
     """;
   }
 
+  static String block({String? userId, String? blockedId}) {
+    return """
+      mutation{
+          blockUser(userId: "$userId", blockedId: "$blockedId"){
+            blockedId
+            userId
+          }
+      }
+    """;
+  }
+
   static String unignoreUser({String? userId, String? ignoredId}) {
     return """
       mutation{
