@@ -50,7 +50,7 @@ class _OTPState extends State<OTP> {
                   PageRouter.gotoWidget(Birthday(), context);
                 } else {
                   /// cache login status here if user is not a new user
-                  SessionManager.instance.authLogging = true;
+                  // SessionManager.instance.authLogging = true;
                   PageRouter.gotoWidget(ConnectFriends(), context,
                       clearStack: true);
                 }

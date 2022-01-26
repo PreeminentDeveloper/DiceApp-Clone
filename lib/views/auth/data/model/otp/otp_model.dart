@@ -14,6 +14,7 @@ class OtpModel {
               token
               user{
                 id
+                bio
                 name
                 username
                 phone

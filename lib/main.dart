@@ -1,3 +1,4 @@
+import 'package:dice_app/views/auth/sign_up.dart';
 import 'package:dice_app/views/onboarding/sign_in_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,8 +37,8 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(primarySwatch: Colors.green),
             routes: Routes.getRoutes,
             home: SessionManager.instance.authLogging
-                ? CameraPictureScreen()
-                :  CameraPictureScreen(),
+                ? HomeScreen()
+                :  const SignUp(),
           );
         },
       ),

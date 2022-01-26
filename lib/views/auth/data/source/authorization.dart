@@ -36,13 +36,14 @@ class AuthService {
       final result = await _graphQLClient.client.mutate(MutationOptions(
           document: gql(model.verifyOtp()), onError: (data) => logger.e(data)));
       final _otpResponse = OtpResponse.fromJson(result.data!);
+
       SessionManager.instance.usersData =
           _otpResponse.verifyOtp?.authSession?.user?.toJson()
               as Map<String, dynamic>;
       SessionManager.instance.authToken =
           _otpResponse.verifyOtp?.authSession?.token;
       SessionManager.instance.authLogging = true;
-      
+
       return OtpResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);
