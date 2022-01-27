@@ -13,7 +13,6 @@ import 'core/util/injection_container.dart';
 import 'views/home/camera/camera_screen.dart';
 import 'views/home/home_screen.dart';
 
-
 void main() async {
   await initializeCore(environment: Environment.staging);
   runApp(const MyApp());
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
             routes: Routes.getRoutes,
             home: SessionManager.instance.authLogging
                 ? HomeScreen()
-                :  const SignUp(),
+                : const SignUp(),
           );
         },
       ),

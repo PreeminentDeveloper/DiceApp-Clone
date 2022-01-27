@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/core/util/pallets.dart';
+import 'package:dice_app/views/chat/feature_images.dart';
 import 'package:dice_app/views/home/camera/widget/display_image.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'widget/bottom_button.dart';
 
@@ -88,6 +94,7 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
             onCapture: () => _takePicture(),
             onSwitch: () => _toggleCamera(),
             onVideoRecord: () => _videoRecord(),
+            gallery: () => _pickGallery(),
           )
         ],
       ),
@@ -142,4 +149,36 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
       ),
     );
   }
+
+  List<AssetEntity> results = [];
+
+  _pickGallery() async {
+    final _results = await FlutterGallery.pickGallery(
+        context: context,
+        title: "Dice",
+        color: DColors.primaryColor,
+        limit: 5,
+        maximumFileSize: 100 //Size in megabyte
+        );
+    setState(() => results = _results);
+    final _images = await _convertImages(_results);
+    PageRouter.gotoWidget(
+        FeatureImages(_images, widget.user?.name ?? '', widget.convoID!),
+        context);
+  }
+
+  Future<List<File>> _convertImages(List<AssetEntity> results) async {
+    List<File> _imageFile = [];
+    for (var image in results) {
+      final _imageResponse = await callAsyncFetch(image.file);
+      _imageFile.add(_imageResponse);
+    }
+    setState(() {});
+    return _imageFile;
+  }
+}
+
+callAsyncFetch(res) async {
+  File image = await res; // image file
+  return image;
 }
