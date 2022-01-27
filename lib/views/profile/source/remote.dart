@@ -119,5 +119,17 @@ class ProfileService {
     }
   }
 
-  deletePhoto() {}
+  Future<void> deletePhoto() async {
+    try {
+      final _model = ProfileSetupModel();
+      final _user = await _graphQLClient.client.query(
+        QueryOptions(
+            document: gql(_model.deletePhoto),
+            fetchPolicy: FetchPolicy.networkOnly),
+      );
+      logger.d(_user.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
 }

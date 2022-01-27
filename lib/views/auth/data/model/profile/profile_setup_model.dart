@@ -46,6 +46,7 @@ class ProfileSetupModel {
     }
   }
   ''';
+
   String deletePhoto = '''
   query {
         removeProfilePhoto{
