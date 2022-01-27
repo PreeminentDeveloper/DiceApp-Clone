@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dice_app/views/home/data/model/conversation_list.dart';
+import 'package:dice_app/views/home/data/model/list_of_conversation_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +40,7 @@ class HomeProvider extends ChangeNotifier {
       if (_response.listConversations!.list!.isNotEmpty) {
         conversationList!.clear();
       }
+
       _response.listConversations?.list?.map((listData) {
         conversationList?.add(ConversationList(
             id: DateTime.now().toString(),
@@ -46,6 +48,7 @@ class HomeProvider extends ChangeNotifier {
             user: listData.users));
         notifyListeners();
       }).toList();
+
       if (saveConvo) listOfConversationsDao!.myconversations(conversationList!);
       homeEnum = HomeEnum.idle;
 

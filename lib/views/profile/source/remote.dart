@@ -45,9 +45,8 @@ class ProfileService {
         QueryOptions(
             document: gql(model.getProfile),
             variables: {"id": model.id},
-            fetchPolicy: FetchPolicy.cacheAndNetwork),
+            fetchPolicy: FetchPolicy.networkOnly),
       );
-
       final _data = GetUserDataResponse.fromJson(_user.data);
       if (isMyProfile) {
         SessionManager.instance.usersData =

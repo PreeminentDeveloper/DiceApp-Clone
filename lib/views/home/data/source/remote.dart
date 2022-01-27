@@ -27,6 +27,7 @@ class HomeService {
             },
             fetchPolicy: FetchPolicy.networkOnly),
       );
+
       return ListOfConversationResponse.fromJson(_result.data);
     } catch (exception) {
       logger.e(exception);

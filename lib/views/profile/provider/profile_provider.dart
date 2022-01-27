@@ -91,6 +91,7 @@ class ProfileProvider extends ChangeNotifier {
       final _response = await _profileService
           .getUsersProfile(ProfileSetupModel(id: id), isMyProfile: false);
       getUserDataResponse = _response;
+
       profileEnum = ProfileEnum.idle;
     } catch (e) {
       logger.e(e);

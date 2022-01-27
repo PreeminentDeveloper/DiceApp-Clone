@@ -42,20 +42,23 @@ class FriendsChat extends StatelessWidget {
                   shrinkWrap: true,
                   children: [
                     ...provider.conversationList!
-                        .map((list) =>
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                              ...list.user!
-                                  .map((user) => GestureDetector(
+                        .map((conversation) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ...conversation.user!
+                                    .map(
+                                      (user) => GestureDetector(
                                         behavior: HitTestBehavior.opaque,
                                         onTap: () => PageRouter.gotoWidget(
                                             ThirdPartyChatViewScreen(
-                                                conversationId),
+                                                conversation.conversationID!),
                                             context,
                                             animationType:
                                                 PageTransitionType.bottomToTop),
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 50.4.w),
+                                              horizontal: 50.4.w,
+                                              vertical: 25.h),
                                           child: Row(
                                             children: [
                                               CircleImageHandler(
@@ -110,10 +113,21 @@ class FriendsChat extends StatelessWidget {
                                             ],
                                           ),
                                         ),
-                                      ))
-                                  .toList()
-                            ]))
+                                      ),
+                                    )
+                                    .toList()
+                              ],
+                            ))
                         .toList(),
+                    // ...provider.conversationList!
+                    //     .map((list) =>
+                    //         Column(mainAxisSize: MainAxisSize.min, children: [
+                    //           ...list.user!
+                    //               .map((user) =>
+                    //               .toList()
+                    //         ]))
+                    //     .toList(),
+
                     SizedBox(height: 11.4.h),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),

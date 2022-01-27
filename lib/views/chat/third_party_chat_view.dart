@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
@@ -42,13 +43,30 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
   ProfileProvider? _profileProvider;
   HomeProvider? _homeProvider;
   List<LocalChatModel> _localChats = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     _prepareAnimation();
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    _ensureThatDbIsoOpened();
     super.initState();
+  }
+
+  void _ensureThatDbIsoOpened() async {
+    if (chatDao!.getListenable(widget.conversationId) == null) {
+      await chatDao!.openABox(widget.conversationId);
+    }
+    setState(() {});
+  }
+
+  ///Auto scroll chat to bottom of the list
+  void _scrollDown() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+    }
   }
 
   void _prepareAnimation() {
@@ -65,6 +83,10 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollDown());
+    if (chatDao!.getListenable(widget.conversationId) == null) {
+      return Container();
+    }
     return Scaffold(
         appBar: defaultAppBar(
           context,
@@ -89,59 +111,29 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
             child: Stack(
               children: [
                 ValueListenableBuilder(
-                    valueListenable:
-                        chatDao!.getListenable(widget.conversationId)!,
-                    builder: (BuildContext context, Box<dynamic> value,
-                        Widget? child) {
-                      _localChats = chatDao!.convert(value).toList();
+                  valueListenable:
+                      chatDao!.getListenable(widget.conversationId)!,
+                  builder: (BuildContext context, Box<dynamic> value,
+                      Widget? child) {
+                    final _response = chatDao!.convert(value).toList();
+                    return ListView(
+                      controller: _scrollController,
+                      children: [
+                        ...List.generate(_response.length, (index) {
+                          final chat = _response[index];
 
-                      return NotificationListener<ScrollEndNotification>(
-                        // onNotification: (scrollEnd) {
-                        //   final metrics = scrollEnd.metrics;
-                        //   if (metrics.atEdge) {
-                        //     bool isTop = metrics.pixels == 0;
-                        //     if (isTop) {
-                        //       _paginate = false;
-                        //     } else {
-                        //       _paginate = true;
-                        //     }
-                        //     setState(() {});
-                        //   }
-                        //   return true;
-                        // },
-                        child: SingleChildScrollView(
-                          key: const PageStorageKey<String>('chat'),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 22.h),
-                              Row(
-                                children: [
-                                  Expanded(child: CustomeDivider()),
-                                  TextWidget(
-                                    text: 'Today',
-                                    type: "Circular",
-                                    size: FontSize.s12,
-                                    appcolor: DColors.lightGrey,
-                                  ),
-                                  Expanded(child: CustomeDivider()),
-                                ],
-                              ),
-                              SizedBox(height: 22.h),
-                              ..._localChats
-                                  .map((chat) =>
-                                      chat.userID == _profileProvider?.user?.id
-                                          ? SenderSide(
-                                              chat: chat, deleteCallback: () {})
-                                          : ReceiverSide(
-                                              chat: chat,
-                                              deleteCallback: () {}))
-                                  .toList(),
-                              SizedBox(height: 40.h)
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
+                          return chat.userID == _profileProvider?.user?.id
+                              ? SenderSide(
+                                  chat: chat, deleteCallback: () => null)
+                              : ReceiverSide(
+                                  chat: chat, deleteCallback: () => null);
+                        }).toList(),
+                        SizedBox(
+                            height: SizeConfig.getDeviceHeight(context) / 10)
+                      ],
+                    );
+                  },
+                ),
                 TextersInfoWidget(_animateValue, _animation!),
                 _getBottomStackedView(),
               ],
@@ -173,13 +165,13 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
                         text: 'Dice View',
                         appcolor: DColors.black,
                         size: FontSize.s14,
-                        weight: FontWeight.bold,
+                        weight: FontWeight.w400,
                       ),
                       SizedBox(width: 5.w),
                       SvgPicture.asset(
                         Assets.eye,
                         color: DColors.inputBorderColor,
-                        height: 15.h,
+                        height: 10.h,
                       ),
                     ],
                   ),
@@ -204,13 +196,13 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: IconButton(
-                padding: EdgeInsets.only(right: 38.w),
-                onPressed: () => PageRouter.goBack(context),
-                icon: const Icon(Icons.arrow_downward)),
-          )
+          // Align(
+          //   alignment: Alignment.bottomRight,
+          //   child: IconButton(
+          //       padding: EdgeInsets.only(right: 38.w),
+          //       onPressed: () => PageRouter.goBack(context),
+          //       icon: const Icon(Icons.arrow_downward)),
+          // )
         ],
       );
 
