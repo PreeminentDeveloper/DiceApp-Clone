@@ -52,6 +52,19 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deletePhoto() async {
+    try {
+      profileEnum = ProfileEnum.busy;
+      await _profileService.deletePhoto();
+      // getUsersInformations();
+      profileEnum = ProfileEnum.idle;
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
   void updateUsersInfo(BuildContext context, String key, String value) async {
     try {
       profileEnum = ProfileEnum.busy;

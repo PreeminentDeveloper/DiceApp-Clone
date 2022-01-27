@@ -54,7 +54,6 @@ class ChatDao {
     List<LocalChatModel> _value = raw.values
         .map((e) => LocalChatModel.fromMap(json.decode(json.encode(e))))
         .toList();
-
     return _sortedValue(_value);
   }
 

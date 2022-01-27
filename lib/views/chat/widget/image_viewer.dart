@@ -14,8 +14,10 @@ import 'package:video_player/video_player.dart';
 class ImageViewer extends StatefulWidget {
   final dynamic imageMedia;
   final bool video;
+  final bool? isFile;
 
-  const ImageViewer(this.imageMedia, {this.video = false, Key? key})
+  const ImageViewer(this.imageMedia,
+      {this.isFile = false, this.video = false, Key? key})
       : super(key: key);
 
   @override
@@ -55,36 +57,39 @@ class _ImageViewerState extends State<ImageViewer> {
               ))),
       backgroundColor: Colors.black,
       body: Center(
-        child: Hero(
-          tag: widget.imageMedia.url,
-          child: widget.video
-              ? VisibilityDetector(
-                  key: ObjectKey(flickManager),
-                  onVisibilityChanged: (visibility) {
-                    if (visibility.visibleFraction == 0 && this.mounted) {
-                      flickManager?.flickControlManager?.autoPause();
-                    } else if (visibility.visibleFraction == 1) {
-                      flickManager?.flickControlManager?.autoResume();
-                    }
-                  },
-                  child: FlickVideoPlayer(
-                    flickManager: flickManager!,
-                    flickVideoWithControls: const FlickVideoWithControls(
-                      controls: FlickPortraitControls(),
-                    ),
-                    flickVideoWithControlsFullscreen:
-                        const FlickVideoWithControls(
-                      controls: FlickLandscapeControls(),
-                    ),
-                  ),
-                )
-              : ImageLoader(
-                  width: SizeConfig.getDeviceWidth(context),
-                  imageLink:
-                      'https://${widget.imageMedia.hostname}/${widget.imageMedia.url}',
-                  fit: BoxFit.contain),
-        ),
+        child: Hero(tag: widget.imageMedia, child: _displayWidget()),
       ),
     );
+  }
+
+  _displayWidget() {
+    if (widget.video) {
+      return VisibilityDetector(
+        key: ObjectKey(flickManager),
+        onVisibilityChanged: (visibility) {
+          if (visibility.visibleFraction == 0 && this.mounted) {
+            flickManager?.flickControlManager?.autoPause();
+          } else if (visibility.visibleFraction == 1) {
+            flickManager?.flickControlManager?.autoResume();
+          }
+        },
+        child: FlickVideoPlayer(
+          flickManager: flickManager!,
+          flickVideoWithControls: const FlickVideoWithControls(
+            controls: FlickPortraitControls(),
+          ),
+          flickVideoWithControlsFullscreen: const FlickVideoWithControls(
+            controls: FlickLandscapeControls(),
+          ),
+        ),
+      );
+    }
+    if (widget.isFile!) {
+      return Image.file(File(widget.imageMedia));
+    }
+    return ImageLoader(
+        width: SizeConfig.getDeviceWidth(context),
+        imageLink: widget.imageMedia,
+        fit: BoxFit.contain);
   }
 }

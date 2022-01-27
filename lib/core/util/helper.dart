@@ -149,7 +149,7 @@ class Helpers {
   }
 
   static Future<File?> _compressImageFiles(File mFile) async {
-    final _dir = await _findLocalPath();
+    final _dir = await findLocalPath();
     final _targetPath = _dir.absolute.path + "/${_generateKey(15)}.jpg";
     File? _result = await FlutterImageCompress.compressAndGetFile(
         mFile.path, _targetPath,
@@ -158,7 +158,7 @@ class Helpers {
   }
 
 //* getting local path
-  static Future<Directory> _findLocalPath() async {
+  static Future<Directory> findLocalPath() async {
     final directory = Platform.isAndroid
         ? await getExternalStorageDirectory()
         : await getApplicationDocumentsDirectory();

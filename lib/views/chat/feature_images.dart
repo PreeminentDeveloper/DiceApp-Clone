@@ -9,6 +9,8 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/widget/date_picker.dart';
+import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
+import 'package:dice_app/views/chat/provider/chat_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
@@ -18,9 +20,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 import 'package:http_parser/http_parser.dart';
 
 import 'data/models/feature_model.dart';
+import 'data/models/local_chats_model.dart' as local;
 import 'data/models/sending_images.dart';
 import 'widget/chat_field.dart';
 
@@ -110,25 +114,36 @@ class _FeatureImagesState extends State<FeatureImages> {
               CustomeDivider(thickness: .3),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ..._featureModel
-                          .map((file) => _images(file.key,
-                                  selected: _fileName == file.key, onTap: () {
-                                _fileName = file.key;
-                                setState(() {});
-                              }, removeImage: () {
-                                if (widget.results.length == 1) return;
-                                _featureModel.remove(file);
-                                setState(() {});
-                              }))
-                          .toList(),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 4.h),
+                    Visibility(
+                        visible: _isLoading, child: LinearProgressIndicator()),
+                    SizedBox(height: 4.h),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ..._featureModel
+                              .map((file) => _images(file.key,
+                                      selected: _fileName == file.key,
+                                      onTap: () {
+                                    _fileName = file.key;
+                                    setState(() {});
+                                  }, removeImage: () {
+                                    if (widget.results.length == 1) return;
+                                    _featureModel.remove(file);
+                                    setState(() {});
+                                  }))
+                              .toList(),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               )
             ],
@@ -215,32 +230,24 @@ class _FeatureImagesState extends State<FeatureImages> {
     );
   }
 
-  final List<FeatureModel> _sendFeatureModel = [];
-
   ImageSending? _imageSending;
 
   final _networkService = NetworkService(baseUrl: UrlConfig.imageUpload);
-  FeatureModel? _model;
   List<Medias>? medias = [];
   List<Message>? message = [];
+  bool _isLoading = false;
 
   void _pushImage() async {
     final _user = Provider.of<ProfileProvider>(context, listen: false);
+
     if (medias!.isNotEmpty) medias!.clear();
 
     for (int i = 0; i < _featureModel.length; i++) {
       final _feature = _featureModel[i];
-      _model = FeatureModel(
-        message: '',
-        user_id: _user.user?.id,
-        caption: _map[_feature.key],
-        conversation_id: widget.convoId,
-        file: await MultipartFile.fromFile(_feature.key!.path,
-            filename: _feature.key!.path.split("/").last,
-            contentType: MediaType("image", "png")),
-      );
+
       medias?.add(Medias(
         caption: _map[_feature.key],
+        filePath: await _copyFileAndreturnNewFilePath(_feature.key),
         file: MultipartFile.fromBytes(_feature.key!.readAsBytesSync(),
             filename: _feature.key!.path.split("/").last,
             contentType:
@@ -256,15 +263,26 @@ class _FeatureImagesState extends State<FeatureImages> {
             conversationID: widget.convoId,
             userID: _user.user?.id));
 
+
+    chatDao!.saveSingleChat(
+        widget.convoId,
+        local.LocalChatModel(
+            conversationID: widget.convoId,
+            userID: _user.user?.id,
+            messageType: 'media',
+            insertLocalTime: DateTime.now().toString(),
+            imageSending: _imageSending));
+
     try {
-      final _response = await _networkService.call('', RequestMethod.upload,
-          formData: FormData.fromMap(_imageSending!.toJson()));
-      logger.d(_response.data);
+      setState(() => _isLoading = true);
+       await _networkService.call('', RequestMethod.upload,
+          formData:
+              FormData.fromMap(_imageSending!.toJson(addMultipath: true)));
+      setState(() => _isLoading = false);
     } catch (e) {
       logger.e(e);
+      setState(() => _isLoading = false);
     }
-
-    // _sendFeatureModel.map((e) => logger.d(e.toMap())).toList();
   }
 
   void _getCachedValue() {
@@ -273,5 +291,14 @@ class _FeatureImagesState extends State<FeatureImages> {
         TextPosition(offset: _msgController.text.length));
   }
 
-  _formartFileImage(File? key) {}
+  Future<String>? _copyFileAndreturnNewFilePath(File? file) async {
+    try {
+      final _newPath = await Helpers.findLocalPath();
+      final _path = await file!.copy("${_newPath.path} filename.jpg");
+      return _path.path;
+    } catch (e) {
+      logger.e(e);
+      return '';
+    }
+  }
 }

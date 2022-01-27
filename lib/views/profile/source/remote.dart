@@ -118,4 +118,6 @@ class ProfileService {
       logger.e(e);
     }
   }
+
+  deletePhoto() {}
 }

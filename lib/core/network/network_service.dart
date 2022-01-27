@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dio/dio.dart';
 
 import 'api_error.dart';
@@ -100,6 +101,7 @@ class NetworkService {
             //     .fire(
             //     FileUploadProgressEvent(FileUploadProgress(sent, total, tag: classTag)));
           });
+          logger.d(response.data);
           break;
       }
       return response;

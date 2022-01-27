@@ -46,6 +46,23 @@ class ProfileSetupModel {
     }
   }
   ''';
+  String deletePhoto = '''
+  query {
+        removeProfilePhoto{
+        name
+        phone
+        photo
+        status
+        id
+        bio
+        username
+        connection
+        conversation {
+        id
+                    }
+        }
+  }
+  ''';
 
   String updateUserInfo(String key, String value, String userId) {
     return """

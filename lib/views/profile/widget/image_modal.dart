@@ -11,8 +11,13 @@ import 'package:image_picker/image_picker.dart';
 
 class ImageModal extends StatelessWidget {
   final Function(File? file)? fileCallBack;
+  final Function()? deletePhoto;
   final bool? showDeleteButton;
-  const ImageModal({this.fileCallBack, Key? key, this.showDeleteButton = true})
+  const ImageModal(
+      {this.fileCallBack,
+      this.deletePhoto,
+      Key? key,
+      this.showDeleteButton = true})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -34,9 +39,7 @@ class ImageModal extends StatelessWidget {
                     weight: FontWeight.w400,
                     appcolor: DColors.red,
                     align: TextAlign.center,
-                    onTap: () {
-                      PageRouter.goBack(context);
-                    },
+                    onTap: deletePhoto,
                   ),
                   SizedBox(height: 8.h),
                   const Divider(),

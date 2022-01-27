@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:dice_app/core/event_bus/events/chat_event.dart';
+import 'sending_images.dart' as local;
+
 class LocalChatModel {
   final String? conversationID;
   final String? id;
@@ -7,6 +10,9 @@ class LocalChatModel {
   final String? time;
   final String? message;
   final String? insertLocalTime;
+  final String? messageType;
+  local.ImageSending? imageSending;
+  Message? messageFromEvent;
 
   LocalChatModel(
       {this.conversationID,
@@ -14,7 +20,10 @@ class LocalChatModel {
       this.userID,
       this.time,
       this.message,
-      this.insertLocalTime});
+      this.insertLocalTime,
+      this.messageFromEvent,
+      this.messageType,
+      this.imageSending});
 
   Map<String, dynamic> toMap() {
     return {
@@ -24,6 +33,9 @@ class LocalChatModel {
       'time': time,
       'message': message,
       'insertLocalTime': insertLocalTime,
+      'localImage': imageSending?.toJson(),
+      'messageType': messageType,
+      'messageFromEvent': messageFromEvent?.toJson(),
     };
   }
 
@@ -35,6 +47,11 @@ class LocalChatModel {
       time: map['time'],
       message: map['message'],
       insertLocalTime: map['insertLocalTime'],
+      messageType: map['messageType'],
+      imageSending: local.ImageSending.fromMap(map['localImage']),
+      messageFromEvent: map['messageFromEvent'] != null
+          ? Message.fromJson(map['messageFromEvent'])
+          : null,
     );
   }
 

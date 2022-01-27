@@ -37,7 +37,7 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["__typename"] = typename;
+    // data["__typename"] = typename;
     data["connection"] = connection;
     data["name"] = name;
     data["id"] = id;

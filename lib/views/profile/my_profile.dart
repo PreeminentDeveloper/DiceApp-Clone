@@ -105,6 +105,10 @@ class _MyProfileState extends State<MyProfile> {
                                       PageRouter.goBack(context);
                                       _profileProvider?.uploadFile(file);
                                     },
+                                    deletePhoto: () {
+                                      PageRouter.goBack(context);
+                                      _profileProvider?.deletePhoto();
+                                    },
                                   ),
                                 ),
                                 child: Center(

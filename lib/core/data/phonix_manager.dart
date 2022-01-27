@@ -27,7 +27,6 @@ class PhonixManager {
       phoenixChannel?.join();
       phoenixChannel?.messages.listen((event) {
         // presence_state
-
         if (event.event.value == 'presence_state') {
           eventBus.fire(OnlineEvent(event.payload));
         }

@@ -4,11 +4,13 @@ import 'dart:io';
 
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/chat/provider/chat_provider.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
 
 import 'media_option.dart';
 import 'widget/gallery_custom_appbar.dart';
@@ -117,13 +119,13 @@ class _MediaGridState extends State<MediaGrid> {
   Widget build(BuildContext context) {
     selectedMediaCount = 0;
     if (isFetching && allMedia!.isEmpty) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
       body: Column(
         children: [
-          GalleryCustomAppBar(),
+          const GalleryCustomAppBar(),
           Expanded(
             child: NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scroll) {
@@ -131,7 +133,7 @@ class _MediaGridState extends State<MediaGrid> {
               },
               child: GridView.builder(
                   itemCount: allMedia!.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 5),
                   itemBuilder: (BuildContext context, int index) {
                     int selectedPosition = 0;
@@ -139,8 +141,17 @@ class _MediaGridState extends State<MediaGrid> {
                       selectedMediaCount = selectedMediaCount! + 1;
                       selectedPosition = selectedMediaCount!;
                     }
-                    return mediaItem(allMedia![index],
-                        selectedPosition: selectedPosition);
+
+                    return Consumer<ChatProvider>(
+                      builder: (context, mediaType, child) {
+                        return Visibility(
+                          visible: allMedia![index].asset!.type ==
+                              mediaType.assetType,
+                          child: mediaItem(allMedia![index],
+                              selectedPosition: selectedPosition),
+                        );
+                      },
+                    );
                   }),
             ),
           ),
@@ -152,7 +163,7 @@ class _MediaGridState extends State<MediaGrid> {
           backgroundColor: DColors.primaryAccentColor,
           onPressed: () => widget
               .onItemsSelected!(selectedMedia!.map((e) => e.asset!).toList()),
-          child: Icon(Icons.check),
+          child: const Icon(Icons.check),
         ),
       ),
       bottomNavigationBar: Container(
@@ -223,7 +234,7 @@ class _MediaGridState extends State<MediaGrid> {
                         padding: const EdgeInsets.only(right: 5, bottom: 5),
                         child: Text(
                           _showDuration(media.asset!.videoDuration),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     )
@@ -237,7 +248,7 @@ class _MediaGridState extends State<MediaGrid> {
                         child: Container(
                       color: Colors.white54,
                     )),
-                    Align(
+                    const Align(
                       alignment: Alignment.topRight,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
