@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
@@ -26,6 +27,19 @@ class _ChatSettingsState extends State<ChatSettings> {
   String third = "3";
 
   @override
+  void initState() {
+    _retrievevalues();
+    super.initState();
+  }
+
+  void _retrievevalues() {
+    onlineStatus = SessionManager.instance.showOnlineStatus;
+    receiptMark = SessionManager.instance.showReceipt;
+    pushNotification = SessionManager.instance.pushNotification;
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
@@ -34,11 +48,37 @@ class _ChatSettingsState extends State<ChatSettings> {
         body: ListView(children: [
           GreyContainer(title: "Chat Settings"),
           SizedBox(height: 10.h),
-          _item("Show Receipt Mark", receiptMark, first),
+          _item(
+              text: "Show Receipt Mark",
+              boolVal: receiptMark,
+              onToggle: (value) {
+                setState(() {
+                  receiptMark = value;
+                  SessionManager.instance.showReceipt = value;
+                });
+              }),
           CustomeDivider(),
-          _item("Online Status", onlineStatus, second),
+          _item(
+              text: "Online Status",
+              boolVal: onlineStatus,
+              onToggle: (value) {
+                setState(() {
+                  onlineStatus = value;
+                  SessionManager.instance.showOnlineStatus = value;
+                });
+              }),
           CustomeDivider(),
-          _item("Push Notification", pushNotification, third),
+          _item(
+              text: "Push Notification",
+              boolVal: pushNotification,
+              onToggle: (value) {
+                setState(() {
+                  pushNotification = value;
+                  SessionManager.instance.pushNotification = value;
+                });
+              }),
+          // CustomeDivider(),
+          // _item("Push Notification", pushNotification, third),
           // SizedBox(height: 10.h),
           // GreyContainer(title: "Choose a Theme"),
           // SizedBox(height: 10.h),
@@ -52,7 +92,7 @@ class _ChatSettingsState extends State<ChatSettings> {
         ]));
   }
 
-  Widget _item(String text, bool boolVal, String value) {
+  Widget _item({String? text, bool? boolVal, Function(bool)? onToggle}) {
     return Container(
       margin:
           EdgeInsets.symmetric(horizontal: SizeConfig.appPadding!, vertical: 3),
@@ -72,21 +112,13 @@ class _ChatSettingsState extends State<ChatSettings> {
             width: 55,
             height: 30,
             padding: 2,
-            value: boolVal,
+            value: boolVal ?? false,
             inactiveColor: Color(0xffb3b3b3),
             activeColor: DColors.bgGrey,
             toggleColor: DColors.primaryColor,
             inactiveToggleColor: Color(0xff666666),
             switchBorder: Border.all(color: DColors.faded),
-            onToggle: (val) {
-              setState(() {
-                value == first
-                    ? receiptMark = val
-                    : value == second
-                        ? onlineStatus = val
-                        : pushNotification = val;
-              });
-            },
+            onToggle: onToggle!,
           )
         ],
       ),

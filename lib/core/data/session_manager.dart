@@ -24,8 +24,12 @@ class SessionManager {
   static const String keyUserData = 'users_data';
   static const String loginKey = 'login';
   static const String userIdKey = 'userIdKey';
+  static const String receiptStatus = 'receiptStatus';
+  static const String onlineStatus = 'onlineStatus';
+  static const String pushNotificationStatus = 'pushNotificationStatus';
 
   String get authToken => sharedPreferences!.getString(keyAuthToken) ?? '';
+
   int get userId => sharedPreferences!.getInt(userIdKey) ?? 0;
 
   bool get authLogging => sharedPreferences!.getBool(loginKey) ?? false;
@@ -43,6 +47,19 @@ class SessionManager {
 
   set usersData(Map<String, dynamic> map) =>
       sharedPreferences!.setString(keyUserData, json.encode(map));
+
+  set showReceipt(bool receipt) =>
+      sharedPreferences!.setBool(receiptStatus, receipt);
+
+  set showOnlineStatus(bool online) =>
+      sharedPreferences!.setBool(onlineStatus, online);
+  set pushNotification(bool pn) =>
+      sharedPreferences!.setBool(pushNotificationStatus, pn);
+
+  bool get showReceipt => sharedPreferences!.getBool(receiptStatus) ?? true;
+  bool get showOnlineStatus => sharedPreferences!.getBool(onlineStatus) ?? true;
+  bool get pushNotification =>
+      sharedPreferences!.getBool(pushNotificationStatus) ?? true;
 
   Future<bool> logOut() async {
     await sharedPreferences!.clear();
