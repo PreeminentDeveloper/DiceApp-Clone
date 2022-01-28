@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+
+import 'widget/settings_toggle.dart';
 
 class Privacy extends StatefulWidget {
   @override
@@ -22,6 +25,18 @@ class _PrivacyState extends State<Privacy> {
   String second = "1";
 
   @override
+  void initState() {
+    _retrievevalues();
+    super.initState();
+  }
+
+  void _retrievevalues() {
+    everyone = SessionManager.instance.whoCanContactMe;
+    private = SessionManager.instance.makeAccountPrivate;
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
@@ -29,10 +44,26 @@ class _PrivacyState extends State<Privacy> {
         appBar: defaultAppBar(context, title: 'Privacy'),
         body: ListView(children: [
           GreyContainer(title: "Who Can Contact You"),
-          _item("Everyone", everyone, first),
+          StatusToggle(
+              text: "Everyone",
+              boolVal: everyone,
+              onToggle: (value) {
+                setState(() {
+                  everyone = value;
+                  SessionManager.instance.whoCanContactMe = value;
+                });
+              }),
           SizedBox(height: SizeConfig.sizeXXL),
           GreyContainer(title: "Private Account"),
-          _item("Make Account Private", private, second),
+          StatusToggle(
+              text: "Make Account Private",
+              boolVal: private,
+              onToggle: (value) {
+                setState(() {
+                  private = value;
+                  SessionManager.instance.makeAccountPrivate = value;
+                });
+              }),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16.w),
             child: TextWidget(
@@ -45,42 +76,5 @@ class _PrivacyState extends State<Privacy> {
             ),
           ),
         ]));
-  }
-
-  Widget _item(text, bool val, String pos) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextWidget(
-            text: text,
-            size: FontSize.s16,
-            weight: FontWeight.w500,
-            appcolor: DColors.mildDark,
-            type: "Objectivity",
-          ),
-          Spacer(),
-          FlutterSwitch(
-            // showOnOff: true,
-            width: 55,
-            height: 30,
-            padding: 2,
-            value: val,
-            inactiveColor: Color(0xffb3b3b3),
-            activeColor: DColors.bgGrey,
-            toggleColor: DColors.primaryColor,
-            inactiveToggleColor: Color(0xff666666),
-            switchBorder: Border.all(color: DColors.faded),
-            // inactiveSwitchBorder: Border.all(color: DColors.outputColor),
-            onToggle: (val) {
-              setState(() {
-                pos == first ? everyone = val : private = val;
-              });
-            },
-          )
-        ],
-      ),
-    );
   }
 }

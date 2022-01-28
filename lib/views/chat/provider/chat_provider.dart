@@ -51,8 +51,6 @@ class ChatProvider extends ChangeNotifier {
     eventBus.on<ChatEventBus>().listen((event) {
       Data _data = event.payload?.data ?? Data();
 
-      logger.d(_data.toJson());
-
       if (_isTargetMet(event, key, userID)) {
         chatDao!.saveSingleChat(
             key,

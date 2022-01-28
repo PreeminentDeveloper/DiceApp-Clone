@@ -27,6 +27,8 @@ class SessionManager {
   static const String receiptStatus = 'receiptStatus';
   static const String onlineStatus = 'onlineStatus';
   static const String pushNotificationStatus = 'pushNotificationStatus';
+  static const String who = 'who';
+  static const String private = 'private';
 
   String get authToken => sharedPreferences!.getString(keyAuthToken) ?? '';
 
@@ -56,10 +58,16 @@ class SessionManager {
   set pushNotification(bool pn) =>
       sharedPreferences!.setBool(pushNotificationStatus, pn);
 
+  set whoCanContactMe(bool pn) => sharedPreferences!.setBool(who, pn);
+  set makeAccountPrivate(bool pn) => sharedPreferences!.setBool(private, pn);
+
   bool get showReceipt => sharedPreferences!.getBool(receiptStatus) ?? true;
   bool get showOnlineStatus => sharedPreferences!.getBool(onlineStatus) ?? true;
   bool get pushNotification =>
       sharedPreferences!.getBool(pushNotificationStatus) ?? true;
+
+  bool get whoCanContactMe => sharedPreferences!.getBool(who) ?? true;
+  bool get makeAccountPrivate => sharedPreferences!.getBool(private) ?? true;
 
   Future<bool> logOut() async {
     await sharedPreferences!.clear();

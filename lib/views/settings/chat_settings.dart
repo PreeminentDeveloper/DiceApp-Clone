@@ -1,6 +1,7 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/settings/widget/settings_toggle.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/grey_card.dart';
@@ -48,7 +49,7 @@ class _ChatSettingsState extends State<ChatSettings> {
         body: ListView(children: [
           GreyContainer(title: "Chat Settings"),
           SizedBox(height: 10.h),
-          _item(
+          StatusToggle(
               text: "Show Receipt Mark",
               boolVal: receiptMark,
               onToggle: (value) {
@@ -58,7 +59,7 @@ class _ChatSettingsState extends State<ChatSettings> {
                 });
               }),
           CustomeDivider(),
-          _item(
+          StatusToggle(
               text: "Online Status",
               boolVal: onlineStatus,
               onToggle: (value) {
@@ -68,7 +69,7 @@ class _ChatSettingsState extends State<ChatSettings> {
                 });
               }),
           CustomeDivider(),
-          _item(
+          StatusToggle(
               text: "Push Notification",
               boolVal: pushNotification,
               onToggle: (value) {
@@ -90,39 +91,6 @@ class _ChatSettingsState extends State<ChatSettings> {
           // SizedBox(height: SizeConfig.sizeXL),
           // GreyContainer(title: "Live Wallpaper"),
         ]));
-  }
-
-  Widget _item({String? text, bool? boolVal, Function(bool)? onToggle}) {
-    return Container(
-      margin:
-          EdgeInsets.symmetric(horizontal: SizeConfig.appPadding!, vertical: 3),
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextWidget(
-            text: text,
-            size: FontSize.s16,
-            weight: FontWeight.w500,
-            appcolor: DColors.mildDark,
-            type: "Objectivity",
-          ),
-          Spacer(),
-          FlutterSwitch(
-            // showOnOff: true,
-            width: 55,
-            height: 30,
-            padding: 2,
-            value: boolVal ?? false,
-            inactiveColor: Color(0xffb3b3b3),
-            activeColor: DColors.bgGrey,
-            toggleColor: DColors.primaryColor,
-            inactiveToggleColor: Color(0xff666666),
-            switchBorder: Border.all(color: DColors.faded),
-            onToggle: onToggle!,
-          )
-        ],
-      ),
-    );
   }
 
   Widget _itemThemes(text, icon) {
