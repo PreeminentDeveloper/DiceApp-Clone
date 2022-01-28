@@ -34,10 +34,10 @@ class StatusToggle extends StatelessWidget {
             height: 30,
             padding: 2,
             value: boolVal ?? false,
-            inactiveColor: Color(0xffb3b3b3),
+            inactiveColor: const Color(0xffb3b3b3),
             activeColor: DColors.bgGrey,
             toggleColor: DColors.primaryColor,
-            inactiveToggleColor: Color(0xff666666),
+            inactiveToggleColor: const Color(0xff666666),
             switchBorder: Border.all(color: DColors.faded),
             onToggle: onToggle!,
           )
