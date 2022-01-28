@@ -27,7 +27,7 @@ class StatusToggle extends StatelessWidget {
             appcolor: DColors.mildDark,
             type: "Objectivity",
           ),
-          Spacer(),
+          const Spacer(),
           FlutterSwitch(
             // showOnOff: true,
             width: 55,
