@@ -10,6 +10,7 @@ import 'package:dice_app/views/chat/feature_images.dart';
 import 'package:dice_app/views/home/camera/widget/display_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:image/image.dart' as img;
 
 import 'widget/bottom_button.dart';
 
@@ -123,11 +124,23 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
 
       // Attempt to take a picture and get the file `image`
       // where it was saved.
-      final _image = await _controller?.takePicture();
+
+      XFile? xfile = await _controller?.takePicture();
+
+      List<int>? imageBytes = await xfile?.readAsBytes() ?? [];
+
+      img.Image? originalImage = img.decodeImage(imageBytes);
+      img.Image fixedImage = img.flipHorizontal(originalImage!);
+
+      File file = File(xfile!.path);
+
+      File fixedFile =
+          await file.writeAsBytes(img.encodeJpg(fixedImage), flush: true);
+
       PageRouter.gotoWidget(
           DisplayPictureScreen(
               object: ImageObject(
-                  path: _image!.path,
+                  path: fixedFile.path,
                   conversationID: widget.convoID,
                   user: widget.user)),
           context);
