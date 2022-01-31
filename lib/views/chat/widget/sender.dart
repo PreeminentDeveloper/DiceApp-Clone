@@ -4,6 +4,7 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/chat/data/models/chat_menus.dart';
 import 'package:dice_app/views/chat/data/models/local_chats_model.dart';
 import 'package:dice_app/views/chat/data/models/sending_images.dart';
@@ -75,7 +76,7 @@ class SenderSide extends StatelessWidget {
                 children: [
                   SvgPicture.asset("assets/delivered.svg"),
                   TextWidget(
-                    text: Helpers.chatTime(chat?.insertLocalTime ?? ''),
+                    text: TimeUtil.chatTime(chat?.insertLocalTime ?? ''),
                     size: FontSize.s8,
                   )
                 ],

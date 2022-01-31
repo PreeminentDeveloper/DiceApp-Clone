@@ -2,12 +2,10 @@ import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
-import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/message_screen.dart';
-import 'package:dice_app/views/chat/provider/chat_provider.dart';
 import 'package:dice_app/views/home/data/source/dao.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
@@ -21,14 +19,11 @@ import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-
-import 'package:phoenix_socket/phoenix_socket.dart';
 
 import 'camera/camera_screen.dart';
 import 'data/model/conversation_list.dart';

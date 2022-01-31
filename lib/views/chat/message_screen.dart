@@ -10,6 +10,7 @@ import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
@@ -18,6 +19,7 @@ import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/settings/provider/setup_provider.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
+import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -29,11 +31,11 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'data/models/chat_menus.dart';
-import 'data/models/local_chats_model.dart';
 import 'feature_images.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
+import 'package:grouped_list/grouped_list.dart';
 
 final bucketGlobal = PageStorageBucket();
 
@@ -117,20 +119,31 @@ class _MessageScreenState extends State<MessageScreen> {
             valueListenable: chatDao!.getListenable(widget.conversationID!)!,
             builder: (BuildContext context, Box<dynamic> value, Widget? child) {
               final _response = chatDao!.convert(value).toList();
-              return ListView(
-                controller: _scrollController,
-                children: [
-                  ...List.generate(_response.length, (index) {
-                    final chat = _response[index];
 
-                    return chat.userID == _profileProvider?.user?.id
-                        ? SenderSide(
-                            chat: chat,
-                            deleteCallback: () => _removeMessage(index))
-                        : ReceiverSide(
-                            chat: chat,
-                            deleteCallback: () => _removeMessage(index));
-                  }).toList(),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: GroupedListView<dynamic, String>(
+                      elements: _response,
+                      controller: _scrollController,
+                      groupBy: (element) =>
+                          TimeUtil.chatDate(element.insertLocalTime),
+                      groupSeparatorBuilder: (String groupByValue) =>
+                          _getGroupedTime(groupByValue),
+                      indexedItemBuilder: (context, dynamic element,
+                              int index) =>
+                          element.userID == _profileProvider?.user?.id
+                              ? SenderSide(
+                                  chat: element,
+                                  deleteCallback: () => _removeMessage(index))
+                              : ReceiverSide(
+                                  chat: element,
+                                  deleteCallback: () => _removeMessage(index)),
+                      floatingHeader: true,
+                      order: GroupedListOrder.ASC, // optional
+                    ),
+                  ),
                   SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
                 ],
               );
@@ -269,6 +282,24 @@ class _MessageScreenState extends State<MessageScreen> {
     }
     setState(() {});
     return _imageFile;
+  }
+
+  Widget _getGroupedTime(String groupByValue) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 15.h, bottom: 10.h),
+      child: Row(
+        children: [
+          Expanded(child: CustomeDivider()),
+          TextWidget(
+            text: TimeUtil.timeAgoSinceDate(groupByValue),
+            appcolor: const Color(0xffB2B2B2),
+            weight: FontWeight.w500,
+          ),
+          Expanded(child: CustomeDivider()),
+        ],
+      ),
+    );
   }
 }
 

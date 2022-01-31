@@ -110,32 +110,34 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
           child: SafeArea(
             child: Stack(
               children: [
-                ValueListenableBuilder(
-                  valueListenable:
-                      chatDao!.getListenable(widget.conversationId)!,
-                  builder: (BuildContext context, Box<dynamic> value,
-                      Widget? child) {
-                    final _response = chatDao!.convert(value).toList();
-                    return ListView(
-                      controller: _scrollController,
-                      children: [
-                        ...List.generate(_response.length, (index) {
-                          final chat = _response[index];
+                // ValueListenableBuilder(
+                //   valueListenable:
+                //       chatDao!.getListenable(widget.conversationId)!,
+                //   builder: (BuildContext context, Box<dynamic> value,
+                //       Widget? child) {
+                //     final _response = chatDao!.convert(value).toList();
+                //     return ListView(
+                //       controller: _scrollController,
+                //       children: [
+                //         ...List.generate(_response.length, (index) {
+                //           final chat = _response[index];
 
-                          return chat.userID == _profileProvider?.user?.id
-                              ? SenderSide(
-                                  chat: chat, deleteCallback: () => null)
-                              : ReceiverSide(
-                                  chat: chat, deleteCallback: () => null);
-                        }).toList(),
-                        SizedBox(
-                            height: SizeConfig.getDeviceHeight(context) / 10)
-                      ],
-                    );
-                  },
-                ),
-                TextersInfoWidget(_animateValue, _animation!),
-                _getBottomStackedView(),
+                //           return chat.userID == _profileProvider?.user?.id
+                //               ? SenderSide(
+                //                   chat: chat, deleteCallback: () => null)
+                //               : ReceiverSide(
+                //                   chat: chat, deleteCallback: () => null);
+                //         }).toList(),
+                //         SizedBox(
+                //             height: SizeConfig.getDeviceHeight(context) / 10)
+                //       ],
+                //     );
+                //   },
+                // ),
+                // TextersInfoWidget(_animateValue, _animation!),
+                // _getBottomStackedView(),
+             
+             
               ],
             ),
           ),

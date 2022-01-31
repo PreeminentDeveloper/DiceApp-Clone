@@ -37,32 +37,6 @@ class Helpers {
     }
   }
 
-  static String formatDate(String? date) {
-    if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatDate = DateFormat("MMM dd, yyyy").format(_dt);
-    String _formatTime = DateFormat("HH:MM a").format(_dt);
-
-    return '$_formatDate at $_formatTime';
-  }
-
-  static String formatDate2(String? date) {
-    if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatDate = DateFormat("dd/MM/yyyy").format(_dt);
-    String _formatTime = DateFormat("HH:MM").format(_dt);
-
-    return '$_formatTime, $_formatDate';
-  }
-
-  static String chatTime(String? date) {
-    if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatTime = DateFormat("hh:mm a").format(_dt);
-
-    return _formatTime;
-  }
-
   static String getInitials(String value) {
     List<String> _values = [];
     try {
