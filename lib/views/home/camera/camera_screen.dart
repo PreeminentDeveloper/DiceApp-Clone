@@ -122,31 +122,44 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
 
+      XFile? _file;
+      File? _imgFile;
+
+      if (_switch) {
+        _imgFile = await _returnIfFrontCamera();
+      } else {
+        _file = await _controller?.takePicture();
+        _imgFile = File(_file!.path);
+      }
+
+      setState(() {});
+
       // Attempt to take a picture and get the file `image`
       // where it was saved.
-
-      XFile? xfile = await _controller?.takePicture();
-
-      List<int>? imageBytes = await xfile?.readAsBytes() ?? [];
-
-      img.Image? originalImage = img.decodeImage(imageBytes);
-      img.Image fixedImage = img.flipHorizontal(originalImage!);
-
-      File file = File(xfile!.path);
-
-      File fixedFile =
-          await file.writeAsBytes(img.encodeJpg(fixedImage), flush: true);
 
       PageRouter.gotoWidget(
           DisplayPictureScreen(
               object: ImageObject(
-                  path: fixedFile.path,
+                  path: _imgFile.path,
                   conversationID: widget.convoID,
                   user: widget.user)),
           context);
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  Future<File> _returnIfFrontCamera() async {
+    XFile? xfile = await _controller?.takePicture();
+
+    List<int>? imageBytes = await xfile?.readAsBytes() ?? [];
+
+    img.Image? originalImage = img.decodeImage(imageBytes);
+    img.Image fixedImage = img.flipHorizontal(originalImage!);
+
+    File file = File(xfile!.path);
+
+    return await file.writeAsBytes(img.encodeJpg(fixedImage), flush: true);
   }
 
   Widget _cameraWidget() {
