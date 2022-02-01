@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -8,7 +7,6 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/invite/invite-contacts.dart';
-import 'package:dice_app/views/invite/model/connection_request/connection_request_response.dart';
 import 'package:dice_app/views/invite/provider/invite_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/about_modal.dart';
@@ -324,7 +322,7 @@ void _bottomSheetMore(context, label) {
                   children: [
                     SizedBox(height: SizeConfig.sizeSmall),
                     Center(
-                      child: Container(
+                      child: SizedBox(
                           width: SizeConfig.getDeviceWidth(context) / 9,
                           child: const Divider(
                             thickness: 2,
@@ -350,9 +348,7 @@ void _bottomSheetMore(context, label) {
                     ),
                     SizedBox(height: SizeConfig.sizeSmall),
                     CustomeDivider(),
-                    if (label == "friend"
-                    // && provider.myRequest != null
-                    )
+                    if (label == "friend")
                       AnimatedList(
                           key: _listKey,
                           shrinkWrap: true,
@@ -361,43 +357,27 @@ void _bottomSheetMore(context, label) {
                           itemBuilder: (context, index, animation) {
                             return FriendList(
                               provider.myRequest[index],
-                              ignoreUser: () {
-                                // provider.myRequest.remove(friends)
-                                //
-                                provider.notifyListeners();
-                              },
+                              animation: animation,
+                              ignoreUser: () => _removeItem(
+                                  context, _listKey, provider, index),
                             );
                           })
-
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: const ScrollPhysics(),
-                    //   itemBuilder: (context, item) {
-                    //     final ListData? friends =
-                    //         provider.myRequest.elementAt(item);
-                    //     return AnimatedOpacity(
-                    //       opacity:
-                    //           _userID == friends!.requester?.id ? 0.0 : 1.0,
-                    //       duration: Duration(seconds: 500),
-                    //       child: FriendList(
-                    //         friends,
-                    //         ignoreUser: () {
-                    //           _userID = friends.requester?.id;
-                    //           // provider.myRequest.remove(friends)
-                    //           //
-                    //           logger.d(_userID);
-                    //           provider.notifyListeners();
-                    //         },
-                    //       ),
-                    //     );
-                    //   },
-                    //   itemCount: provider.myRequest.length,
-                    // )
                   ],
                 ),
               );
             });
       });
     },
+  );
+}
+
+void _removeItem(context, _listKey, InviteProvider provider, int index) {
+  Provider.of<ProfileProvider>(context, listen: false)
+      .ignoreUser(receiverID: provider.myRequest[index].userId);
+  final item = provider.myRequest.removeAt(index);
+
+  _listKey.currentState!.removeItem(
+    index,
+    (context, animation) => FriendList(item, animation: animation),
   );
 }

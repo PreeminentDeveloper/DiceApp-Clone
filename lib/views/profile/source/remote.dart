@@ -86,10 +86,9 @@ class ProfileService {
   Future<dynamic> acceptConnection(
       {String? msg, String? senderID, String? receiverID}) async {
     try {
-      final _result = await _graphQLClient.client.mutate(MutationOptions(
+      await _graphQLClient.client.mutate(MutationOptions(
           document: gql(_model.acceptConnectionRequest(
               message: msg, requesterId: senderID, userId: receiverID))));
-      logger.d(_result.data);
     } catch (e) {
       logger.e(e);
     }
@@ -97,10 +96,9 @@ class ProfileService {
 
   Future<dynamic> ignoreUser({String? userID, String? receiverID}) async {
     try {
-      final _result = await _graphQLClient.client.mutate(MutationOptions(
+      await _graphQLClient.client.mutate(MutationOptions(
           document:
               gql(_model.ignoreUser(userId: userID, ignoredId: receiverID))));
-      logger.d(_result.data);
     } catch (e) {
       logger.e(e);
     }

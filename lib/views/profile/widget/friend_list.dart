@@ -15,8 +15,10 @@ import 'package:provider/provider.dart';
 class FriendList extends StatelessWidget {
   final ListData? listData;
   final Function()? ignoreUser;
+  final Animation<double>? animation;
 
-  FriendList(this.listData, {this.ignoreUser, Key? key}) : super(key: key);
+  FriendList(this.listData, {this.animation, this.ignoreUser, Key? key})
+      : super(key: key);
 
   ProfileProvider? _profileProvider;
   HomeProvider? _homeProvider;
@@ -25,207 +27,208 @@ class FriendList extends StatelessWidget {
   Widget build(BuildContext context) {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
-    return Consumer<ProfileProvider>(builder: (context, provider, child) {
-      return Container(
-        margin: EdgeInsets.all(SizeConfig.appPadding!),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                _profileProvider?.ignoreUser(
-                    receiverID: listData?.requester?.id);
-              },
-              child: SvgPicture.asset(
-                "assets/remove.svg",
-                height: 20.h,
+    return ScaleTransition(
+      scale: animation!,
+      child: Consumer<ProfileProvider>(builder: (context, provider, child) {
+        return Container(
+          margin: EdgeInsets.all(SizeConfig.appPadding!),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: ignoreUser,
+                child: SvgPicture.asset(
+                  "assets/remove.svg",
+                  height: 20.h,
+                ),
               ),
-            ),
-            const SizedBox(width: 20),
-            CircleImageHandler(
-              'https://${listData?.requester?.photo?.hostname}/${listData?.requester?.photo?.url}',
-              showInitialText: listData?.requester?.photo?.url?.isEmpty ?? true,
-              initials: Helpers.getInitials(listData?.requester?.name ?? ''),
-              radius: 20,
-            ),
-            const SizedBox(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextWidget(
-                  text: listData?.requester?.name ?? '',
-                  size: FontSize.s16,
-                  weight: FontWeight.w500,
-                  appcolor: DColors.mildDark,
-                ),
-                const SizedBox(height: 3),
-                TextWidget(
-                  text: '@${listData?.requester?.username ?? ''}',
-                  size: FontSize.s10,
-                  weight: FontWeight.w500,
-                  appcolor: DColors.lightGrey,
-                ),
-              ],
-            ),
-            const Spacer(),
-            TextButton(
-                onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (_)=> OtherProfile(personId)));
+              const SizedBox(width: 20),
+              CircleImageHandler(
+                'https://${listData?.requester?.photo?.hostname}/${listData?.requester?.photo?.url}',
+                showInitialText:
+                    listData?.requester?.photo?.url?.isEmpty ?? true,
+                initials: Helpers.getInitials(listData?.requester?.name ?? ''),
+                radius: 20,
+              ),
+              const SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextWidget(
+                    text: listData?.requester?.name ?? '',
+                    size: FontSize.s16,
+                    weight: FontWeight.w500,
+                    appcolor: DColors.mildDark,
+                  ),
+                  const SizedBox(height: 3),
+                  TextWidget(
+                    text: '@${listData?.requester?.username ?? ''}',
+                    size: FontSize.s10,
+                    weight: FontWeight.w500,
+                    appcolor: DColors.lightGrey,
+                  ),
+                ],
+              ),
+              const Spacer(),
+              TextButton(
+                  onPressed: () {
+                    // Navigator.push(context, MaterialPageRoute(builder: (_)=> OtherProfile(personId)));
 
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextWidget(
-                                text: "Friend Request",
-                                weight: FontWeight.bold,
-                                size: FontSize.s14,
-                              ),
-                              GestureDetector(
-                                  onTap: () {
-                                    _profileProvider?.ignoreUser(
-                                        receiverID: listData?.requester?.id);
-                                    Navigator.pop(context);
-                                  },
-                                  child: SvgPicture.asset("assets/remove.svg",
-                                      height: 20.h))
-                            ],
-                          ),
-                          content: SizedBox(
-                            height: 160,
-                            child: Column(
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  child: Row(
-                                    children: [
-                                      CircleImageHandler(
-                                        'https://${listData?.requester?.photo?.hostname}/${listData?.requester?.photo?.url}',
-                                        showInitialText: listData?.requester
-                                                ?.photo?.url?.isEmpty ??
-                                            true,
-                                        initials: Helpers.getInitials(
-                                            listData?.requester?.name ?? ''),
-                                        radius: 20,
-                                      ),
-                                      const SizedBox(
-                                        width: 20,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          TextWidget(
-                                            text:
-                                                listData?.requester?.name ?? '',
-                                            size: FontSize.s16,
-                                            weight: FontWeight.w500,
-                                            appcolor: DColors.mildDark,
-                                          ),
-                                          const SizedBox(height: 3),
-                                          TextWidget(
-                                            text:
-                                                '@${listData?.requester?.username ?? ''}',
-                                            size: FontSize.s10,
-                                            weight: FontWeight.w500,
-                                            appcolor: DColors.lightGrey,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                TextWidget(
+                                  text: "Friend Request",
+                                  weight: FontWeight.bold,
+                                  size: FontSize.s14,
                                 ),
-                                const SizedBox(height: 10),
-                                Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 15),
-                                    child: CustomeDivider()),
-                                Row(children: [
-                                  SizedBox(
-                                    height: 35,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3.2,
-                                    child: TextButton(
-                                        onPressed: () async {
-                                          _profileProvider?.ignoreUser(
-                                              receiverID:
-                                                  listData?.requester?.id);
-                                          Navigator.pop(context);
-                                        },
-                                        style: ButtonStyle(
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            SizeConfig
-                                                                .sizeXXL!),
-                                                    side: const BorderSide(
-                                                        color: DColors
-                                                            .primaryColor)))),
-                                        child: TextWidget(
-                                          text: "Ignore",
-                                          appcolor: DColors.primaryColor,
-                                          size: FontSize.s13,
-                                          weight: FontWeight.w700,
-                                        )),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  SizedBox(
-                                    height: 35,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3.2,
-                                    child: TextButton(
-                                        onPressed: () async {
-                                          _profileProvider?.acceptConnection(
-                                              homeProvider: _homeProvider,
-                                              receiverID:
-                                                  listData?.requester?.id);
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        },
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<Color>(
-                                                    DColors.primaryColor),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(
-                                                        SizeConfig.sizeXXL!),
-                                                    side: const BorderSide(
-                                                        color: DColors
-                                                            .primaryColor)))),
-                                        child: TextWidget(
-                                          text: "Accept",
-                                          appcolor: DColors.white,
-                                          size: FontSize.s13,
-                                          weight: FontWeight.w700,
-                                        )),
-                                  )
-                                ]),
+                                GestureDetector(
+                                    onTap: () {
+                                      _profileProvider?.ignoreUser(
+                                          receiverID: listData?.requester?.id);
+                                      Navigator.pop(context);
+                                    },
+                                    child: SvgPicture.asset("assets/remove.svg",
+                                        height: 20.h))
                               ],
                             ),
-                          ),
-                        );
-                      });
-                },
-                style: style,
-                child: TextWidget(
-                  text: "View",
-                  type: "Objectivity",
-                  size: FontSize.s10,
-                  weight: FontWeight.w700,
-                  appcolor: DColors.primaryAccentColor,
-                ))
-          ],
-        ),
-      );
-    });
+                            content: SizedBox(
+                              height: 160,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        CircleImageHandler(
+                                          'https://${listData?.requester?.photo?.hostname}/${listData?.requester?.photo?.url}',
+                                          showInitialText: listData?.requester
+                                                  ?.photo?.url?.isEmpty ??
+                                              true,
+                                          initials: Helpers.getInitials(
+                                              listData?.requester?.name ?? ''),
+                                          radius: 20,
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            TextWidget(
+                                              text: listData?.requester?.name ??
+                                                  '',
+                                              size: FontSize.s16,
+                                              weight: FontWeight.w500,
+                                              appcolor: DColors.mildDark,
+                                            ),
+                                            const SizedBox(height: 3),
+                                            TextWidget(
+                                              text:
+                                                  '@${listData?.requester?.username ?? ''}',
+                                              size: FontSize.s10,
+                                              weight: FontWeight.w500,
+                                              appcolor: DColors.lightGrey,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 15),
+                                      child: CustomeDivider()),
+                                  Row(children: [
+                                    SizedBox(
+                                      height: 35,
+                                      width: MediaQuery.of(context).size.width /
+                                          3.2,
+                                      child: TextButton(
+                                          onPressed: () async {
+                                            _profileProvider?.ignoreUser(
+                                                receiverID:
+                                                    listData?.requester?.id);
+                                            Navigator.pop(context);
+                                          },
+                                          style: ButtonStyle(
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              SizeConfig
+                                                                  .sizeXXL!),
+                                                      side: const BorderSide(
+                                                          color: DColors
+                                                              .primaryColor)))),
+                                          child: TextWidget(
+                                            text: "Ignore",
+                                            appcolor: DColors.primaryColor,
+                                            size: FontSize.s13,
+                                            weight: FontWeight.w700,
+                                          )),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    SizedBox(
+                                      height: 35,
+                                      width: MediaQuery.of(context).size.width /
+                                          3.2,
+                                      child: TextButton(
+                                          onPressed: () async {
+                                            _profileProvider?.acceptConnection(
+                                                homeProvider: _homeProvider,
+                                                receiverID:
+                                                    listData?.requester?.id);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<Color>(
+                                                      DColors.primaryColor),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(
+                                                          SizeConfig.sizeXXL!),
+                                                      side: const BorderSide(
+                                                          color: DColors
+                                                              .primaryColor)))),
+                                          child: TextWidget(
+                                            text: "Accept",
+                                            appcolor: DColors.white,
+                                            size: FontSize.s13,
+                                            weight: FontWeight.w700,
+                                          )),
+                                    )
+                                  ]),
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                  },
+                  style: style,
+                  child: TextWidget(
+                    text: "View",
+                    type: "Objectivity",
+                    size: FontSize.s10,
+                    weight: FontWeight.w700,
+                    appcolor: DColors.primaryAccentColor,
+                  ))
+            ],
+          ),
+        );
+      }),
+    );
   }
 }
