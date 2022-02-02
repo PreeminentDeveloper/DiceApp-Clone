@@ -1,3 +1,6 @@
+import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/util/helper.dart';
+
 class SetUpGql {
   static String listIgnoredUsers = '''
   query (\$pageNo: int!, \$perPage: int!, \$search: String!, \$userId: String!){
@@ -96,9 +99,8 @@ class SetUpGql {
       required bool? onlineStatus,
       required bool? pushNotification,
       required bool? everyone,
-      required bool? privateAccount,
-      required bool? visibility}) {
-      return """
+      required bool? privateAccount}) {
+    return """
           mutation{
                 updateUser(
                   userId: "$userID"
@@ -107,6 +109,10 @@ class SetUpGql {
                       showReceiptMark: $receiptMark
                       pushNotification: $pushNotification
                       onlineStatus: $onlineStatus
+                    }
+                    privacySettings: {
+                      everyone: $everyone
+                      privateAccount: $privateAccount
                     }
                   }
                   

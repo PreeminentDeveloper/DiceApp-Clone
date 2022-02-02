@@ -68,7 +68,7 @@ class SupportScreen extends StatelessWidget {
   void _launchEmail(BuildContext context) async {
     try {
       EmailContent email =
-          EmailContent(to: [AppString.supportURL], subject: 'Hello!');
+          EmailContent(to: [AppString.supportURL]);
 
       OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
           nativePickerTitle: 'Select email app to compose',

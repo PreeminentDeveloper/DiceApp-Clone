@@ -147,8 +147,7 @@ class ProfileService {
               onlineStatus: onlineStatus,
               pushNotification: pushNotification,
               everyone: everyone,
-              privateAccount: privateAccount,
-              visibility: visibility)),
+              privateAccount: privateAccount)),
           fetchPolicy: FetchPolicy.networkOnly));
     } catch (e) {
       logger.e(e);
