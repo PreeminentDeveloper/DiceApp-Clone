@@ -29,7 +29,6 @@ class ProfileProvider extends ChangeNotifier {
     chatSettings = user?.chatSettings;
     privacySettings = user?.privacySettings;
     notificationSettings = user?.notificationSettings;
-    logger.d(user?.toJson());
     if (notifyListeners) this.notifyListeners();
   }
 

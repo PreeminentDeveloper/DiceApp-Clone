@@ -6,6 +6,7 @@ import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 
 class SupportScreen extends StatelessWidget {
   @override
@@ -50,13 +51,38 @@ class SupportScreen extends StatelessWidget {
                 size: 14.sp,
                 weight: FontWeight.normal,
                 align: TextAlign.center,
-                onTap: () =>
-                    Helpers.launchURL('https://${AppString.supportURL}'),
+                onTap: () {
+                  // final Uri _params =
+                  //     Uri(scheme: 'mailto', path: AppString.supportURL);
+                  // Helpers.launchURL(AppString.supportURL);
+                  _launchEmail(context);
+                },
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _launchEmail(BuildContext context) async {
+    try {
+      EmailContent email =
+          EmailContent(to: [AppString.supportURL], subject: 'Hello!');
+
+      OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
+          nativePickerTitle: 'Select email app to compose',
+          emailContent: email);
+
+      showDialog(
+        context: context,
+        builder: (_) => MailAppPickerDialog(
+          mailApps: result.options,
+          emailContent: email,
+        ),
+      );
+    } catch (e) {
+      logger.w(e);
+    }
   }
 }
