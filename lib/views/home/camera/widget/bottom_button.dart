@@ -38,8 +38,8 @@ class CameraButtongs extends StatelessWidget {
             children: [
               GestureDetector(
                   onTap: onCapture,
-                  onLongPress: onVideoRecord,
-                  onLongPressCancel: onVideoRecordingEnd,
+                  onLongPressStart: (_) => onVideoRecord!(),
+                  onLongPressEnd: (_) => onVideoRecordingEnd!(),
                   child: SvgPicture.asset(
                     Assets.capture,
                     color: isRecording! ? Colors.red : Colors.white,

@@ -138,19 +138,50 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
   }
 
   void _videoRecord() async {
-    try {
-      // Ensure that the camera is initialized.
-      await _initializeControllerFuture;
+    startVideoRecording().then((_) {
+      if (mounted) {
+        isRecording = _controller!.value.isRecordingVideo;
+        setState(() {});
+      }
+    });
+  }
 
-      await _controller?.startVideoRecording().then((_) {
-        if (mounted) {
-          setState(() {
-            isRecording = _controller!.value.isRecordingVideo;
-          });
-        }
-      });
-    } catch (e) {
+  Future<void> startVideoRecording() async {
+    // Ensure that the camera is initialized.
+    await _initializeControllerFuture;
+
+    if (_controller == null || !_controller!.value.isInitialized) {
+      logger.e('Error: select a camera first.');
+      return;
+    }
+
+    if (_controller!.value.isRecordingVideo) {
+      // A recording is already started, do nothing.
+      return;
+    }
+
+    try {
+      await _controller?.startVideoRecording();
+    } on CameraException catch (e) {
       logger.e(e);
+      return;
+    }
+  }
+
+  Future<XFile?> stopVideoRecording() async {
+    // Ensure that the camera is initialized.
+    await _initializeControllerFuture;
+
+    if (_controller == null || !_controller!.value.isRecordingVideo) {
+      logger.e('Error: select a camera first.');
+      return null;
+    }
+
+    try {
+      return _controller?.stopVideoRecording();
+    } on CameraException catch (e) {
+      logger.e(e);
+      return null;
     }
   }
 
@@ -158,23 +189,23 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
     XFile? videoFile;
 
     // Ensure that the camera is initialized.
-    await _initializeControllerFuture;
 
-    await _controller?.stopVideoRecording().then((file) {
+    stopVideoRecording().then((file) {
       if (mounted) {
-        videoFile = file;
-        setState(() {
-          isRecording = _controller!.value.isRecordingVideo;
-        });
-
-        PageRouter.gotoWidget(
-            DisplayVideoScreen(
-                object: MediaObject(
-                    path: videoFile!.path,
-                    conversationID: widget.convoID,
-                    user: widget.user)),
-            context);
+        if (file != null) {
+          videoFile = file;
+          setState(() {
+            isRecording = _controller!.value.isRecordingVideo;
+          });
+        }
       }
+      PageRouter.gotoWidget(
+          DisplayVideoScreen(
+              object: MediaObject(
+                  path: videoFile!.path,
+                  conversationID: widget.convoID,
+                  user: widget.user)),
+          context);
     });
   }
 

@@ -1,5 +1,4 @@
 import 'package:dice_app/views/auth/sign_up.dart';
-import 'package:dice_app/views/onboarding/sign_in_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,7 +10,6 @@ import 'core/network/url_config.dart';
 import 'core/provider/get_provider.dart';
 import 'core/util/injection_container.dart';
 import 'views/home/camera/camera_screen.dart';
-import 'views/home/home_screen.dart';
 
 void main() async {
   await initializeCore(environment: Environment.staging);
@@ -36,7 +34,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(primarySwatch: Colors.green),
             routes: Routes.getRoutes,
             home: SessionManager.instance.authLogging
-                ? HomeScreen()
+                ? CameraPictureScreen()
                 : const SignUp(),
           );
         },
