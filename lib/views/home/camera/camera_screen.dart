@@ -10,10 +10,12 @@ import 'package:dice_app/views/chat/feature_images.dart';
 import 'package:dice_app/views/home/camera/widget/display_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:image/image.dart' as img;
+import 'package:photo_manager/photo_manager.dart';
 
 import 'widget/bottom_button.dart';
+
+enum FlashWidget { off, on, auto }
 
 // A screen that allows users to take a picture using a given camera.
 class CameraPictureScreen extends StatefulWidget {
@@ -33,6 +35,7 @@ class CameraPictureScreen extends StatefulWidget {
 }
 
 class CameraPictureScreenState extends State<CameraPictureScreen> {
+  FlashWidget selectedFlashWidget = FlashWidget.off;
   CameraController? _controller;
   Future<void>? _initializeControllerFuture;
   List<CameraDescription> _cameras = [];
@@ -95,8 +98,28 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
             alignment: Alignment.topRight,
             padding: EdgeInsets.symmetric(vertical: 50.h, horizontal: 23.w),
             child: IconButton(
-                onPressed: () => _controller!.setFlashMode(FlashMode.off),
-                icon: const Icon(Icons.flash_auto, color: DColors.white)),
+                onPressed: () {
+                  if (selectedFlashWidget == FlashWidget.off) {
+                    selectedFlashWidget = FlashWidget.on;
+                    _controller!.setFlashMode(FlashMode.torch);
+                  } else if (selectedFlashWidget == FlashWidget.on) {
+                    selectedFlashWidget = FlashWidget.auto;
+                    _controller!.setFlashMode(FlashMode.auto);
+                  } else if (selectedFlashWidget == FlashWidget.auto) {
+                    selectedFlashWidget = FlashWidget.off;
+                    _controller!.setFlashMode(FlashMode.off);
+                  } else {
+                    _controller!.setFlashMode(FlashMode.off);
+                  }
+                  setState(() {});
+                },
+                icon: Icon(
+                    selectedFlashWidget == FlashWidget.on
+                        ? Icons.flash_on
+                        : selectedFlashWidget == FlashWidget.auto
+                            ? Icons.flash_auto
+                            : Icons.flash_off,
+                    color: DColors.white)),
           ),
           CameraButtongs(
             onClose: () => PageRouter.goBack(context),
