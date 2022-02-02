@@ -1373,12 +1373,12 @@ packages:
     source: hosted
     version: "2.1.1"
   video_player:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: video_player
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.11"
+    version: "2.2.16"
   video_player_platform_interface:
     dependency: transitive
     description:

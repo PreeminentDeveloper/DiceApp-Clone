@@ -7,12 +7,31 @@ import 'package:dice_app/views/home/data/model/media_model.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player/video_player.dart';
 
 // A widget that displays the picture taken by the user.
-class DisplayPictureScreen extends StatelessWidget {
+class DisplayVideoScreen extends StatefulWidget {
   final MediaObject? object;
 
-  DisplayPictureScreen({Key? key, required this.object}) : super(key: key);
+  DisplayVideoScreen({Key? key, required this.object}) : super(key: key);
+
+  @override
+  State<DisplayVideoScreen> createState() => _DisplayVideoScreenState();
+}
+
+class _DisplayVideoScreenState extends State<DisplayVideoScreen> {
+  VideoPlayerController? videoController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    videoController = VideoPlayerController.file(File(widget!.object!.path!)
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +39,19 @@ class DisplayPictureScreen extends StatelessWidget {
       appBar: defaultAppBar(context, title: ''),
       body: Stack(
         children: [
-          Image.file(
-            File(object!.path!),
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
-          ),
+          // VideoPlayer(
+          //   File(widget.object!.path!),
+          //   width: MediaQuery.of(context).size.width,
+          //   fit: BoxFit.cover,
+          // ),
+          VideoPlayer(videoController!),
           GestureDetector(
             onTap: () {
               PageRouter.gotoWidget(
-                  FeatureImages([File(object!.path!)], object?.user?.name ?? '',
-                      object?.conversationID ?? ''),
+                  FeatureImages(
+                      [File(widget.object!.path!)],
+                      widget.object?.user?.name ?? '',
+                      widget.object?.conversationID ?? ''),
                   context);
             },
             child: Align(

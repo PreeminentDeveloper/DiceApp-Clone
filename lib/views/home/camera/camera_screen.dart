@@ -8,6 +8,8 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/views/chat/feature_images.dart';
 import 'package:dice_app/views/home/camera/widget/display_image.dart';
+import 'package:dice_app/views/home/camera/widget/display_video.dart';
+import 'package:dice_app/views/home/data/model/media_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image/image.dart' as img;
@@ -40,7 +42,7 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
   Future<void>? _initializeControllerFuture;
   List<CameraDescription> _cameras = [];
   bool _switch = false;
-
+  bool isRecording = false;
   @override
   void initState() {
     _checkCameraAvailability();
@@ -126,7 +128,9 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
             onCapture: () => _takePicture(),
             onSwitch: () => _toggleCamera(),
             onVideoRecord: () => _videoRecord(),
+            onVideoRecordingEnd: () => _videoRecordingEnd(),
             gallery: () => _pickGallery(),
+            isRecording: isRecording,
           )
         ],
       ),
@@ -134,9 +138,45 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
   }
 
   void _videoRecord() async {
+    try {
+      // Ensure that the camera is initialized.
+      await _initializeControllerFuture;
+
+      await _controller?.startVideoRecording().then((_) {
+        if (mounted) {
+          setState(() {
+            isRecording = _controller!.value.isRecordingVideo;
+          });
+        }
+      });
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<void> _videoRecordingEnd() async {
+    XFile? videoFile;
+
     // Ensure that the camera is initialized.
     await _initializeControllerFuture;
-    await _controller?.startVideoRecording();
+
+    await _controller?.stopVideoRecording().then((file) {
+      if (mounted) {
+        if (file != null) {
+          videoFile = file;
+          setState(() {
+            isRecording = _controller!.value.isRecordingVideo;
+          });
+        }
+        PageRouter.gotoWidget(
+            DisplayVideoScreen(
+                object: MediaObject(
+                    path: videoFile!.path,
+                    conversationID: widget.convoID,
+                    user: widget.user)),
+            context);
+      }
+    });
   }
 
   /// togle camera
@@ -170,10 +210,11 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
 
       PageRouter.gotoWidget(
           DisplayPictureScreen(
-              object: ImageObject(
-                  path: _imgFile.path,
-                  conversationID: widget.convoID,
-                  user: widget.user)),
+              object: MediaObject(
+            path: _imgFile.path,
+            conversationID: widget.convoID,
+            user: widget.user,
+          )),
           context);
     } catch (e) {
       logger.e(e);
