@@ -27,7 +27,7 @@ class _DisplayVideoScreenState extends State<DisplayVideoScreen> {
     // TODO: implement initState
     super.initState();
     initialLoad();
-    videoController = VideoPlayerController.file(File(widget!.object!.path!));
+    videoController = VideoPlayerController.file(File(widget.object!.path!));
   }
 
   initialLoad() async {
