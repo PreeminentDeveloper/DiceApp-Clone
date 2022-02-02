@@ -162,12 +162,11 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
 
     await _controller?.stopVideoRecording().then((file) {
       if (mounted) {
-        if (file != null) {
-          videoFile = file;
-          setState(() {
-            isRecording = _controller!.value.isRecordingVideo;
-          });
-        }
+        videoFile = file;
+        setState(() {
+          isRecording = _controller!.value.isRecordingVideo;
+        });
+
         PageRouter.gotoWidget(
             DisplayVideoScreen(
                 object: MediaObject(
