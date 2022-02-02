@@ -9,6 +9,7 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/views/chat/feature_images.dart';
 import 'package:dice_app/views/home/camera/widget/display_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:image/image.dart' as img;
 
@@ -89,6 +90,13 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
                 return const Center(child: CircularProgressIndicator());
               }
             },
+          ),
+          Container(
+            alignment: Alignment.topRight,
+            padding: EdgeInsets.symmetric(vertical: 50.h, horizontal: 23.w),
+            child: IconButton(
+                onPressed: () => _controller!.setFlashMode(FlashMode.off),
+                icon: const Icon(Icons.flash_auto, color: DColors.white)),
           ),
           CameraButtongs(
             onClose: () => PageRouter.goBack(context),
