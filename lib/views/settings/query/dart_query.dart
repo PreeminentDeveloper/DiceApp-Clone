@@ -71,4 +71,65 @@ class SetUpGql {
       }
     """;
   }
+
+  String updateUserInfo(String key, String value, String userId) {
+    return """
+      mutation{
+          updateUser(input: {$key: "$value"}, userId: "$userId"){
+            user{
+              bio
+              id
+              name
+              username 
+              phone
+              status
+              photo
+            }
+          }
+      }
+    """;
+  }
+
+  static String chatSettings(
+      {required String? userID,
+      required bool? receiptMark,
+      required bool? onlineStatus,
+      required bool? pushNotification,
+      required bool? everyone,
+      required bool? privateAccount,
+      required bool? visibility}) {
+      return """
+          mutation{
+                updateUser(
+                  userId: "$userID"
+                  input: {
+                    chatSettings: {
+                      showReceiptMark: $receiptMark
+                      pushNotification: $pushNotification
+                      onlineStatus: $onlineStatus
+                    }
+                  }
+                  
+                ){
+                user{
+                    name
+                    id
+                    chatSettings{
+                      showReceiptMark
+                      pushNotification
+                      onlineStatus
+                    }
+                    privacySettings{
+                      everyone
+                      privateAccount
+                    }
+                    notificationSettings{
+                      visibility
+                    }
+                    
+                  }
+                }
+}
+    """;
+  }
 }

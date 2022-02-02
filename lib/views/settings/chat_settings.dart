@@ -1,6 +1,10 @@
 import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/chat/provider/chat_provider.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
+import 'package:dice_app/views/settings/provider/setup_provider.dart';
 import 'package:dice_app/views/settings/widget/settings_toggle.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
@@ -10,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:provider/provider.dart';
 
 class ChatSettings extends StatefulWidget {
   @override
@@ -17,26 +22,22 @@ class ChatSettings extends StatefulWidget {
 }
 
 class _ChatSettingsState extends State<ChatSettings> {
-  bool onlineStatus = false;
-
-  bool receiptMark = false;
-
-  bool pushNotification = false;
-
-  String first = "0";
-  String second = "1";
-  String third = "3";
+  ProfileProvider? _profileProvider;
+  bool _receipt = true;
+  bool _status = true;
+  bool _notification = true;
 
   @override
   void initState() {
-    _retrievevalues();
+    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _setValues();
     super.initState();
   }
 
-  void _retrievevalues() {
-    onlineStatus = SessionManager.instance.showOnlineStatus;
-    receiptMark = SessionManager.instance.showReceipt;
-    pushNotification = SessionManager.instance.pushNotification;
+  void _setValues() {
+    _receipt = _profileProvider?.chatSettings?.showReceiptMark ?? true;
+    _status = _profileProvider?.chatSettings?.onlineStatus ?? true;
+    _notification = _profileProvider?.chatSettings?.pushNotification ?? true;
     setState(() {});
   }
 
@@ -51,69 +52,41 @@ class _ChatSettingsState extends State<ChatSettings> {
           SizedBox(height: 10.h),
           StatusToggle(
               text: "Show Receipt Mark",
-              boolVal: receiptMark,
+              boolVal: _receipt,
               onToggle: (value) {
-                setState(() {
-                  receiptMark = value;
-                  SessionManager.instance.showReceipt = value;
-                });
+                _receipt = value;
+                _triggerUpdate();
+                setState(() {});
               }),
           CustomeDivider(),
           StatusToggle(
               text: "Online Status",
-              boolVal: onlineStatus,
+              boolVal: _status,
               onToggle: (value) {
-                setState(() {
-                  onlineStatus = value;
-                  SessionManager.instance.showOnlineStatus = value;
-                });
+                _status = value;
+                _triggerUpdate();
+                setState(() {});
               }),
           CustomeDivider(),
           StatusToggle(
               text: "Push Notification",
-              boolVal: pushNotification,
+              boolVal: _notification,
               onToggle: (value) {
-                setState(() {
-                  pushNotification = value;
-                  SessionManager.instance.pushNotification = value;
-                });
+                _notification = value;
+                _triggerUpdate();
+                setState(() {});
               }),
-          // CustomeDivider(),
-          // _item("Push Notification", pushNotification, third),
-          // SizedBox(height: 10.h),
-          // GreyContainer(title: "Choose a Theme"),
-          // SizedBox(height: 10.h),
-          // _itemThemes("Default", "assets/okay.svg"),
-          // CustomeDivider(),
-          // _itemThemes("Greenie", "assets/paint-bucket.svg"),
-          // CustomeDivider(),
-          // _itemThemes("Torquiest", "assets/paint-bucket.svg"),
-          // SizedBox(height: SizeConfig.sizeXL),
-          // GreyContainer(title: "Live Wallpaper"),
         ]));
   }
 
-  Widget _itemThemes(text, icon) {
-    return Container(
-      margin:
-          EdgeInsets.symmetric(horizontal: SizeConfig.appPadding!, vertical: 3),
-      child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextWidget(
-            text: text,
-            size: FontSize.s16,
-            weight: FontWeight.w500,
-            appcolor: DColors.mildDark,
-            type: "Objectivity",
-          ),
-          Spacer(),
-          SvgPicture.asset(
-            icon,
-            height: 20,
-          )
-        ],
-      ),
-    );
+  void _triggerUpdate() {
+    _profileProvider?.usersChatSettings(
+        receiptMark: _receipt,
+        onlineStatus: _status,
+        pushNotification: _notification,
+        everyone: _profileProvider?.privacySettings?.everyone ?? true,
+        privateAccount:
+            _profileProvider?.privacySettings?.privateAccount ?? true,
+        visibility: _profileProvider?.notificationSettings?.visibility ?? true);
   }
 }

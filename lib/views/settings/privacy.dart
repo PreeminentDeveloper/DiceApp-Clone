@@ -1,13 +1,12 @@
-import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/grey_card.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_switch/flutter_switch.dart';
+import 'package:provider/provider.dart';
 
 import 'widget/settings_toggle.dart';
 
@@ -17,22 +16,20 @@ class Privacy extends StatefulWidget {
 }
 
 class _PrivacyState extends State<Privacy> {
-  bool everyone = false;
-
-  bool private = false;
-
-  String first = "0";
-  String second = "1";
+  ProfileProvider? _profileProvider;
+  bool _everyone = true;
+  bool _private = true;
 
   @override
   void initState() {
-    _retrievevalues();
+    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _setValues();
     super.initState();
   }
 
-  void _retrievevalues() {
-    everyone = SessionManager.instance.whoCanContactMe;
-    private = SessionManager.instance.makeAccountPrivate;
+  void _setValues() {
+    _everyone = _profileProvider?.privacySettings?.everyone ?? true;
+    _private = _profileProvider?.privacySettings?.privateAccount ?? true;
     setState(() {});
   }
 
@@ -46,23 +43,21 @@ class _PrivacyState extends State<Privacy> {
           GreyContainer(title: "Who Can Contact You"),
           StatusToggle(
               text: "Everyone",
-              boolVal: everyone,
+              boolVal: _everyone,
               onToggle: (value) {
-                setState(() {
-                  everyone = value;
-                  SessionManager.instance.whoCanContactMe = value;
-                });
+                _everyone = value;
+                _triggerUpdate();
+                setState(() {});
               }),
           SizedBox(height: SizeConfig.sizeXXL),
           GreyContainer(title: "Private Account"),
           StatusToggle(
               text: "Make Account Private",
-              boolVal: private,
+              boolVal: _private,
               onToggle: (value) {
-                setState(() {
-                  private = value;
-                  SessionManager.instance.makeAccountPrivate = value;
-                });
+                _private = value;
+                _triggerUpdate();
+                setState(() {});
               }),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16.w),
@@ -76,5 +71,16 @@ class _PrivacyState extends State<Privacy> {
             ),
           ),
         ]));
+  }
+
+  void _triggerUpdate() {
+    _profileProvider?.usersChatSettings(
+        receiptMark: _profileProvider?.chatSettings?.showReceiptMark,
+        onlineStatus: _profileProvider?.chatSettings?.onlineStatus,
+        pushNotification:
+            _profileProvider?.chatSettings?.pushNotification ?? true,
+        everyone: _everyone,
+        privateAccount: _private,
+        visibility: _profileProvider?.notificationSettings?.visibility ?? true);
   }
 }

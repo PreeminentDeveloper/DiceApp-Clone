@@ -43,6 +43,18 @@ class ProfileSetupModel {
       conversation{
         id
       }
+      chatSettings{
+        showReceiptMark
+        pushNotification
+        onlineStatus
+      }
+      privacySettings{
+        everyone
+        privateAccount
+      }
+      notificationSettings{
+        visibility
+      }
     }
   }
   ''';
@@ -77,6 +89,21 @@ class ProfileSetupModel {
               phone
               status
               photo
+              conversation{
+                id
+                          }
+              chatSettings{
+                showReceiptMark
+                pushNotification
+                onlineStatus
+              }
+              privacySettings{
+                everyone
+                privateAccount
+              }
+              notificationSettings{
+                visibility
+              }
             }
           }
       }

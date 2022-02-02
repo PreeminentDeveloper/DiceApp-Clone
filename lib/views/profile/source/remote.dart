@@ -8,6 +8,7 @@ import 'package:dice_app/views/auth/data/model/profile/get_user_data_response.da
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
 import 'package:dice_app/views/profile/model/codename_verification.dart';
 import 'package:dice_app/views/profile/model/update_profile_response.dart';
+import 'package:dice_app/views/settings/query/dart_query.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -125,6 +126,30 @@ class ProfileService {
             fetchPolicy: FetchPolicy.networkOnly),
       );
       logger.d(_user.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<dynamic> chatSettings(
+      {required String? userID,
+      required bool? receiptMark,
+      required bool? onlineStatus,
+      required bool? pushNotification,
+      required bool? everyone,
+      required bool? privateAccount,
+      required bool? visibility}) async {
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(SetUpGql.chatSettings(
+              userID: userID,
+              receiptMark: receiptMark,
+              onlineStatus: onlineStatus,
+              pushNotification: pushNotification,
+              everyone: everyone,
+              privateAccount: privateAccount,
+              visibility: visibility)),
+          fetchPolicy: FetchPolicy.networkOnly));
     } catch (e) {
       logger.e(e);
     }

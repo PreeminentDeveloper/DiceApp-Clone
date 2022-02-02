@@ -16,12 +16,20 @@ class ProfileProvider extends ChangeNotifier {
   ProfileEnum profileEnum = ProfileEnum.initial;
   final ProfileService _profileService;
   User? user;
+  ChatSettings? chatSettings;
+  PrivacySettings? privacySettings;
+  NotificationSettings? notificationSettings;
+
   GetUserDataResponse? getUserDataResponse;
 
   ProfileProvider(this._profileService);
 
-  void getUsersInformations({bool notifyListeners = false}) {
+  Future<void>? getUsersInformations({bool notifyListeners = false}) {
     user = User.fromJson(SessionManager.instance.usersData);
+    chatSettings = user?.chatSettings;
+    privacySettings = user?.privacySettings;
+    notificationSettings = user?.notificationSettings;
+    logger.d(user?.toJson());
     if (notifyListeners) this.notifyListeners();
   }
 
@@ -146,6 +154,32 @@ class ProfileProvider extends ChangeNotifier {
       isExists = _response!.codeNameExists!;
       profileEnum = ProfileEnum.idle;
       notifyListeners();
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void usersChatSettings({
+    required bool? receiptMark,
+    required bool? onlineStatus,
+    required bool? pushNotification,
+    required bool? everyone,
+    required bool? privateAccount,
+    required bool? visibility,
+  }) async {
+    try {
+      await _profileService.chatSettings(
+          userID: user!.id,
+          receiptMark: receiptMark,
+          onlineStatus: onlineStatus,
+          pushNotification: pushNotification,
+          everyone: everyone,
+          privateAccount: privateAccount,
+          visibility: visibility);
+      await _profileService.getUsersProfile(ProfileSetupModel(id: user?.id));
+      getUsersInformations(notifyListeners: true);
     } catch (e) {
       logger.e(e);
       profileEnum = ProfileEnum.idle;

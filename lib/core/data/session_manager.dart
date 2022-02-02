@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dice_app/core/notification/notification_service.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,11 +25,9 @@ class SessionManager {
   static const String keyUserData = 'users_data';
   static const String loginKey = 'login';
   static const String userIdKey = 'userIdKey';
-  static const String receiptStatus = 'receiptStatus';
-  static const String onlineStatus = 'onlineStatus';
-  static const String pushNotificationStatus = 'pushNotificationStatus';
-  static const String who = 'who';
-  static const String private = 'private';
+  static const String chatSettings = 'chatSettings';
+  static const String privacySettings = 'privacySettings';
+  static const String notificationSettings = 'notificationSettings';
 
   String get authToken => sharedPreferences!.getString(keyAuthToken) ?? '';
 
@@ -50,24 +49,23 @@ class SessionManager {
   set usersData(Map<String, dynamic> map) =>
       sharedPreferences!.setString(keyUserData, json.encode(map));
 
-  set showReceipt(bool receipt) =>
-      sharedPreferences!.setBool(receiptStatus, receipt);
+  set usersChatSettings(Map<String, dynamic> map) =>
+      sharedPreferences!.setString(chatSettings, json.encode(map));
 
-  set showOnlineStatus(bool online) =>
-      sharedPreferences!.setBool(onlineStatus, online);
-  set pushNotification(bool pn) =>
-      sharedPreferences!.setBool(pushNotificationStatus, pn);
+  set usersPrivacySettings(Map<String, dynamic> map) =>
+      sharedPreferences!.setString(privacySettings, json.encode(map));
 
-  set whoCanContactMe(bool pn) => sharedPreferences!.setBool(who, pn);
-  set makeAccountPrivate(bool pn) => sharedPreferences!.setBool(private, pn);
+  set usersNotificationSettings(Map<String, dynamic> map) =>
+      sharedPreferences!.setString(notificationSettings, json.encode(map));
 
-  bool get showReceipt => sharedPreferences!.getBool(receiptStatus) ?? true;
-  bool get showOnlineStatus => sharedPreferences!.getBool(onlineStatus) ?? true;
-  bool get pushNotification =>
-      sharedPreferences!.getBool(pushNotificationStatus) ?? true;
+  Map<String, dynamic> get usersChatSettings =>
+      json.decode(sharedPreferences!.getString(chatSettings) ?? '');
 
-  bool get whoCanContactMe => sharedPreferences!.getBool(who) ?? true;
-  bool get makeAccountPrivate => sharedPreferences!.getBool(private) ?? true;
+  Map<String, dynamic> get usersPrivacySettings =>
+      json.decode(sharedPreferences!.getString(privacySettings) ?? '');
+
+  Map<String, dynamic> get usersNotificationSettings =>
+      json.decode(sharedPreferences!.getString(notificationSettings) ?? '');
 
   Future<bool> logOut() async {
     await sharedPreferences!.clear();
