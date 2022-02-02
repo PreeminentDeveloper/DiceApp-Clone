@@ -26,11 +26,12 @@ class _DisplayVideoScreenState extends State<DisplayVideoScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    videoController = VideoPlayerController.file(File(widget!.object!.path!)
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      }));
+    initialLoad();
+    videoController = VideoPlayerController.file(File(widget!.object!.path!));
+  }
+
+  initialLoad() async {
+    await videoController?.initialize();
   }
 
   @override
