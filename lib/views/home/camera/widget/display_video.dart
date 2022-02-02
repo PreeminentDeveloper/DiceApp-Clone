@@ -26,12 +26,11 @@ class _DisplayVideoScreenState extends State<DisplayVideoScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initialLoad();
-    videoController = VideoPlayerController.file(File(widget.object!.path!));
-  }
-
-  initialLoad() async {
-    await videoController?.initialize();
+    videoController = VideoPlayerController.file(File(widget.object!.path!))
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
   }
 
   @override
@@ -40,12 +39,10 @@ class _DisplayVideoScreenState extends State<DisplayVideoScreen> {
       appBar: defaultAppBar(context, title: ''),
       body: Stack(
         children: [
-          // VideoPlayer(
-          //   File(widget.object!.path!),
-          //   width: MediaQuery.of(context).size.width,
-          //   fit: BoxFit.cover,
-          // ),
-          VideoPlayer(videoController!),
+          videoController!.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: 0.65, child: VideoPlayer(videoController!))
+              : Container(),
           GestureDetector(
             onTap: () {
               PageRouter.gotoWidget(

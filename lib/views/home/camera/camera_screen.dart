@@ -24,8 +24,10 @@ class CameraPictureScreen extends StatefulWidget {
   const CameraPictureScreen({
     Key? key,
     this.camera,
-    @required this.user,
-    @required this.convoID,
+    // @required
+    this.user,
+    // @required
+    this.convoID,
   }) : super(key: key);
 
   final CameraDescription? camera;
