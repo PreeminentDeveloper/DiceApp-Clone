@@ -173,7 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   name: user.name,
                                                   recentMessage:
                                                       '@${user.username}',
-                                                  date: 'timeAgo'),
+                                                  date: 'timeAgo',
+                                                  viewersCount: conversation
+                                                      .viewersCount),
                                               onTapProfile: () =>
                                                   PageRouter.gotoWidget(
                                                       OtherProfile(user.id!),

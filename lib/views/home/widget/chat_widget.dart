@@ -14,12 +14,14 @@ class ChatObject {
   final String? name;
   final String? recentMessage;
   final String? date;
+  final int? viewersCount;
 
   ChatObject(
       {@required this.image,
       @required this.name,
       @required this.recentMessage,
-      @required this.date});
+      @required this.date,
+      @required this.viewersCount});
 }
 
 class ChatListWidget extends StatelessWidget {
@@ -83,7 +85,7 @@ class ChatListWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 TextWidget(
-                  text: "1",
+                  text: '${chatObject?.viewersCount ?? 0}',
                   size: FontSize.s10,
                   appcolor: DColors.white,
                 )

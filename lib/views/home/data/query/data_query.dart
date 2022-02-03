@@ -14,6 +14,7 @@ class HomeGqlMutation {
         status
         type
         updatedAt
+        viewersCount
         userId
         users{
           age

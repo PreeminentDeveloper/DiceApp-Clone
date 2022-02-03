@@ -77,6 +77,7 @@ class ListOfData {
   String? type;
   String? updatedAt;
   String? userId;
+  int? viewersCount;
   List<User>? users;
 
   ListOfData(
@@ -87,6 +88,7 @@ class ListOfData {
       this.type,
       this.updatedAt,
       this.userId,
+      this.viewersCount,
       this.users});
 
   ListOfData.fromJson(Map<String, dynamic> json) {
@@ -94,6 +96,7 @@ class ListOfData {
     id = json["id"];
     name = json["name"];
     status = json["status"];
+    viewersCount = json["viewersCount"];
     type = json["type"];
     updatedAt = json["updatedAt"];
     userId = json["userId"];
@@ -108,6 +111,7 @@ class ListOfData {
     data["id"] = id;
     data["name"] = name;
     data["status"] = status;
+    data["viewersCount"] = viewersCount;
     data["type"] = type;
     data["updatedAt"] = updatedAt;
     data["userId"] = userId;

@@ -6,11 +6,14 @@ import 'package:flutter/foundation.dart';
 class ConversationList {
   final String? id;
   final String? conversationID;
+  final int? viewersCount;
+
   List<User>? user = [];
 
   ConversationList({
     this.id,
     this.conversationID,
+    this.viewersCount,
     this.user,
   });
 
@@ -22,6 +25,7 @@ class ConversationList {
     return ConversationList(
       id: id ?? this.id,
       conversationID: conversationID ?? this.conversationID,
+      viewersCount: viewersCount ?? 0,
       user: user ?? this.user,
     );
   }
@@ -30,6 +34,7 @@ class ConversationList {
     return {
       'id': id,
       'conversationID': conversationID,
+      'viewersCount': viewersCount,
       'user': user?.map((x) => x.toJson()).toList(),
     };
   }
@@ -38,6 +43,7 @@ class ConversationList {
     return ConversationList(
       id: map['id'],
       conversationID: map['conversationID'],
+      viewersCount: map['viewersCount'],
       user: map['user'] != null
           ? List<User>.from(map['user']?.map((x) => User.fromJson(x)))
           : [],
