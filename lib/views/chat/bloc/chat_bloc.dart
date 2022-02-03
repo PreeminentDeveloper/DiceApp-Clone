@@ -25,19 +25,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             pageNo: event.pageIndex,
             userID: event.userID,
             conversationID: event.conversationID);
-        _localChats.clear();
-        response.listMessages?.list?.map((list) {
-          _localChats.add(LocalChatModel(
-              conversationID: "conversation_id",
-              id: list.id?.toString(),
-              userID: list.user?.id,
-              time: list.insertedAt,
-              message: list.message,
-              insertLocalTime: DateTime.now().toString()
-              ));
-        }).toList();
-
-        chatDao!.saveMyChats(event.conversationID, _localChats);
+        chatDao!.saveMyChats(event.conversationID, response.listMessages?.list);
         yield ChatSuccessState(response: _localChats);
       } catch (e) {
         yield ChatFailedState(message: e.toString());

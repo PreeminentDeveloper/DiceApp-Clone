@@ -1,3 +1,5 @@
+import 'package:dice_app/core/event_bus/events/chat_event.dart';
+
 class ListOoChatResponse {
   String? typename;
   ListMessages? listMessages;
@@ -78,7 +80,7 @@ class ListOfMessages {
   String? id;
   String? message;
   User? user;
-  List<dynamic>? medias;
+  List<Medias>? medias = [];
 
   ListOfMessages(
       {this.typename,
@@ -94,7 +96,9 @@ class ListOfMessages {
     id = json["id"];
     message = json["message"];
     user = json["user"] == null ? null : User.fromJson(json["user"]);
-    medias = json["medias"] ?? [];
+    medias = json["medias"] == null
+        ? null
+        : (json["medias"] as List).map((e) => Medias.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -104,7 +108,10 @@ class ListOfMessages {
     data["id"] = id;
     data["message"] = message;
     if (user != null) data["user"] = user?.toJson();
-    if (medias != null) data["medias"] = medias;
+    if (medias != null) {
+      data["medias"] = medias?.map((e) => e.toJson()).toList();
+    }
+
     return data;
   }
 }

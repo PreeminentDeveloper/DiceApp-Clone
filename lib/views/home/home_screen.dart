@@ -6,6 +6,7 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/message_screen.dart';
+import 'package:dice_app/views/chat/provider/chat_provider.dart';
 import 'package:dice_app/views/home/data/source/dao.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/home/widget/empty_friends_widget.dart';
@@ -180,6 +181,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               onPressed: () async {
                                                 chatDao!.openABox(conversation
                                                     .conversationID!);
+                                                Provider.of<ChatProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .markAllMessageAsRead(
+                                                        conversation
+                                                            .conversationID!);
                                                 PageRouter.gotoWidget(
                                                     MessageScreen(
                                                         user: user,

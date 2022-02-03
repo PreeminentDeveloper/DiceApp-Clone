@@ -263,19 +263,18 @@ class _FeatureImagesState extends State<FeatureImages> {
             conversationID: widget.convoId,
             userID: _user.user?.id));
 
-
-    chatDao!.saveSingleChat(
-        widget.convoId,
-        local.LocalChatModel(
-            conversationID: widget.convoId,
-            userID: _user.user?.id,
-            messageType: 'media',
-            insertLocalTime: DateTime.now().toString(),
-            imageSending: _imageSending));
+    // chatDao!.saveSingleChat(
+    //     widget.convoId,
+    //     local.LocalChatModel(
+    //         conversationID: widget.convoId,
+    //         userID: _user.user?.id,
+    //         messageType: 'media',
+    //         insertLocalTime: DateTime.now().toString(),
+    //         imageSending: _imageSending));
 
     try {
       setState(() => _isLoading = true);
-       await _networkService.call('', RequestMethod.upload,
+      await _networkService.call('', RequestMethod.upload,
           formData:
               FormData.fromMap(_imageSending!.toJson(addMultipath: true)));
       setState(() => _isLoading = false);

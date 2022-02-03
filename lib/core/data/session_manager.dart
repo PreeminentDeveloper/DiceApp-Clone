@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dice_app/core/data/hive_manager.dart';
 import 'package:dice_app/core/notification/notification_service.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,6 +69,7 @@ class SessionManager {
       json.decode(sharedPreferences!.getString(notificationSettings) ?? '');
 
   Future<bool> logOut() async {
+    await HiveBoxes.clearAllBox();
     await sharedPreferences!.clear();
     try {
       final cacheDir = await getTemporaryDirectory();

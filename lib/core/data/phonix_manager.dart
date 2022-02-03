@@ -27,13 +27,13 @@ class PhonixManager {
       phoenixChannel?.join();
       phoenixChannel?.messages.listen((event) {
         // presence_state
-        if (event.event.value == 'presence_state') {
-          eventBus.fire(OnlineEvent(event.payload));
+        if (event.event.value == 'presence_diff') {
+          eventBus.fire(event.payload);
         }
-        if (event.event.value.contains(event.event.value)) {
-          eventBus.fire(ChatEventBus(
-              event.event.value, ChatEventModel.fromJson(event.payload)));
-        }
+        // if (event.event.value.contains(event.event.value)) {
+        //   eventBus.fire(ChatEventBus(
+        //       event.event.value, ChatEventModel.fromJson(event.payload)));
+        // }
       });
     });
   }

@@ -29,6 +29,14 @@ class TimeUtil {
     return _formatTime;
   }
 
+  static String chatTime2(String? date) {
+    if (date!.isEmpty) return '';
+    DateTime _dt = DateTime.parse(date);
+    String _formatTime = DateFormat("dd-MM-yyyy hh:mm:ss").format(_dt);
+
+    return _formatTime;
+  }
+
   static String chatDate(String? date) {
     if (date!.isEmpty) return '';
     DateTime _dt = DateTime.parse(date);
@@ -47,16 +55,16 @@ class TimeUtil {
 
     final _difference = _presentDate.difference(_temp);
 
+    if (_difference.inDays > 1) {
+      return '$_day ${_getMonth(_month)} $_year';
+    }
+
     if (_difference.inDays == 0) {
       return 'Today';
     }
 
     if (_difference.inDays == 1) {
       return 'Yesterday';
-    }
-
-    if (_difference.inDays > 1) {
-      return '$_day ${_getMonth(_month)} $_year';
     }
 
     return '';

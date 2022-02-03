@@ -2,12 +2,12 @@
 
 import 'dart:io';
 
-import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/core/util/time_helper.dart';
@@ -25,22 +25,24 @@ import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
+import 'bloc/chat_bloc.dart';
 import 'data/models/chat_menus.dart';
 import 'feature_images.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
-import 'package:grouped_list/grouped_list.dart';
 
 final bucketGlobal = PageStorageBucket();
 
 class MessageScreen extends StatefulWidget {
-  final User? user;
+  final dynamic user;
   final String? conversationID;
   MessageScreen({this.user, this.conversationID});
 
@@ -56,14 +58,16 @@ class _MessageScreenState extends State<MessageScreen> {
   ChatProvider? _chatProvider;
   final _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final _bloc = ChatBloc(inject());
+  int _index = 1;
 
   @override
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    _chatProvider!.loadCachedMessages(widget.conversationID!);
+    _chatProvider!.loadMessagesFromServer(widget.conversationID!);
     _chatProvider!.listenToChatEvents(
-        widget.conversationID!, _profileProvider!.user!.id!);
+        widget.conversationID!, _profileProvider!.user!.id!, widget.user!.id!);
     eventBus.on<ChatEventBus>().listen((event) => _scrollDown());
     _ensureThatDbIsoOpened();
     super.initState();
@@ -73,6 +77,7 @@ class _MessageScreenState extends State<MessageScreen> {
     if (chatDao!.getListenable(widget.conversationID!) == null) {
       await chatDao!.openABox(widget.conversationID!);
     }
+    _makeCall();
     setState(() {});
   }
 
@@ -82,6 +87,13 @@ class _MessageScreenState extends State<MessageScreen> {
       _scrollController.animateTo(_scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
     }
+  }
+
+  void _makeCall() {
+    _bloc.add(ListChatEvent(
+        pageIndex: _index,
+        userID: _profileProvider!.user!.id!,
+        conversationID: widget.conversationID));
   }
 
   @override
@@ -120,32 +132,37 @@ class _MessageScreenState extends State<MessageScreen> {
             builder: (BuildContext context, Box<dynamic> value, Widget? child) {
               final _response = chatDao!.convert(value).toList();
 
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: GroupedListView<dynamic, String>(
-                      elements: _response,
-                      controller: _scrollController,
-                      groupBy: (element) =>
-                          TimeUtil.chatDate(element.insertLocalTime),
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          _getGroupedTime(groupByValue),
-                      indexedItemBuilder: (context, dynamic element,
-                              int index) =>
-                          element.userID == _profileProvider?.user?.id
-                              ? SenderSide(
-                                  chat: element,
-                                  deleteCallback: () => _removeMessage(index))
-                              : ReceiverSide(
-                                  chat: element,
-                                  deleteCallback: () => _removeMessage(index)),
-                      floatingHeader: true,
-                      order: GroupedListOrder.ASC, // optional
+              return BlocListener<ChatBloc, ChatState>(
+                bloc: _bloc,
+                listener: (context, state) {},
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: GroupedListView<dynamic, String>(
+                        elements: _response,
+                        sort: false,
+                        controller: _scrollController,
+                        groupBy: (element) =>
+                            TimeUtil.chatDate(element.insertedAt),
+                        groupSeparatorBuilder: (String groupByValue) =>
+                            _getGroupedTime(groupByValue),
+                        indexedItemBuilder: (context, dynamic element,
+                                int index) =>
+                            element.user?.id == _profileProvider?.user?.id
+                                ? SenderSide(
+                                    chat: element,
+                                    deleteCallback: () => _removeMessage(index))
+                                : ReceiverSide(
+                                    chat: element,
+                                    deleteCallback: () =>
+                                        _removeMessage(index)),
+                        floatingHeader: true,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-                ],
+                    SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+                  ],
+                ),
               );
             },
           ),
@@ -181,11 +198,15 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _addMessage() async {
-    await _chatProvider!.addMessageToLiveDB(_profileProvider!.user!.id!,
-        widget.conversationID, _messageController.text);
+    bool? _sent = await _chatProvider!.addMessageToLiveDB(
+        _profileProvider!.user!.id!,
+        widget.conversationID,
+        _messageController.text);
     _messageController.text = '';
     isEnabled = false;
     setState(() {});
+
+    if (_sent!) _makeCall();
   }
 
   void _removeMessage(int index) {
@@ -218,49 +239,56 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Widget _getTitleWidget() => GestureDetector(
-        onTap: () =>
-            PageRouter.gotoWidget(OtherProfile(widget.user!.id!), context),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleImageHandler(
-              'https://${widget.user?.photo?.hostname}/${widget.user?.photo?.url}',
-              radius: 20,
-              showInitialText: widget.user?.photo?.url?.isEmpty ?? true,
-              initials: Helpers.getInitials(widget.user?.name ?? ''),
-            ),
-            SizedBox(width: 10.w),
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextWidget(
-                    text: widget.user?.name ?? '',
-                    appcolor: DColors.mildDark,
-                    weight: FontWeight.w500,
-                    size: FontSize.s17,
-                  ),
-                  SizedBox(height: 4.h),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircleAvatar(
-                        radius: 4.r,
-                        backgroundColor: DColors.primaryAccentColor,
-                      ),
-                      SizedBox(width: 2.5.h),
-                      TextWidget(
-                        text: "Offline",
-                        appcolor: DColors.primaryAccentColor,
-                        weight: FontWeight.w500,
-                        size: FontSize.s12,
-                      ),
-                    ],
-                  )
-                ]),
-          ],
-        ),
-      );
+      onTap: () =>
+          PageRouter.gotoWidget(OtherProfile(widget.user!.id!), context),
+      child: Consumer<ChatProvider>(
+        builder: (context, chat, child) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleImageHandler(
+                'https://${widget.user?.photo?.hostname}/${widget.user?.photo?.url}',
+                radius: 20,
+                showInitialText: widget.user?.photo?.url?.isEmpty ?? true,
+                initials: Helpers.getInitials(widget.user?.name ?? ''),
+              ),
+              SizedBox(width: 10.w),
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextWidget(
+                      text: widget.user?.name ?? '',
+                      appcolor: DColors.mildDark,
+                      weight: FontWeight.w500,
+                      size: FontSize.s17,
+                    ),
+                    SizedBox(height: 4.h),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          radius: 4.r,
+                          backgroundColor: chat.isUserOnline
+                              ? DColors.primaryAccentColor
+                              : DColors.disabledColor,
+                        ),
+                        SizedBox(width: 2.5.h),
+                        TextWidget(
+                          text: chat.isUserOnline ? 'Online' : "Offline",
+                          appcolor: chat.isUserOnline
+                              ? DColors.primaryAccentColor
+                              : DColors.disabledColor,
+                          weight: FontWeight.w300,
+                          size: FontSize.s12,
+                        ),
+                      ],
+                    )
+                  ]),
+            ],
+          );
+        },
+      ));
 
   PopMenuWidget _blockUser() => PopMenuWidget(
         primaryWidget: Container(
@@ -290,13 +318,14 @@ class _MessageScreenState extends State<MessageScreen> {
       padding: EdgeInsets.only(top: 15.h, bottom: 10.h),
       child: Row(
         children: [
-          Expanded(child: CustomeDivider()),
+          Expanded(child: CustomeDivider(thickness: .3)),
           TextWidget(
             text: TimeUtil.timeAgoSinceDate(groupByValue),
             appcolor: const Color(0xffB2B2B2),
             weight: FontWeight.w500,
+            size: 10.sp,
           ),
-          Expanded(child: CustomeDivider()),
+          Expanded(child: CustomeDivider(thickness: .3)),
         ],
       ),
     );
