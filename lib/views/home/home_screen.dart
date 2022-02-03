@@ -197,9 +197,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .conversationID),
                                                     context);
                                               },
-                                              onTapDelete: () => showSheet(
-                                                  context,
-                                                  child: _deleteDialog()),
+                                              onTapDelete: () {
+                                                _homeProvider
+                                                    ?.removeConversation(
+                                                        conversationId:
+                                                            conversation
+                                                                .conversationID!,
+                                                        userID:
+                                                            _profileProvider!
+                                                                .user!.id!);
+                                              },
                                               onTapCamera: () async {
                                                 PageRouter.gotoWidget(
                                                     CameraPictureScreen(

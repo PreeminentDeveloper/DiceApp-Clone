@@ -26,7 +26,7 @@ class DisplayPictureScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: defaultAppBar(context, title: ''),
+      appBar: defaultAppBar(context, title: '', backgroundColor: Colors.black),
       body: Stack(
         children: [
           Image.file(

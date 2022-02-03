@@ -24,7 +24,7 @@ class HomeProvider extends ChangeNotifier {
   HomeProvider(this._homeService);
 
   void listConversations(
-      {required int pageNumber,
+      {int? pageNumber = 1,
       int perPage = 20,
       String? search,
       required String userID,
@@ -32,7 +32,7 @@ class HomeProvider extends ChangeNotifier {
     try {
       if (list!.isEmpty) homeEnum = HomeEnum.busy;
       final _response = await _homeService.listConvo(
-          pageNumber: pageNumber,
+          pageNumber: pageNumber ?? 1,
           perPage: perPage,
           search: search ?? '',
           userID: userID);
@@ -53,6 +53,20 @@ class HomeProvider extends ChangeNotifier {
       if (saveConvo) listOfConversationsDao!.myconversations(conversationList!);
       homeEnum = HomeEnum.idle;
 
+      notifyListeners();
+    } catch (e) {
+      logger.e(e);
+      homeEnum = HomeEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void removeConversation(
+      {required String conversationId, required String userID}) async {
+    try {
+      await _homeService.removeConvo(
+          conversationId: conversationId, userID: userID);
+      listConversations(userID: userID);
       notifyListeners();
     } catch (e) {
       logger.e(e);

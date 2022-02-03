@@ -33,4 +33,21 @@ class HomeService {
       rethrow;
     }
   }
+
+  Future<dynamic> removeConvo(
+      {required String userID, required String conversationId}) async {
+    try {
+      final _result = await _graphQLClient.client.query(
+        QueryOptions(
+            document: gql(HomeGqlMutation.removeConversation),
+            variables: {"userId": userID, "conversationId": conversationId},
+            fetchPolicy: FetchPolicy.networkOnly),
+      );
+      logger.d(_result.data);
+      
+    } catch (exception) {
+      logger.e(exception);
+      rethrow;
+    }
+  }
 }
