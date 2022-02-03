@@ -68,7 +68,6 @@ class ChatProvider extends ChangeNotifier {
   }
 
   /// Listens for when a message is been received
-  ///
   /// when listening for chat event, if the UserID that is been returned is not equivalent to the senders UserID
   /// then the message should be cached locally
   listenToChatEvents(String key, String userID, String receiverID) {

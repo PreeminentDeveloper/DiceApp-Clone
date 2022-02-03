@@ -210,6 +210,8 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
     setState(() {});
     return _imageFile;
   }
+
+
 }
 
 callAsyncFetch(res) async {

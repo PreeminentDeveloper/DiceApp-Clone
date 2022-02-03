@@ -5,7 +5,9 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/network/app_config.dart';
 import 'package:dice_app/core/network/network_service.dart';
 import 'package:dice_app/core/network/url_config.dart';
+import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/widget/date_picker.dart';
@@ -18,11 +20,14 @@ import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import 'package:path/path.dart' as path;
 import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart' as path;
+import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
 
+import 'bloc/chat_bloc.dart';
 import 'data/models/feature_model.dart';
 import 'data/models/local_chats_model.dart' as local;
 import 'data/models/sending_images.dart';
@@ -44,6 +49,7 @@ class _FeatureImagesState extends State<FeatureImages> {
   final _msgController = TextEditingController();
   final List<FeatureModel> _featureModel = [];
   final Map<dynamic, dynamic> _map = <dynamic, dynamic>{};
+  final _bloc = ChatBloc(inject());
 
   @override
   void initState() {
@@ -52,6 +58,7 @@ class _FeatureImagesState extends State<FeatureImages> {
   }
 
   void _convertFileImages() {
+    if (_featureModel.isNotEmpty) _featureModel.clear();
     widget.results
         .map((result) =>
             _featureModel.add(FeatureModel(key: result, value: result.path)))
@@ -97,7 +104,7 @@ class _FeatureImagesState extends State<FeatureImages> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextWidget(
-                      text: "${widget.results.length} image(s) to...",
+                      text: "${_featureModel.length} image(s) to...",
                       appcolor: DColors.mildDark,
                       weight: FontWeight.w400,
                       size: FontSize.s12,
@@ -121,7 +128,7 @@ class _FeatureImagesState extends State<FeatureImages> {
                     SizedBox(height: 4.h),
                     Visibility(
                         visible: _isLoading, child: LinearProgressIndicator()),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 10.h),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -140,6 +147,10 @@ class _FeatureImagesState extends State<FeatureImages> {
                                     setState(() {});
                                   }))
                               .toList(),
+                          SizedBox(width: 121.w),
+                          GestureDetector(
+                              onTap: () => _pickGallery(),
+                              child: SvgPicture.asset('assets/add_pic.svg'))
                         ],
                       ),
                     ),
@@ -197,10 +208,10 @@ class _FeatureImagesState extends State<FeatureImages> {
               ),
             ),
           ),
-          SizedBox(height: 8.h),
           IconButton(
               onPressed: removeImage,
-              icon: Icon(Icons.cancel_outlined, size: 20))
+              icon: const Icon(Icons.cancel_outlined,
+                  size: 20, color: Color(0xffB2B2B2)))
         ],
       ),
     );
@@ -263,20 +274,15 @@ class _FeatureImagesState extends State<FeatureImages> {
             conversationID: widget.convoId,
             userID: _user.user?.id));
 
-    // chatDao!.saveSingleChat(
-    //     widget.convoId,
-    //     local.LocalChatModel(
-    //         conversationID: widget.convoId,
-    //         userID: _user.user?.id,
-    //         messageType: 'media',
-    //         insertLocalTime: DateTime.now().toString(),
-    //         imageSending: _imageSending));
-
     try {
       setState(() => _isLoading = true);
       await _networkService.call('', RequestMethod.upload,
           formData:
               FormData.fromMap(_imageSending!.toJson(addMultipath: true)));
+      _bloc.add(ListChatEvent(
+          pageIndex: 1,
+          userID: _user.user?.id,
+          conversationID: widget.convoId));
       setState(() => _isLoading = false);
     } catch (e) {
       logger.e(e);
@@ -300,4 +306,39 @@ class _FeatureImagesState extends State<FeatureImages> {
       return '';
     }
   }
+
+  List<AssetEntity> results = [];
+
+  _pickGallery() async {
+    final _results = await FlutterGallery.pickGallery(
+        context: context,
+        title: "Dice",
+        color: DColors.primaryColor,
+        limit: 5,
+        maximumFileSize: 100 //Size in megabyte
+        );
+    setState(() => results = _results);
+    final _images = await _convertImages(_results);
+
+    if (widget.results.isNotEmpty) widget.results.clear();
+
+    widget.results.addAll(_images);
+    setState(() {});
+    _convertFileImages();
+  }
+
+  Future<List<File>> _convertImages(List<AssetEntity> results) async {
+    List<File> _imageFile = [];
+    for (var image in results) {
+      final _imageResponse = await callAsyncFetch(image.file);
+      _imageFile.add(_imageResponse);
+    }
+    setState(() {});
+    return _imageFile;
+  }
+}
+
+callAsyncFetch(res) async {
+  File image = await res; // image file
+  return image;
 }

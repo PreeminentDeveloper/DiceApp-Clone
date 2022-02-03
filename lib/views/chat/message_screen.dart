@@ -271,14 +271,14 @@ class _MessageScreenState extends State<MessageScreen> {
                           radius: 4.r,
                           backgroundColor: chat.isUserOnline
                               ? DColors.primaryAccentColor
-                              : DColors.disabledColor,
+                              : const Color(0xffB2B2B2),
                         ),
                         SizedBox(width: 2.5.h),
                         TextWidget(
                           text: chat.isUserOnline ? 'Online' : "Offline",
                           appcolor: chat.isUserOnline
                               ? DColors.primaryAccentColor
-                              : DColors.disabledColor,
+                              : const Color(0xffB2B2B2),
                           weight: FontWeight.w300,
                           size: FontSize.s12,
                         ),
