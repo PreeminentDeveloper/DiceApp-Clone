@@ -18,8 +18,7 @@ class PhonixManager {
         '${UrlConfig.phonixSocketBaseURL}${SessionManager.instance.authToken}&vsn=2.0.0')
       ..connect();
 
-    phoenixSocket?.closeStream
-        .listen((event) => logger.d('Closing _phoenix => $event'));
+    phoenixSocket?.closeStream.listen((event) => {});
 
     phoenixSocket?.openStream.listen((event) {
       phoenixChannel = phoenixSocket?.addChannel(topic: "chat_room:lobby");

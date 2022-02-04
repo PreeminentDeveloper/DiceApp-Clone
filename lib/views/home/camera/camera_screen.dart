@@ -14,6 +14,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:image/image.dart' as img;
 
 import 'widget/bottom_button.dart';
+import 'widget/display_video.dart';
 
 // A screen that allows users to take a picture using a given camera.
 class CameraPictureScreen extends StatefulWidget {
@@ -37,6 +38,7 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
   Future<void>? _initializeControllerFuture;
   List<CameraDescription> _cameras = [];
   bool _switch = false;
+  bool _isRecoring = false;
 
   @override
   void initState() {
@@ -102,7 +104,8 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
             onClose: () => PageRouter.goBack(context),
             onCapture: () => _takePicture(),
             onSwitch: () => _toggleCamera(),
-            onVideoRecord: () => _videoRecord(),
+            onVideoRecord: () => _startVideoRecord(),
+            onLongPressUp: () => _stopVideoRecording(),
             gallery: () => _pickGallery(),
           )
         ],
@@ -110,10 +113,28 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
     );
   }
 
-  void _videoRecord() async {
-    // Ensure that the camera is initialized.
-    await _initializeControllerFuture;
+  void _startVideoRecord() async {
     await _controller?.startVideoRecording();
+    setState(() {
+      _isRecoring = false;
+    });
+  }
+
+  void _stopVideoRecording() async {
+    XFile? _videopath = await _controller?.stopVideoRecording();
+    setState(() {
+      _isRecoring = false;
+    });
+    if (_videopath != null) {
+      PageRouter.gotoWidget(
+          DisplayVideoScreen(
+              object: ImageObject(
+                  path: _videopath.path,
+                  conversationID: widget.convoID,
+                  user: widget.user)),
+          context);
+    }
+    logger.d(_videopath?.path);
   }
 
   /// togle camera
@@ -210,8 +231,6 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
     setState(() {});
     return _imageFile;
   }
-
-
 }
 
 callAsyncFetch(res) async {

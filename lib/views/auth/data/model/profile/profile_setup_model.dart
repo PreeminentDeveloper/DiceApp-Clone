@@ -38,6 +38,8 @@ class ProfileSetupModel {
       phone
       username
       phone
+      iblocked
+      ublocked
       status
       photo
       conversation{

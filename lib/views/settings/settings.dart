@@ -1,3 +1,4 @@
+import 'package:dice_app/core/data/hive_manager.dart';
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
@@ -266,6 +267,8 @@ class Settings extends StatelessWidget {
   }
 
   _logOut(BuildContext context) async {
+    await HiveBoxes.clearAllBox();
+    await SessionManager.instance.sharedPreferences?.clear();
     await SessionManager.instance.logOut();
     Navigator.pushAndRemoveUntil(
         context,

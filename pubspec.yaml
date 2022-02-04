@@ -65,6 +65,8 @@ dependencies:
   slide_item: ^1.0.8
   timeago: ^3.2.1
   url_launcher: ^6.0.9
+  video_player: ^2.2.18
+  video_thumbnail: ^0.4.3
   visibility_detector: ^0.2.2
 
 dev_dependencies:

@@ -8,13 +8,7 @@ import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ImageObject {
-  final String? path;
-  final String? conversationID;
-  final User? user;
-
-  ImageObject({this.path, this.conversationID, this.user});
-}
+import 'display_video.dart';
 
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {

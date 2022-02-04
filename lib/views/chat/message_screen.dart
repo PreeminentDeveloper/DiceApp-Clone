@@ -70,6 +70,8 @@ class _MessageScreenState extends State<MessageScreen> {
     _chatProvider!.listenToChatEvents(
         widget.conversationID!, _profileProvider!.user!.id!, widget.user!.id!);
     eventBus.on<ChatEventBus>().listen((event) => _scrollDown());
+    _profileProvider!.getMyFriendsProfile(widget.user.id);
+
     _ensureThatDbIsoOpened();
     super.initState();
   }

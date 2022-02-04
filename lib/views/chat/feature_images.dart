@@ -24,20 +24,25 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 import 'bloc/chat_bloc.dart';
 import 'data/models/feature_model.dart';
 import 'data/models/local_chats_model.dart' as local;
 import 'data/models/sending_images.dart';
 import 'widget/chat_field.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class FeatureImages extends StatefulWidget {
   final List<File> results;
   final String receiverName;
   final String convoId;
-  const FeatureImages(this.results, this.receiverName, this.convoId, {Key? key})
+  final bool isVideo;
+  const FeatureImages(this.results, this.receiverName, this.convoId,
+      {this.isVideo = false, Key? key})
       : super(key: key);
 
   @override
@@ -51,18 +56,20 @@ class _FeatureImagesState extends State<FeatureImages> {
   final Map<dynamic, dynamic> _map = <dynamic, dynamic>{};
   final _bloc = ChatBloc(inject());
 
+  VideoPlayerController? _controller;
+
   @override
   void initState() {
     _convertFileImages();
     super.initState();
   }
 
-  void _convertFileImages() {
+  Future<void> _convertFileImages() async {
     if (_featureModel.isNotEmpty) _featureModel.clear();
-    widget.results
-        .map((result) =>
-            _featureModel.add(FeatureModel(key: result, value: result.path)))
-        .toList();
+
+    widget.results.map((result) {
+      _featureModel.add(FeatureModel(key: result, value: result.path));
+    }).toList();
     setState(() {});
   }
 
@@ -136,16 +143,20 @@ class _FeatureImagesState extends State<FeatureImages> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ..._featureModel
-                              .map((file) => _images(file.key,
-                                      selected: _fileName == file.key,
-                                      onTap: () {
-                                    _fileName = file.key;
-                                    setState(() {});
-                                  }, removeImage: () {
-                                    if (widget.results.length == 1) return;
-                                    _featureModel.remove(file);
-                                    setState(() {});
-                                  }))
+                              .map(
+                                (file) => _images(file.value,
+                                    selected: _fileName == file.key,
+                                    isVideo: file.key
+                                        .toString()
+                                        .contains('mp4'), onTap: () {
+                                  _fileName = file.key;
+                                  setState(() {});
+                                }, removeImage: () {
+                                  if (widget.results.length == 1) return;
+                                  _featureModel.remove(file);
+                                  setState(() {});
+                                }),
+                              )
                               .toList(),
                           SizedBox(width: 121.w),
                           GestureDetector(
@@ -182,7 +193,10 @@ class _FeatureImagesState extends State<FeatureImages> {
   }
 
   Widget _images(data,
-      {bool selected = false, Function()? onTap, Function()? removeImage}) {
+      {bool isVideo = false,
+      bool selected = false,
+      Function()? onTap,
+      Function()? removeImage}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -203,7 +217,7 @@ class _FeatureImagesState extends State<FeatureImages> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.r),
-                child: Image.file(data,
+                child: Image.file(File(data),
                     height: 150.h, width: 100.w, fit: BoxFit.cover),
               ),
             ),

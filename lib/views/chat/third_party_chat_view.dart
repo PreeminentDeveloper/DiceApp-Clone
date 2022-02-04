@@ -103,7 +103,7 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
             } else {
               _controller?.reverse();
             }
-          }),
+          }),// 702822
         ),
         body: GestureDetector(
           onTap: () {},
@@ -210,7 +210,7 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
 
   /// [Note] Here, in other have  images centered appropriately, i had to duplicate the Row widget into 3 replica
   /// Then i turned the left and the right replicate to visibility off so we can be left with the centered Replicate
-  // ** ✌️✌️✌️✌️ Hast Lavista Baby **/
+  // ** ✌️✌️✌️✌️ Hasta Lavista Baby **/
   GestureDetector _customAppBar({required Function() onTap}) {
     return GestureDetector(
       onTap: onTap,

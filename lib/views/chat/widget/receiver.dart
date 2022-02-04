@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -16,6 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'image_viewer.dart';
 
@@ -97,61 +101,132 @@ class ReceiverSide extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...medias!
-              .map((e) => GestureDetector(
-                    onTap: () => PageRouter.gotoWidget(
-                        ImageViewer('https://${e.hostname}/${e.url}'), context,
-                        animationType: PageTransitionType.fade),
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(17.2, 10, 100, 0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xffCBCBCB)),
-                        color: DColors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.r),
-                          topRight: Radius.circular(30.r),
-                          bottomRight: Radius.circular(20.r),
+          ...medias!.map((e) {
+            if (e.url!.contains('mp4')) {
+              return FutureBuilder(
+                  future: _fetchThumbNails('https://${e.hostname}/${e.url}'),
+                  builder: (_, snap) {
+                    if (snap.connectionState == ConnectionState.waiting ||
+                        !snap.hasData) return Container();
+                    return GestureDetector(
+                      onTap: () => PageRouter.gotoWidget(
+                          ImageViewer('https://${e.hostname}/${e.url}',
+                              video: true),
+                          context,
+                          animationType: PageTransitionType.fade),
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(90, 10, 17.2, 0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xffCBCBCB)),
+                          color: DColors.primaryColor,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.r),
+                            topRight: Radius.circular(30.r),
+                            bottomLeft: Radius.circular(20.r),
+                          ),
                         ),
-                      ),
-                      child: SingleChildScrollView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Hero(
-                              tag: 'https://${e.hostname}/${e.url}',
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(30.r),
-                                  topRight: Radius.circular(30.r),
-                                  bottomLeft: Radius.circular(15.r),
+                        child: SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Hero(
+                                tag: 'https://${e.hostname}/${e.url}',
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30.r),
+                                    topRight: Radius.circular(30.r),
+                                    bottomLeft: Radius.circular(15.r),
+                                  ),
+                                  child: Image.file(File(snap.data.toString()),
+                                      height: 156.54.h,
+                                      width: 357.52.w,
+                                      fit: BoxFit.cover),
                                 ),
-                                child: ImageLoader(
-                                    height: 156.54.h,
-                                    width: 357.52.w,
-                                    imageLink: 'https://${e.hostname}/${e.url}',
-                                    fit: BoxFit.cover),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w, vertical: 8.h),
-                              child: TextWidget(
-                                text: e.caption ?? '',
-                                type: "Circular",
-                                appcolor: DColors.mildDark,
-                                height: 1.6,
-                                align: TextAlign.center,
-                              ),
-                            )
-                          ],
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10.w, vertical: 8.h),
+                                child: TextWidget(
+                                  text: e.caption ?? '',
+                                  type: "Circular",
+                                  appcolor: DColors.mildDark,
+                                  height: 1.6,
+                                  align: TextAlign.center,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ))
-              .toList(),
+                    );
+                  });
+            }
+            return GestureDetector(
+              onTap: () => PageRouter.gotoWidget(
+                  ImageViewer('https://${e.hostname}/${e.url}'), context,
+                  animationType: PageTransitionType.fade),
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(90, 10, 17.2, 0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: DColors.primaryAccentColor),
+                  color: DColors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.r),
+                    topRight: Radius.circular(30.r),
+                    bottomLeft: Radius.circular(20.r),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Hero(
+                        tag: 'https://${e.hostname}/${e.url}',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.r),
+                            topRight: Radius.circular(30.r),
+                            bottomLeft: Radius.circular(15.r),
+                          ),
+                          child: ImageLoader(
+                              height: 156.54.h,
+                              width: 357.52.w,
+                              imageLink: 'https://${e.hostname}/${e.url}',
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 8.h),
+                        child: TextWidget(
+                          text: e.caption ?? '',
+                          type: "Circular",
+                          appcolor: DColors.mildDark,
+                          height: 1.6,
+                          align: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
+  }
+
+  Future<String?> _fetchThumbNails(String url) async {
+    final fileName = await VideoThumbnail.thumbnailFile(
+      video: url,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.PNG,
+      maxHeight: 64,
+      quality: 75,
+    );
+    return fileName;
   }
 }

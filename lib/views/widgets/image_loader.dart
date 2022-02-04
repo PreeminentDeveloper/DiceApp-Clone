@@ -9,9 +9,16 @@ class ImageLoader extends StatelessWidget {
   final String? imageLink;
   final BoxFit? fit;
   final Function()? onTap;
+  final bool? showPlayIcon;
 
   const ImageLoader(
-      {Key? key, this.onTap, this.fit, this.height, this.width, this.imageLink})
+      {Key? key,
+      this.onTap,
+      this.showPlayIcon = false,
+      this.fit,
+      this.height,
+      this.width,
+      this.imageLink})
       : super(key: key);
 
   @override
@@ -31,10 +38,12 @@ class ImageLoader extends StatelessWidget {
             image: DecorationImage(image: imageProvider, fit: fit),
           ),
         ),
-        placeholder: (context, url) => Center(
+        placeholder: (context, url) => const Center(
             child: CircularProgressIndicator(
                 backgroundColor: DColors.primaryColor)),
-        errorWidget: (context, url, error) => Icon(Icons.error),
+        errorWidget: (context, url, error) => showPlayIcon!
+            ? const Icon(Icons.play_arrow, size: 50, color: DColors.white)
+            : const Icon(Icons.error),
         fadeOutDuration: const Duration(seconds: 1),
         fadeInDuration: const Duration(seconds: 3),
       ),

@@ -8,6 +8,7 @@ class CameraButtongs extends StatelessWidget {
   final Function()? onSwitch;
   final Function()? onCapture;
   final Function()? onVideoRecord;
+  final Function()? onLongPressUp;
   final Function()? gallery;
   final bool? isRecording;
 
@@ -17,6 +18,7 @@ class CameraButtongs extends StatelessWidget {
       this.onSwitch,
       this.onCapture,
       this.onVideoRecord,
+      this.onLongPressUp,
       this.gallery,
       this.isRecording = false})
       : super(key: key);
@@ -37,6 +39,7 @@ class CameraButtongs extends StatelessWidget {
               GestureDetector(
                   onTap: onCapture,
                   onLongPress: onVideoRecord,
+                  onLongPressUp: onLongPressUp,
                   child: SvgPicture.asset(Assets.capture)),
               SizedBox(height: 21.5.h),
               GestureDetector(

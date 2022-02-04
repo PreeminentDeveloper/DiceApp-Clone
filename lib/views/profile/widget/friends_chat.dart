@@ -78,7 +78,7 @@ class FriendsChat extends StatelessWidget {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   TextWidget(
-                                                    text: user.name ?? 'ad',
+                                                    text: user.name ?? '',
                                                     size: FontSize.s16,
                                                     weight: FontWeight.normal,
                                                     align: TextAlign.left,
@@ -97,7 +97,8 @@ class FriendsChat extends StatelessWidget {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   TextWidget(
-                                                    text: '21',
+                                                    text:
+                                                        '${conversation.viewersCount ?? 0}',
                                                     size: FontSize.s12,
                                                     appcolor:
                                                         DColors.primaryColor,
