@@ -65,8 +65,10 @@ class _SignUpState extends State<SignUp> {
             }
             if (state is AuthSuccessState) {
               setState(() => _loadingState = false);
-              PageRouter.gotoWidget(
-                  OTP(dialCode + _phoneController.text, _deviceID), context);
+              String _phone = _phoneController.text[0] == '0'
+                  ? _phoneController.text.replaceFirst('0', '+234')
+                  : '+234${_phoneController.text}';
+              PageRouter.gotoWidget(OTP(_phone, _deviceID), context);
             }
             if (state is AuthFailedState) {
               logger.d(state.message);

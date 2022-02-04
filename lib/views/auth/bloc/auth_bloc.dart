@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/auth/data/model/login/login_model.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_model.dart';
 import 'package:dice_app/views/auth/data/model/otp/otp_response.dart';
@@ -33,6 +34,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     /// Verify otp event
     if (event is VerifyOtpEvent) {
       try {
+        logger.d(event.otpModel.phone);
+        logger.d(event.otpModel.deviceId);
         yield AuthLoadingState();
         final response = await _authService.verifyOtp(event.otpModel);
         yield AuthSuccessState(response: response);
@@ -52,12 +55,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     }
 
-
     /// setup profile
     if (event is ProfileSetUpEvent) {
       try {
         yield AuthLoadingState();
-        final response = await _authService.setUpProfile(event.profileSetupModel);
+        final response =
+            await _authService.setUpProfile(event.profileSetupModel);
         yield AuthSuccessState(response: response);
       } catch (e) {
         yield AuthFailedState(message: e.toString());
