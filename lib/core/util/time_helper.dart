@@ -1,8 +1,15 @@
 import 'package:dice_app/core/util/helper.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 
 class TimeUtil {
+  static String localTime(String? date) {
+    if (date!.isEmpty) return '';
+    var dateValue = DateFormat("yyyy-MM-dd").parseUTC(date).toLocal();
+    String formattedDate = DateFormat("hh:mm").format(dateValue);
+    logger.d(formattedDate);
+    return formattedDate;
+  }
+
   static String formatDate(String? date) {
     if (date!.isEmpty) return '';
     DateTime _dt = DateTime.parse(date);
@@ -23,25 +30,20 @@ class TimeUtil {
 
   static String chatTime(String? date) {
     if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatTime = DateFormat("hh:mm a").format(_dt);
-
-    return _formatTime;
+    var dateTime = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+    return DateFormat("hh:mm a").format(dateTime.toLocal());
   }
 
   static String chatTime2(String? date) {
     if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatTime = DateFormat("dd-MM-yyyy hh:mm:ss").format(_dt);
-
-    return _formatTime;
+    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+    return DateFormat("dd-MM-yyyy hh:mm:ss").format(_dt.toLocal());
   }
 
   static String chatDate(String? date) {
     if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatTime = DateFormat("dd-MM-yyyy").format(_dt);
-    return _formatTime;
+    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+    return DateFormat("dd-MM-yyyy").format(_dt.toLocal());
   }
 
   static String timeAgoSinceDate(String dateString) {
