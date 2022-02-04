@@ -46,7 +46,44 @@ class TimeUtil {
     return DateFormat("dd-MM-yyyy").format(_dt.toLocal());
   }
 
-  static String timeAgoSinceDate(String dateString) {
+  static String chatDateAndTime(String? date) {
+    if (date!.isEmpty) return '';
+    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+    return DateFormat("dd-MM-yyyy HH:mm").format(_dt.toLocal());
+  }
+
+  static String lastTimeMessage(String? dateString) {
+    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(dateString!, true);
+    final _formattedTime = DateFormat("HH:mm a").format(_dt.toLocal());
+    final _presentDate = DateTime.now();
+    final _difference = _presentDate.difference(_dt.toLocal());
+
+    var _formatDateDT = DateFormat("yyyy-MM-dd").parse(dateString, true);
+
+    final _yearDateList = _formatDateDT.toLocal().toString().split(' ');
+    final _yearDate = _yearDateList[0];
+
+    final _splttedYear = _yearDate.split('-');
+    int _year = int.parse(_splttedYear[0]);
+    int _month = int.parse(_splttedYear[2]);
+    int _day = int.parse(_splttedYear[1]);
+
+    if (_difference.inDays > 1) {
+      return '$_day/$_month/$_year';
+    }
+
+    if (_difference.inDays == 0) {
+      return _formattedTime;
+    }
+
+    if (_difference.inDays == 1) {
+      return 'Yesterday';
+    }
+    return '';
+  }
+
+  static String timeAgoSinceDate(String dateString,
+      {String? time, bool onlyTime = false}) {
     List<String> _dateList = dateString.split('-');
     int _day = int.parse(_dateList[0]);
     int _year = int.parse(_dateList[2]);
@@ -62,6 +99,10 @@ class TimeUtil {
     }
 
     if (_difference.inDays == 0) {
+      if (onlyTime) {
+        return time ?? '';
+      }
+
       return 'Today';
     }
 

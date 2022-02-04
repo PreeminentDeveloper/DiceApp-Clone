@@ -44,7 +44,6 @@ class HomeService {
             fetchPolicy: FetchPolicy.networkOnly),
       );
       logger.d(_result.data);
-      
     } catch (exception) {
       logger.e(exception);
       rethrow;

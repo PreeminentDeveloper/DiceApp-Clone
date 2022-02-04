@@ -1,21 +1,25 @@
 import 'dart:convert';
 
 import 'package:dice_app/core/entity/users_entity.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:flutter/foundation.dart';
+
+import 'list_of_conversation_response.dart';
 
 class ConversationList {
   final String? id;
   final String? conversationID;
   final int? viewersCount;
+  final LastMessage? lastMessage;
 
   List<User>? user = [];
 
-  ConversationList({
-    this.id,
-    this.conversationID,
-    this.viewersCount,
-    this.user,
-  });
+  ConversationList(
+      {this.id,
+      this.conversationID,
+      this.viewersCount,
+      this.user,
+      this.lastMessage});
 
   ConversationList copyWith({
     String? id,
@@ -23,11 +27,11 @@ class ConversationList {
     List<User>? user,
   }) {
     return ConversationList(
-      id: id ?? this.id,
-      conversationID: conversationID ?? this.conversationID,
-      viewersCount: viewersCount ?? 0,
-      user: user ?? this.user,
-    );
+        id: id ?? this.id,
+        conversationID: conversationID ?? this.conversationID,
+        viewersCount: viewersCount ?? 0,
+        user: user ?? this.user,
+        lastMessage: lastMessage);
   }
 
   Map<String, dynamic> toMap() {
@@ -35,6 +39,7 @@ class ConversationList {
       'id': id,
       'conversationID': conversationID,
       'viewersCount': viewersCount,
+      'lastMessage': lastMessage?.toJson(),
       'user': user?.map((x) => x.toJson()).toList(),
     };
   }
@@ -44,6 +49,9 @@ class ConversationList {
       id: map['id'],
       conversationID: map['conversationID'],
       viewersCount: map['viewersCount'],
+      lastMessage: map['lastMessage'] != null
+          ? LastMessage.fromJson(map['lastMessage'])
+          : null,
       user: map['user'] != null
           ? List<User>.from(map['user']?.map((x) => User.fromJson(x)))
           : [],

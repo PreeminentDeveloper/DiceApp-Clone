@@ -15,6 +15,10 @@ class HomeGqlMutation {
         type
         updatedAt
         viewersCount
+        lastMessage{
+          insertedAt
+          message
+        }
         userId
         users{
           age
@@ -27,6 +31,8 @@ class HomeGqlMutation {
           phone
           status
           username
+          iblocked
+          ublocked
           photo
           conversation{
             id

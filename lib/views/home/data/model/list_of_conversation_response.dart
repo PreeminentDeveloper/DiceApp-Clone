@@ -1,4 +1,5 @@
 import 'package:dice_app/core/entity/users_entity.dart';
+import 'package:dice_app/core/util/helper.dart';
 
 class ListOfConversationResponse {
   String? typename;
@@ -16,8 +17,9 @@ class ListOfConversationResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["__typename"] = typename;
-    if (listConversations != null)
+    if (listConversations != null) {
       data["listConversations"] = listConversations?.toJson();
+    }
     return data;
   }
 }
@@ -72,12 +74,13 @@ class ListConversations {
 class ListOfData {
   String? typename;
   String? id;
-  dynamic? name;
+  dynamic name;
   String? status;
   String? type;
   String? updatedAt;
   String? userId;
   int? viewersCount;
+  LastMessage? lastMessage;
   List<User>? users;
 
   ListOfData(
@@ -87,6 +90,7 @@ class ListOfData {
       this.status,
       this.type,
       this.updatedAt,
+      this.lastMessage,
       this.userId,
       this.viewersCount,
       this.users});
@@ -97,6 +101,9 @@ class ListOfData {
     name = json["name"];
     status = json["status"];
     viewersCount = json["viewersCount"];
+    lastMessage = json["lastMessage"] != null
+        ? LastMessage.fromJson(json['lastMessage'])
+        : null;
     type = json["type"];
     updatedAt = json["updatedAt"];
     userId = json["userId"];
@@ -116,6 +123,28 @@ class ListOfData {
     data["updatedAt"] = updatedAt;
     data["userId"] = userId;
     if (users != null) data["users"] = users?.map((e) => e.toJson()).toList();
+    logger.d(lastMessage?.toJson());
+
+    data["lastMessage"] = lastMessage?.toJson();
+    return data;
+  }
+}
+
+class LastMessage {
+  String? insertedAt;
+  String? message;
+
+  LastMessage({this.insertedAt, this.message});
+
+  LastMessage.fromJson(json) {
+    insertedAt = json["insertedAt"];
+    message = json["message"];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["message"] = message;
+    data["insertedAt"] = insertedAt;
     return data;
   }
 }

@@ -9,6 +9,8 @@ class User {
   String? phone;
   String? username;
   String? status;
+  String? iblocked;
+  String? ublocked;
   Photo? photo;
   dynamic conversation;
   PrivacySettings? privacySettings;
@@ -28,6 +30,8 @@ class User {
       this.username,
       this.status,
       this.photo,
+      this.iblocked,
+      this.ublocked,
       this.conversation});
 
   User.fromJson(json) {
@@ -38,6 +42,8 @@ class User {
     bio = json["bio"];
     phone = json["phone"];
     username = json["username"];
+    iblocked = json["iblocked"];
+    ublocked = json["ublocked"];
     chatSettings = json["chatSettings"] == null
         ? null
         : ChatSettings.fromJson(json["chatSettings"]);
@@ -63,6 +69,8 @@ class User {
     data["bio"] = bio;
     data["phone"] = phone;
     data["username"] = username;
+    data["iblocked"] = iblocked;
+    data["ublocked"] = ublocked;
     data["status"] = status;
     if (chatSettings != null) {
       data["chatSettings"] = chatSettings?.toJson();

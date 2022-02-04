@@ -2,6 +2,7 @@ import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +16,15 @@ class ChatObject {
   final String? recentMessage;
   final String? date;
   final int? viewersCount;
+  final String? lastMessage;
 
   ChatObject(
       {@required this.image,
       @required this.name,
       @required this.recentMessage,
       @required this.date,
-      @required this.viewersCount});
+      @required this.viewersCount,
+      @required this.lastMessage});
 }
 
 class ChatListWidget extends StatelessWidget {

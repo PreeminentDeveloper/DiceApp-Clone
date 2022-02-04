@@ -1,15 +1,11 @@
-import 'dart:convert';
-
-import 'package:dice_app/views/home/data/model/conversation_list.dart';
-import 'package:dice_app/views/home/data/model/list_of_conversation_response.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/home/data/model/conversation_list.dart';
 import 'package:dice_app/views/home/data/source/dao.dart';
 import 'package:dice_app/views/home/data/source/remote.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 enum HomeEnum { initial, busy, idle }
 
@@ -30,7 +26,7 @@ class HomeProvider extends ChangeNotifier {
       required String userID,
       bool saveConvo = true}) async {
     try {
-      if (list!.isEmpty) homeEnum = HomeEnum.busy;
+      // if (list!.isEmpty) homeEnum = HomeEnum.busy;
       final _response = await _homeService.listConvo(
           pageNumber: pageNumber ?? 1,
           perPage: perPage,
@@ -46,6 +42,7 @@ class HomeProvider extends ChangeNotifier {
             id: DateTime.now().toString(),
             conversationID: listData.id,
             viewersCount: listData.viewersCount,
+            lastMessage: listData.lastMessage,
             user: listData.users));
         notifyListeners();
       }).toList();

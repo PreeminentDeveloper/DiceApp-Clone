@@ -63,6 +63,7 @@ dependencies:
   provider: ^5.0.0
   shared_preferences: ^2.0.5
   slide_item: ^1.0.8
+  timeago: ^3.2.1
   url_launcher: ^6.0.9
   visibility_detector: ^0.2.2
 

@@ -4,6 +4,7 @@ import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/message_screen.dart';
 import 'package:dice_app/views/chat/provider/chat_provider.dart';
@@ -173,7 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   name: user.name,
                                                   recentMessage:
                                                       '@${user.username}',
-                                                  date: 'timeAgo',
+                                                  date: TimeUtil.lastTimeMessage(
+                                                      conversation.lastMessage
+                                                          ?.insertedAt),
                                                   viewersCount: conversation
                                                       .viewersCount),
                                               onTapProfile: () =>

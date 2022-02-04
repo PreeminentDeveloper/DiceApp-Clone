@@ -15,6 +15,7 @@ import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
 import 'package:dice_app/views/home/camera/camera_screen.dart';
+import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/settings/provider/setup_provider.dart';
@@ -170,21 +171,40 @@ class _MessageScreenState extends State<MessageScreen> {
             alignment: Alignment.bottomCenter,
             child: SizedBox(
               width: SizeConfig.screenWidth,
-              child: ChatEditBox(
-                onChanged: (value) => _toggleIcons(value),
-                isEnabled: isEnabled,
-                msgController: _messageController,
-                addMessage: () => _addMessage(),
-                showGeneralDialog: (value) => _showDialog(value),
-                onMenuPressed: (option) => _showDialog(''),
-                showStickerDialog: (val) => _toggleStickerOff(val),
-                toggleSticekrDialog: _sticker,
-                pickImages: () => _showDialog(''),
-                takePicture: () => PageRouter.gotoWidget(
-                    CameraPictureScreen(
-                        user: widget.user, convoID: widget.conversationID),
-                    context),
-              ),
+              child: widget.user?.iblocked != null
+                  ? Container(
+                      alignment: Alignment.bottomCenter,
+                      child: const Text('You have blocked this user',
+                          style: TextStyle(color: DColors.grey400)))
+                  : ChatEditBox(
+                      onChanged: (value) => _toggleIcons(value),
+                      isEnabled: isEnabled,
+                      msgController: _messageController,
+                      addMessage: () =>
+                          widget.user?.iblocked != null ? null : _addMessage(),
+                      showGeneralDialog: (value) =>
+                          widget.user?.iblocked != null
+                              ? null
+                              : _showDialog(value),
+                      onMenuPressed: (option) => widget.user?.iblocked != null
+                          ? null
+                          : _showDialog(''),
+                      showStickerDialog: (val) => widget.user?.iblocked != null
+                          ? null
+                          : _toggleStickerOff(val),
+                      toggleSticekrDialog:
+                          widget.user?.iblocked != null ? null : _sticker,
+                      pickImages: () => widget.user?.iblocked != null
+                          ? null
+                          : _showDialog(''),
+                      takePicture: () => widget.user?.iblocked != null
+                          ? null
+                          : PageRouter.gotoWidget(
+                              CameraPictureScreen(
+                                  user: widget.user,
+                                  convoID: widget.conversationID),
+                              context),
+                    ),
             ),
           )
         ],
@@ -204,9 +224,13 @@ class _MessageScreenState extends State<MessageScreen> {
         _messageController.text);
     _messageController.text = '';
     isEnabled = false;
-    setState(() {});
 
-    if (_sent!) _makeCall();
+    if (_sent!) {
+      Provider.of<HomeProvider>(context, listen: false).listConversations(
+          pageNumber: 1, search: '', userID: _profileProvider!.user!.id!);
+      _makeCall();
+    }
+    setState(() {});
   }
 
   void _removeMessage(int index) {
@@ -294,10 +318,16 @@ class _MessageScreenState extends State<MessageScreen> {
         primaryWidget: Container(
             margin: const EdgeInsets.only(right: 16),
             child: const Icon(Icons.more_horiz, color: DColors.lightGrey)),
-        menuItems: ChatMenu.blocUser(),
+        menuItems: ChatMenu.blocUser(
+            message: widget.user?.iblocked != null ? 'Unlock' : 'block'),
         menuCallback: (option) {
-          Provider.of<SetUpProvider>(context, listen: false).blockUser(
-              userID: _profileProvider?.user?.id, receiverID: widget.user?.id);
+          widget.user?.iblocked != null
+              ? Provider.of<SetUpProvider>(context, listen: false).unblockUser(
+                  userID: _profileProvider?.user?.id,
+                  receiverID: widget.user?.id)
+              : Provider.of<SetUpProvider>(context, listen: false).blockUser(
+                  userID: _profileProvider?.user?.id,
+                  receiverID: widget.user?.id);
           controller.hideMenu();
         },
       );

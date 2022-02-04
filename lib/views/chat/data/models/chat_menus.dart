@@ -20,9 +20,9 @@ class ChatMenu {
     return _itemModels;
   }
 
-  static List<ChatMenu> blocUser() {
+  static List<ChatMenu> blocUser({required String? message}) {
     List<ChatMenu> _itemModels = [];
-    ChatMenu _item = ChatMenu(title: 'Block', options: ChatOptions.block);
+    ChatMenu _item = ChatMenu(title: message, options: ChatOptions.block);
     _itemModels.add(_item);
     return _itemModels;
   }
