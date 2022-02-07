@@ -75,7 +75,13 @@ class SenderSide extends StatelessWidget {
                   },
                 ),
               ),
-              SvgPicture.asset("assets/delivered.svg")
+              chat?.read != null
+                  ? SvgPicture.asset("assets/delivered.svg")
+                  : SvgPicture.asset(
+                      "assets/ssent_icon.svg",
+                      width: 24,
+                      fit: BoxFit.cover,
+                    )
             ],
           ),
         ),
@@ -215,7 +221,6 @@ class SenderSide extends StatelessWidget {
         ],
       ),
     );
-  
   }
 
   Future<String?> _fetchThumbNails(String url) async {

@@ -81,6 +81,7 @@ class ListOfMessages {
   String? message;
   User? user;
   List<Medias>? medias = [];
+  Read? read;
 
   ListOfMessages(
       {this.typename,
@@ -88,6 +89,7 @@ class ListOfMessages {
       this.id,
       this.message,
       this.user,
+      this.read,
       this.medias});
 
   ListOfMessages.fromJson(Map<String, dynamic> json) {
@@ -96,6 +98,7 @@ class ListOfMessages {
     id = json["id"];
     message = json["message"];
     user = json["user"] == null ? null : User.fromJson(json["user"]);
+    read = json["read"] == null ? null : Read.fromJson(json["read"]);
     medias = json["medias"] == null
         ? null
         : (json["medias"] as List).map((e) => Medias.fromJson(e)).toList();
@@ -108,6 +111,7 @@ class ListOfMessages {
     data["id"] = id;
     data["message"] = message;
     if (user != null) data["user"] = user?.toJson();
+    if (read != null) data["read"] = read?.toJson();
     if (medias != null) {
       data["medias"] = medias?.map((e) => e.toJson()).toList();
     }
@@ -149,6 +153,39 @@ class User {
     data["phone"] = phone;
     data["status"] = status;
     data["username"] = username;
+    return data;
+  }
+}
+
+class Read {
+  String? id;
+  String? messageId;
+  String? conversationId;
+  String? userId;
+  String? insertedAt;
+
+  Read(
+      {this.id,
+      this.messageId,
+      this.conversationId,
+      this.userId,
+      this.insertedAt});
+
+  Read.fromJson(Map<String, dynamic> json) {
+    id = json["id"];
+    messageId = json["messageId"];
+    conversationId = json["conversationId"];
+    userId = json["userId"];
+    insertedAt = json["insertedAt"];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["insertedAt"] = insertedAt;
+    data["userId"] = userId;
+    data["conversationId"] = conversationId;
+    data["messageId"] = messageId;
+    data["id"] = id;
     return data;
   }
 }

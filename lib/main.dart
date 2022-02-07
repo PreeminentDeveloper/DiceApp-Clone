@@ -1,4 +1,5 @@
 import 'package:dice_app/views/auth/sign_up.dart';
+import 'package:dice_app/views/onboarding/sign_in_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
             routes: Routes.getRoutes,
             home: SessionManager.instance.authLogging
                 ? HomeScreen()
-                : const SignUp(),
+                : const SignInSplashScreen(),
           );
         },
       ),

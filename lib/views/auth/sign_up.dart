@@ -73,9 +73,8 @@ class _SignUpState extends State<SignUp> {
             if (state is AuthFailedState) {
               logger.d(state.message);
               setState(() => _loadingState = false);
-              // Todo:=> show user error here
             }
-          },// +2348065124585
+          }, // +2348065124585
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SafeArea(

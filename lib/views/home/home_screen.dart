@@ -174,9 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   name: user.name,
                                                   recentMessage:
                                                       '@${user.username}',
-                                                  date: TimeUtil.lastTimeMessage(
-                                                      conversation.lastMessage
-                                                          ?.insertedAt),
+                                                  date:
+                                                      TimeUtil.lastTimeMessage(
+                                                          conversation
+                                                              .lastMessage
+                                                              ?.insertedAt),
                                                   viewersCount: conversation
                                                       .viewersCount),
                                               onTapProfile: () =>
@@ -184,14 +186,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       OtherProfile(user.id!),
                                                       context),
                                               onPressed: () async {
-                                                chatDao!.openABox(conversation
-                                                    .conversationID!);
                                                 Provider.of<ChatProvider>(
                                                         context,
                                                         listen: false)
                                                     .markAllMessageAsRead(
                                                         conversation
                                                             .conversationID!);
+                                                chatDao!.openABox(conversation
+                                                    .conversationID!);
                                                 PageRouter.gotoWidget(
                                                     MessageScreen(
                                                         user: user,
