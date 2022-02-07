@@ -24,6 +24,12 @@ class ChatModel {
           hostname
           url
         }
+        read{
+          id
+          messageId
+          userId
+          insertedAt
+        }
       }
     }
   }

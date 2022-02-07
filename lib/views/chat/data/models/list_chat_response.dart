@@ -1,4 +1,5 @@
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
+import 'package:dice_app/core/util/helper.dart';
 
 class ListOoChatResponse {
   String? typename;
@@ -158,7 +159,7 @@ class User {
 }
 
 class Read {
-  String? id;
+  dynamic id;
   String? messageId;
   String? conversationId;
   String? userId;

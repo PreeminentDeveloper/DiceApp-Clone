@@ -114,8 +114,9 @@ class _OtherProfileState extends State<OtherProfile> {
                   SizedBox(height: 16.h),
                   homeProvider.conversationList!.isEmpty
                       ? const NotAChattyUser()
-                      : FriendsChat(profile
-                          .getUserDataResponse?.getProfile?.conversation["id"])
+                      : FriendsChat(widget.id,
+                          myFriendProfile:
+                              profile.getUserDataResponse?.getProfile)
                 ],
               );
             },
