@@ -1,10 +1,12 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dice_app/core/data/permission_manager.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
 import 'package:dice_app/views/invite/provider/invite_provider.dart';
+import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
@@ -118,10 +120,10 @@ class _InviteContactsState extends State<InviteContacts> {
                                             subText:
                                                 contacts.user?.username ?? '',
                                             buttonText: 'Add',
-                                            onTap: () => {},
-                                            // onTap: () => PageRouter.gotoWidget(
-                                            //     OtherProfile(invitee?.requester?.id),
-                                            //     context),
+                                            onTap: () => PageRouter.gotoWidget(
+                                                OtherProfile(
+                                                    contacts.user!.id!),
+                                                context),
                                           ),
                                         )
                                         .toList()
