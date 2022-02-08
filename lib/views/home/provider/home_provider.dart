@@ -19,6 +19,14 @@ class HomeProvider extends ChangeNotifier {
 
   HomeProvider(this._homeService);
 
+  @override
+  void dispose() {
+    list = [];
+    conversationList = [];
+    conversationID = null;
+    super.dispose();
+  }
+
   void listConversations(
       {int? pageNumber = 1,
       int perPage = 20,

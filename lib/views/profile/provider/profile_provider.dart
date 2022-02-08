@@ -24,6 +24,15 @@ class ProfileProvider extends ChangeNotifier {
 
   ProfileProvider(this._profileService);
 
+  @override
+  void dispose() {
+    user = null;
+    chatSettings = null;
+    notificationSettings = null;
+    getUserDataResponse = null;
+    super.dispose();
+  }
+
   Future<void>? getUsersInformations({bool notifyListeners = false}) {
     user = User.fromJson(SessionManager.instance.usersData);
     chatSettings = user?.chatSettings;

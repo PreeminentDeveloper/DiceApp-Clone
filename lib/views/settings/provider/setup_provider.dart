@@ -15,6 +15,14 @@ class SetUpProvider extends ChangeNotifier {
   // 087a51cb-0aaf-42eb-8708-eb76bb5ff051
   SetUpProvider(this._setUpService);
 
+    @override
+  void dispose() {
+    ignoreList = [];
+    blockedList = [];
+    super.dispose();
+  }
+
+
   void listIgnoredAndBlockedUsers({
     required int pageNumber,
     int perPage = 20,

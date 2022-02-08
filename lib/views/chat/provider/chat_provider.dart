@@ -17,6 +17,16 @@ class ChatProvider extends ChangeNotifier {
   bool get isUserOnline => _isUserOnline;
   List<ListOfMessages> tempMessagesHolder = [];
 
+  @override
+  void dispose() {
+    localChats = [];
+    tempMessagesHolder = [];
+    _isUserOnline = false;
+    localChats?.clear();
+
+    super.dispose();
+  }
+
   /// Load messages fro local database
   void loadMessagesFromServer(String key) async {
     try {
@@ -95,12 +105,6 @@ class ChatProvider extends ChangeNotifier {
       }
     }).toList();
     logger.i('$receipientID Leaves the conversations: $_isUserOnline');
-  }
-
-  /// clear list of the user
-  @override
-  void dispose() {
-    localChats?.clear();
   }
 
   /// Returns true if the event type is a ChatEventBus,

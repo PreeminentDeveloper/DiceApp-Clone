@@ -22,6 +22,16 @@ class InviteProvider extends ChangeNotifier {
 
   InviteProvider(this._inviteService);
 
+  @override
+  void dispose() {
+    mContacts = [];
+    list = [];
+    searchUser = [];
+    myRequest = [];
+    user = null;
+    super.dispose();
+  }
+
   void checkIfConnections(List<String> contacts) async {
     try {
       inviteEnum = InviteEnum.busy;

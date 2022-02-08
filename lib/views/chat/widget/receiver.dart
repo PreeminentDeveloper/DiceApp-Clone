@@ -188,7 +188,7 @@ class ReceiverSide extends StatelessWidget {
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30.r),
                             topRight: Radius.circular(30.r),
-                            bottomLeft: Radius.circular(15.r),
+                            bottomRight: Radius.circular(15.r),
                           ),
                           child: ImageLoader(
                               height: 156.54.h,
