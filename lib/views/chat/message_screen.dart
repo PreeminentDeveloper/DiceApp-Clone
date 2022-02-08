@@ -112,6 +112,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   void dispose() {
+    chatDao!.truncate();
     super.dispose();
   }
 
