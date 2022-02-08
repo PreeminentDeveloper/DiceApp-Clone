@@ -3,53 +3,81 @@ import 'package:intl/intl.dart';
 
 class TimeUtil {
   static String localTime(String? date) {
-    if (date!.isEmpty) return '';
-    var dateValue = DateFormat("yyyy-MM-dd").parseUTC(date).toLocal();
-    String formattedDate = DateFormat("hh:mm").format(dateValue);
-    logger.d(formattedDate);
-    return formattedDate;
+    try {
+      if (date!.isEmpty) return '';
+      var dateValue = DateFormat("yyyy-MM-dd").parseUTC(date).toLocal();
+      String formattedDate = DateFormat("hh:mm").format(dateValue);
+      logger.d(formattedDate);
+      return formattedDate;
+    } catch (_) {
+      return '';
+    }
   }
 
   static String formatDate(String? date) {
-    if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatDate = DateFormat("MMM dd, yyyy").format(_dt);
-    String _formatTime = DateFormat("HH:MM a").format(_dt);
+    try {
+      if (date!.isEmpty) return '';
+      DateTime _dt = DateTime.parse(date);
+      String _formatDate = DateFormat("MMM dd, yyyy").format(_dt);
+      String _formatTime = DateFormat("HH:MM a").format(_dt);
 
-    return '$_formatDate at $_formatTime';
+      return '$_formatDate at $_formatTime';
+    } catch (_) {
+      return '';
+    }
   }
 
   static String formatDate2(String? date) {
-    if (date!.isEmpty) return '';
-    DateTime _dt = DateTime.parse(date);
-    String _formatDate = DateFormat("dd/MM/yyyy").format(_dt);
-    String _formatTime = DateFormat("HH:MM").format(_dt);
+    try {
+      if (date!.isEmpty) return '';
+      DateTime _dt = DateTime.parse(date);
+      String _formatDate = DateFormat("dd/MM/yyyy").format(_dt);
+      String _formatTime = DateFormat("HH:MM").format(_dt);
 
-    return '$_formatTime, $_formatDate';
+      return '$_formatTime, $_formatDate';
+    } catch (_) {
+      return '';
+    }
   }
 
   static String chatTime(String? date) {
-    if (date!.isEmpty) return '';
-    var dateTime = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
-    return DateFormat("hh:mm a").format(dateTime.toLocal());
+    try {
+      if (date!.isEmpty) return '';
+      var dateTime = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+      return DateFormat("hh:mm a").format(dateTime.toLocal());
+    } catch (_) {
+      return '';
+    }
   }
 
   static String chatTime2(String? date) {
-    if (date!.isEmpty) return '';
-    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
-    return DateFormat("dd-MM-yyyy hh:mm:ss").format(_dt.toLocal());
+    try {
+      if (date!.isEmpty) return '';
+      var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+      return DateFormat("dd-MM-yyyy hh:mm:ss").format(_dt.toLocal());
+    } catch (_) {
+      return '';
+    }
   }
 
   static String chatDate(String? date) {
     if (date!.isEmpty) return '';
-    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
-    return DateFormat("dd-MM-yyyy").format(_dt.toLocal());
+    try {
+      var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+      return DateFormat("dd-MM-yyyy").format(_dt.toLocal());
+    } catch (_) {
+      return '';
+    }
   }
 
   static String chatDateAndTime(String? date) {
-    if (date!.isEmpty) return '';
-    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
-    return DateFormat("dd-MM-yyyy HH:mm").format(_dt.toLocal());
+    try {
+      if (date!.isEmpty) return '';
+      var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(date, true);
+      return DateFormat("dd-MM-yyyy HH:mm").format(_dt.toLocal());
+    } catch (e) {
+      return '';
+    }
   }
 
   static String lastTimeMessage(String? dateString) {
@@ -85,33 +113,37 @@ class TimeUtil {
 
   static String timeAgoSinceDate(String dateString,
       {String? time, bool onlyTime = false}) {
-    List<String> _dateList = dateString.split('-');
-    int _day = int.parse(_dateList[0]);
-    int _year = int.parse(_dateList[2]);
-    int _month = int.parse(_dateList[1]);
+    try {
+      List<String> _dateList = dateString.split('-');
+      int _day = int.parse(_dateList[0]);
+      int _year = int.parse(_dateList[2]);
+      int _month = int.parse(_dateList[1]);
 
-    final _temp = DateTime(_year, _month, _day);
-    final _presentDate = DateTime.now();
+      final _temp = DateTime(_year, _month, _day);
+      final _presentDate = DateTime.now();
 
-    final _difference = _presentDate.difference(_temp);
+      final _difference = _presentDate.difference(_temp);
 
-    if (_difference.inDays > 1) {
-      return '$_day ${_getMonth(_month)} $_year';
-    }
-
-    if (_difference.inDays == 0) {
-      if (onlyTime) {
-        return time ?? '';
+      if (_difference.inDays > 1) {
+        return '$_day ${_getMonth(_month)} $_year';
       }
 
-      return 'Today';
-    }
+      if (_difference.inDays == 0) {
+        if (onlyTime) {
+          return time ?? '';
+        }
 
-    if (_difference.inDays == 1) {
-      return 'Yesterday';
-    }
+        return 'Today';
+      }
 
-    return '';
+      if (_difference.inDays == 1) {
+        return 'Yesterday';
+      }
+
+      return '';
+    } catch (_) {
+      return '';
+    }
   }
 
   static String _getMonth(int month) {

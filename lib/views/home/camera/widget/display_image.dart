@@ -31,8 +31,8 @@ class DisplayPictureScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               PageRouter.gotoWidget(
-                  FeatureImages([File(object!.path!)], object?.user?.name ?? '',
-                      object?.conversationID ?? ''),
+                  FeatureImages(object?.user, [File(object!.path!)],
+                      object?.user?.name ?? '', object?.conversationID ?? ''),
                   context);
             },
             child: Align(

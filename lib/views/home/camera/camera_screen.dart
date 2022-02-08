@@ -218,7 +218,8 @@ class CameraPictureScreenState extends State<CameraPictureScreen> {
     setState(() => results = _results);
     final _images = await _convertImages(_results);
     PageRouter.gotoWidget(
-        FeatureImages(_images, widget.user?.name ?? '', widget.convoID!),
+        FeatureImages(
+            widget.user, _images, widget.user?.name ?? '', widget.convoID!),
         context);
   }
 

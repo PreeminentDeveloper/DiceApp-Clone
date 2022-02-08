@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/network/app_config.dart';
 import 'package:dice_app/core/network/network_service.dart';
@@ -12,6 +13,7 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/widget/date_picker.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
+import 'package:dice_app/views/chat/message_screen.dart';
 import 'package:dice_app/views/chat/provider/chat_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
@@ -19,6 +21,7 @@ import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
@@ -40,8 +43,10 @@ class FeatureImages extends StatefulWidget {
   final List<File> results;
   final String receiverName;
   final String convoId;
+  final User? user;
+
   final bool isVideo;
-  const FeatureImages(this.results, this.receiverName, this.convoId,
+  const FeatureImages(this.user, this.results, this.receiverName, this.convoId,
       {this.isVideo = false, Key? key})
       : super(key: key);
 
@@ -98,97 +103,103 @@ class _FeatureImagesState extends State<FeatureImages> {
               ),
             )
           ]),
-      body: SafeArea(
-          child: Stack(
-        children: [
-          ListView(
-            shrinkWrap: true,
-            children: [
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextWidget(
-                      text: "${_featureModel.length} image(s) to...",
-                      appcolor: DColors.mildDark,
-                      weight: FontWeight.w400,
-                      size: FontSize.s12,
-                    ),
-                    TextWidget(
-                      text: widget.receiverName,
-                      appcolor: DColors.green700,
-                      weight: FontWeight.w600,
-                      size: FontSize.s14,
-                    )
-                  ],
-                ),
-              ),
-              CustomeDivider(thickness: .3),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 4.h),
-                    Visibility(
-                        visible: _isLoading, child: LinearProgressIndicator()),
-                    SizedBox(height: 10.h),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ..._featureModel
-                              .map(
-                                (file) => _images(file.value,
-                                    selected: _fileName == file.key,
-                                    isVideo: file.key
-                                        .toString()
-                                        .contains('mp4'), onTap: () {
-                                  _fileName = file.key;
-                                  setState(() {});
-                                }, removeImage: () {
-                                  if (widget.results.length == 1) return;
-                                  _featureModel.remove(file);
-                                  setState(() {});
-                                }),
-                              )
-                              .toList(),
-                          SizedBox(width: 121.w),
-                          GestureDetector(
-                              onTap: () => _pickGallery(),
-                              child: SvgPicture.asset('assets/add_pic.svg'))
-                        ],
+      body: BlocListener<ChatBloc, ChatState>(
+        bloc: _bloc,
+        listener: (context, state) {},
+        child: SafeArea(
+            child: Stack(
+          children: [
+            ListView(
+              shrinkWrap: true,
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextWidget(
+                        text: "${_featureModel.length} image(s) to...",
+                        appcolor: DColors.mildDark,
+                        weight: FontWeight.w400,
+                        size: FontSize.s12,
                       ),
-                    ),
-                  ],
+                      TextWidget(
+                        text: widget.receiverName,
+                        appcolor: DColors.green700,
+                        weight: FontWeight.w600,
+                        size: FontSize.s14,
+                      )
+                    ],
+                  ),
                 ),
-              )
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              width: SizeConfig.screenWidth,
-              child: ChatEditBox(
-                onChanged: (value) {
-                  _map[_fileName] = value;
-                },
-                isEnabled: true,
-                msgController: _msgController,
-                addMessage: () => _pushImage(),
-                showGeneralDialog: (value) => null,
-                onMenuPressed: (option) => null,
-                pickImages: () {},
-              ),
+                CustomeDivider(thickness: .3),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 4.h),
+                      Visibility(
+                          visible: _isLoading,
+                          child: LinearProgressIndicator()),
+                      SizedBox(height: 10.h),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ..._featureModel
+                                .map(
+                                  (file) => _images(file.value,
+                                      selected: _fileName == file.key,
+                                      isVideo: file.key
+                                          .toString()
+                                          .contains('mp4'), onTap: () {
+                                    _fileName = file.key;
+                                    setState(() {});
+                                  }, removeImage: () {
+                                    if (widget.results.length == 1) return;
+                                    _featureModel.remove(file);
+                                    setState(() {});
+                                  }),
+                                )
+                                .toList(),
+                            SizedBox(width: 121.w),
+                            GestureDetector(
+                                onTap: () => _pickGallery(),
+                                child: SvgPicture.asset('assets/add_pic.svg'))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-          )
-        ],
-      )),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: SizeConfig.screenWidth,
+                child: ChatEditBox(
+                  onChanged: (value) {
+                    _map[_fileName] = value;
+                  },
+                  isEnabled: true,
+                  msgController: _msgController,
+                  addMessage: () => _pushImage(),
+                  showGeneralDialog: (value) => null,
+                  onMenuPressed: (option) => null,
+                  pickImages: () {},
+                ),
+              ),
+            )
+          ],
+        )),
+      ),
     );
   }
 
@@ -293,10 +304,15 @@ class _FeatureImagesState extends State<FeatureImages> {
       await _networkService.call('', RequestMethod.upload,
           formData:
               FormData.fromMap(_imageSending!.toJson(addMultipath: true)));
-      _bloc.add(ListChatEvent(
-          pageIndex: 1,
-          userID: _user.user?.id,
-          conversationID: widget.convoId));
+      PageRouter.gotoWidget(
+          MessageScreen(
+            isFromMedia: true,
+            user: widget.user, conversationID: widget.convoId),
+          context);
+      // _bloc.add(ListChatEvent(
+      //     pageIndex: 1,
+      //     userID: _user.user?.id,
+      //     conversationID: widget.convoId));
       setState(() => _isLoading = false);
     } catch (e) {
       logger.e(e);

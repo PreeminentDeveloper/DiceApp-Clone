@@ -80,6 +80,7 @@ class _DisplayVideoScreenState extends State<DisplayVideoScreen> {
             onTap: () {
               PageRouter.gotoWidget(
                   FeatureImages(
+                      widget.object?.user,
                       [File(widget.object!.path!)],
                       widget.object?.user?.name ?? '',
                       widget.object?.conversationID ?? '',

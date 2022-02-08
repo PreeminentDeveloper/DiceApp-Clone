@@ -16,6 +16,7 @@ import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
 import 'package:dice_app/views/home/camera/camera_screen.dart';
+import 'package:dice_app/views/home/home_screen.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/profile/friends_profile.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
@@ -31,6 +32,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +48,8 @@ final bucketGlobal = PageStorageBucket();
 class MessageScreen extends StatefulWidget {
   final dynamic user;
   final String? conversationID;
-  MessageScreen({this.user, this.conversationID});
+  final bool? isFromMedia;
+  MessageScreen({this.isFromMedia = false, this.user, this.conversationID});
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -125,6 +128,10 @@ class _MessageScreenState extends State<MessageScreen> {
             titleSpacing: 0,
             centerTitle: false,
             titleWidget: _getTitleWidget(),
+            goBack: widget.isFromMedia!
+                ? () => PageRouter.gotoWidget(HomeScreen(), context,
+                    clearStack: true, animationType: PageTransitionType.fade)
+                : () => PageRouter.goBack(context),
             onTap: () => setState(() => _switchView = !_switchView),
             actions: [_blockUser()]),
         body: GestureDetector(
@@ -268,7 +275,8 @@ class _MessageScreenState extends State<MessageScreen> {
     setState(() => results = _results);
     final _images = await _convertImages(_results);
     PageRouter.gotoWidget(
-        FeatureImages(_images, widget.user?.name ?? '', widget.conversationID!),
+        FeatureImages(widget.user, _images, widget.user?.name ?? '',
+            widget.conversationID!),
         context);
   }
 
