@@ -24,16 +24,17 @@ class PhonixManager {
 
       phoenixChannel?.join();
       phoenixChannel?.messages.listen((event) {
-        if (event.event.value == 'single_presence_state') {
-          logger.d(
-              'JAYBUG: This event was triggered: ${event.event.value} ==== ${event.payload}');
-          eventBus.fire(OnlineListener(
-              event.event.value, OnlineEvent.fromJson(event.payload!)));
-        }
+        // if (event.event.value == 'single_presence_state') {
+        //   eventBus.fire(OnlineListener(
+        //       event.event.value, OnlineEvent.fromJson(event.payload!)));
+        // }
 
         if (event.event.value.contains('create_message')) {
           eventBus.fire(ChatEventBus(
               event.event.value, ChatEventModel.fromJson(event.payload)));
+        }
+        if (event.event.value.contains('get_converstion_online_status')) {
+          eventBus.fire(OnlineListener(event.event.value, event.payload!));
         }
       });
     });

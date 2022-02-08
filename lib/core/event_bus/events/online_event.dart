@@ -1,6 +1,6 @@
 class OnlineListener {
   final String? key;
-  final OnlineEvent? event;
+  final Map<String, dynamic>? event;
 
   OnlineListener(this.key, this.event);
 }

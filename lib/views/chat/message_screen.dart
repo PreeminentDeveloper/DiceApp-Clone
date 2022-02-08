@@ -72,13 +72,8 @@ class _MessageScreenState extends State<MessageScreen> {
     _chatProvider!.listenToChatEvents(
         widget.conversationID!, _profileProvider!.user!.id!, widget.user!.id!);
     eventBus.on().listen((event) {
-      logger.d(event);
       if (event is OnlineListener) {
-        logger.d(event.event?.data?.toJson());
-        logger.d(event.event?.data?.id);
-        logger.d(widget.user!.id!);
-
-        _isOnline = event.event?.data?.id == widget.user!.id!;
+        _isOnline = event.event?['status'] ?? false;
         setState(() {});
       }
       _scrollDown();
