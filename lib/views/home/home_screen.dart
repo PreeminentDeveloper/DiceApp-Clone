@@ -87,170 +87,175 @@ class _HomeScreenState extends State<HomeScreen> {
     SizeConfig().init(context);
     double _height = MediaQuery.of(context).size.height;
     double _width = MediaQuery.of(context).size.width;
-    return Scaffold(
-        backgroundColor: DColors.white,
-        appBar: defaultAppBar(context,
-            elevation: flag ? 0 : 1,
-            leading: Container(
-                margin: EdgeInsets.only(left: 16.w),
-                child: SvgPicture.asset(Assets.dice)),
-            actions: [
-              GestureDetector(
-                child: Container(
-                    margin: const EdgeInsets.only(right: 16),
-                    child: SvgPicture.asset(Assets.diceLogo)),
-                onTap: () => PageRouter.gotoWidget(FindPeople(), context),
-              )
-            ]),
-        body: NestedScrollView(
-            controller: _scrollController,
-            headerSliverBuilder: (context, innerBoxScrolled) {
-              return <Widget>[
-                SliverAppBar(
-                  backgroundColor: Colors.white,
-                  floating: true,
-                  elevation: 1,
-                  pinned: true,
-                  automaticallyImplyLeading: false,
-                  flexibleSpace: Container(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: ProfileWindow(() {
-                      PageRouter.gotoWidget(MyProfile(), context);
-                    }, value: flag ? false : true),
-                  ),
-                  bottom: PreferredSize(
-                    child: Container(
-                      height: _height * 0.055,
-                      color: Colors.white,
-                      width: SizeConfig.getDeviceWidth(context),
-                      padding:
-                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextWidget(
-                          text: "Chats",
-                          size: FontSize.s16,
-                          weight: FontWeight.w700,
-                          align: TextAlign.left,
-                          appcolor: DColors.primaryColor,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          backgroundColor: DColors.white,
+          appBar: defaultAppBar(context,
+              elevation: flag ? 0 : 1,
+              leading: Container(
+                  margin: EdgeInsets.only(left: 16.w),
+                  child: SvgPicture.asset(Assets.dice)),
+              actions: [
+                GestureDetector(
+                  child: Container(
+                      margin: const EdgeInsets.only(right: 16),
+                      child: SvgPicture.asset(Assets.diceLogo)),
+                  onTap: () => PageRouter.gotoWidget(FindPeople(), context),
+                )
+              ]),
+          body: NestedScrollView(
+              controller: _scrollController,
+              headerSliverBuilder: (context, innerBoxScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                    backgroundColor: Colors.white,
+                    floating: true,
+                    elevation: 1,
+                    pinned: true,
+                    automaticallyImplyLeading: false,
+                    flexibleSpace: Container(
+                      padding: EdgeInsets.only(bottom: 10.h),
+                      child: ProfileWindow(() {
+                        PageRouter.gotoWidget(MyProfile(), context);
+                      }, value: flag ? false : true),
+                    ),
+                    bottom: PreferredSize(
+                      child: Container(
+                        height: _height * 0.055,
+                        color: Colors.white,
+                        width: SizeConfig.getDeviceWidth(context),
+                        padding:
+                            EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextWidget(
+                            text: "Chats",
+                            size: FontSize.s16,
+                            weight: FontWeight.w700,
+                            align: TextAlign.left,
+                            appcolor: DColors.primaryColor,
+                          ),
                         ),
                       ),
+                      preferredSize: Size(_width, _height * 0.055),
                     ),
-                    preferredSize: Size(_width, _height * 0.055),
-                  ),
-                )
-              ];
-            },
-            body: FutureBuilder(
-              future: listOfConversationsDao?.getListenable(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<ValueListenable<Box>?> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    !snapshot.hasData) {
-                  return Container();
-                }
-
-                return ValueListenableBuilder(
-                  valueListenable: snapshot.data!,
-                  builder: (_, Box<dynamic> value, __) {
-                    List<ConversationList>? _conversationList =
-                        listOfConversationsDao!
-                            .convert(listOfConversationsDao!.box!)
-                            .toList();
-
-                    if (_conversationList.isEmpty) {
-                      return const EmptyFriendsWidget();
-                    }
-
-                    return NotificationListener<ScrollNotification>(
-                      onNotification: (scrollNotification) {
-                        if (_paginationController
-                                .position.userScrollDirection ==
-                            ScrollDirection.reverse) {
-                          setState(() => _pageIndex++);
-                          _homeProvider?.listConversations(
-                              pageNumber: _pageIndex,
-                              search: '',
-                              userID: _profileProvider!.user!.id!);
-                        }
-                        return true;
-                      },
-                      child: ListView(
-                        controller: _paginationController,
-                        children: [
-                          CustomeDivider(thickness: .3),
-                          SizedBox(height: 8.h),
-                          ..._conversationList
-                              .map((conversation) => Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ...conversation.user!
-                                          .map((user) => ChatListWidget(
-                                                slideKey: user.id,
-                                                chatObject: ChatObject(
-                                                    image:
-                                                        'https://${user.photo?.hostname}/${user.photo?.url}',
-                                                    name: user.name,
-                                                    recentMessage:
-                                                        '@${user.username}',
-                                                    date: TimeUtil
-                                                        .lastTimeMessage(
-                                                            conversation
-                                                                .lastMessage
-                                                                ?.insertedAt),
-                                                    viewersCount: conversation
-                                                        .viewersCount),
-                                                onTapProfile: () =>
-                                                    PageRouter.gotoWidget(
-                                                        OtherProfile(user.id!),
-                                                        context),
-                                                onPressed: () async {
-                                                  Provider.of<ChatProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .markAllMessageAsRead(
-                                                          conversation
-                                                              .conversationID!);
-                                                  chatDao!.openABox(conversation
-                                                      .conversationID!);
-                                                  PageRouter.gotoWidget(
-                                                      MessageScreen(
-                                                          user: user,
-                                                          conversationID:
-                                                              conversation
-                                                                  .conversationID),
-                                                      context);
-                                                },
-                                                onTapDelete: () {
-                                                  _homeProvider
-                                                      ?.removeConversation(
-                                                          conversationId:
-                                                              conversation
-                                                                  .conversationID!,
-                                                          userID:
-                                                              _profileProvider!
-                                                                  .user!.id!);
-                                                },
-                                                onTapCamera: () async {
-                                                  PageRouter.gotoWidget(
-                                                      CameraPictureScreen(
-                                                          user: user,
-                                                          convoID: conversation
-                                                              .conversationID),
-                                                      context);
-                                                },
-                                              ))
-                                          .toList()
-                                    ],
-                                  ))
-                              .toList(),
-                        ],
-                      ),
-                    );
-                  },
-                );
+                  )
+                ];
               },
-            )));
+              body: FutureBuilder(
+                future: listOfConversationsDao?.getListenable(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<ValueListenable<Box>?> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      snapshot.data == null) {
+                    return Container();
+                  }
+
+                  return ValueListenableBuilder(
+                    valueListenable: snapshot.data!,
+                    builder: (_, Box<dynamic> value, __) {
+                      List<ConversationList>? _conversationList =
+                          listOfConversationsDao!
+                              .convert(listOfConversationsDao!.box!)
+                              .toList();
+
+                      if (_conversationList.isEmpty) {
+                        return const EmptyFriendsWidget();
+                      }
+
+                      return NotificationListener<ScrollNotification>(
+                        onNotification: (scrollNotification) {
+                          if (_paginationController
+                                  .position.userScrollDirection ==
+                              ScrollDirection.reverse) {
+                            setState(() => _pageIndex++);
+                            _homeProvider?.listConversations(
+                                pageNumber: _pageIndex,
+                                search: '',
+                                userID: _profileProvider!.user!.id!);
+                          }
+                          return true;
+                        },
+                        child: ListView(
+                          controller: _paginationController,
+                          children: [
+                            CustomeDivider(thickness: .3),
+                            SizedBox(height: 8.h),
+                            ..._conversationList
+                                .map((conversation) => Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ...conversation.user!
+                                            .map((user) => ChatListWidget(
+                                                  slideKey: user.id,
+                                                  chatObject: ChatObject(
+                                                      image:
+                                                          'https://${user.photo?.hostname}/${user.photo?.url}',
+                                                      name: user.name,
+                                                      recentMessage:
+                                                          '@${user.username}',
+                                                      date: TimeUtil
+                                                          .lastTimeMessage(
+                                                              conversation
+                                                                  .lastMessage
+                                                                  ?.insertedAt),
+                                                      viewersCount: conversation
+                                                          .viewersCount),
+                                                  onTapProfile: () =>
+                                                      PageRouter.gotoWidget(
+                                                          OtherProfile(
+                                                              user.id!),
+                                                          context),
+                                                  onPressed: () async {
+                                                    Provider.of<ChatProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .markAllMessageAsRead(
+                                                            conversation
+                                                                .conversationID!);
+                                                    chatDao!.openABox(
+                                                        conversation
+                                                            .conversationID!);
+                                                    PageRouter.gotoWidget(
+                                                        MessageScreen(
+                                                            user: user,
+                                                            conversationID:
+                                                                conversation
+                                                                    .conversationID),
+                                                        context);
+                                                  },
+                                                  onTapDelete: () {
+                                                    _homeProvider
+                                                        ?.removeConversation(
+                                                            conversationId:
+                                                                conversation
+                                                                    .conversationID!,
+                                                            userID:
+                                                                _profileProvider!
+                                                                    .user!.id!);
+                                                  },
+                                                  onTapCamera: () async {
+                                                    PageRouter.gotoWidget(
+                                                        CameraPictureScreen(
+                                                            user: user,
+                                                            convoID: conversation
+                                                                .conversationID),
+                                                        context);
+                                                  },
+                                                ))
+                                            .toList()
+                                      ],
+                                    ))
+                                .toList(),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ))),
+    );
   }
 
   ///TODO remove from list

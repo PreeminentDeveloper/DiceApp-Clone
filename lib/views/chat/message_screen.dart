@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
+import 'package:dice_app/core/event_bus/events/online_event.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -61,6 +62,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final ScrollController _scrollController = ScrollController();
   final _bloc = ChatBloc(inject());
   int _index = 1;
+  bool _isOnline = false;
 
   @override
   void initState() {
@@ -69,7 +71,18 @@ class _MessageScreenState extends State<MessageScreen> {
     _chatProvider!.loadMessagesFromServer(widget.conversationID!);
     _chatProvider!.listenToChatEvents(
         widget.conversationID!, _profileProvider!.user!.id!, widget.user!.id!);
-    eventBus.on<ChatEventBus>().listen((event) => _scrollDown());
+    eventBus.on().listen((event) {
+      logger.d(event);
+      if (event is OnlineListener) {
+        logger.d(event.event?.data?.toJson());
+        logger.d(event.event?.data?.id);
+        logger.d(widget.user!.id!);
+
+        _isOnline = event.event?.data?.id == widget.user!.id!;
+        setState(() {});
+      }
+      _scrollDown();
+    });
     _profileProvider!.getMyFriendsProfile(widget.user.id);
 
     _ensureThatDbIsoOpened();
@@ -295,14 +308,14 @@ class _MessageScreenState extends State<MessageScreen> {
                       children: [
                         CircleAvatar(
                           radius: 4.r,
-                          backgroundColor: chat.isUserOnline
+                          backgroundColor: _isOnline
                               ? DColors.primaryAccentColor
                               : const Color(0xffB2B2B2),
                         ),
                         SizedBox(width: 2.5.h),
                         TextWidget(
-                          text: chat.isUserOnline ? 'Online' : "Offline",
-                          appcolor: chat.isUserOnline
+                          text: _isOnline ? 'Online' : "Offline",
+                          appcolor: _isOnline
                               ? DColors.primaryAccentColor
                               : const Color(0xffB2B2B2),
                           weight: FontWeight.w300,

@@ -29,24 +29,10 @@ class ChatProvider extends ChangeNotifier {
   Future<void>? markAllMessageAsRead(String? conversationID) {
     try {
       final _push = phonixManager.phoenixChannel
-          ?.push("marked_all_unread_chats-$conversationID", {});
+          ?.push("mark_all_unread_chats-$conversationID", {});
       if (_push!.sent) {
         logger.i(
             'Mark All Message Read: ${_push.sent}:  ConversationID === $conversationID');
-      }
-    } catch (e) {
-      logger.e(e);
-    }
-  }
-
-  /// mark all messages as read
-  Future<void>? checkUsersOnlineStatus(
-      String receipient, String? conversationID) {
-    try {
-      final _push = phonixManager.phoenixChannel
-          ?.push("marked_all_unread_chats-$conversationID", {});
-      if (_push!.sent) {
-        logger.i('Mark All Message Read: ${_push.sent}: $conversationID');
       }
     } catch (e) {
       logger.e(e);
@@ -74,13 +60,13 @@ class ChatProvider extends ChangeNotifier {
     eventBus.on<ChatEventBus>().listen((event) {
       Data _data = event.payload?.data ?? Data();
       logger.d(_data.toJson());
-      // chatDao!.saveSingleChat(
-      //     key,
-      //     ListOfMessages(
-      //         insertedAt: _data.message?.insertedAt,
-      //         id: _data.message?.id.toString(),
-      //         user: User(id: _data.message?.userId),
-      //         medias: _data.message?.medias));
+      chatDao!.saveSingleChat(
+          key,
+          ListOfMessages(
+              insertedAt: _data.message?.insertedAt,
+              id: _data.message?.id.toString(),
+              user: User(id: _data.message?.userId),
+              medias: _data.message?.medias));
     });
   }
 

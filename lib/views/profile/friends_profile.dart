@@ -5,6 +5,7 @@ import 'package:dice_app/core/entity/users_entity.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/message_screen.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
@@ -177,10 +178,13 @@ class _OtherProfileState extends State<OtherProfile> {
         );
       default:
         return GestureDetector(
-          onTap: () => PageRouter.gotoWidget(
-              MessageScreen(
-                  user: value, conversationID: value?.conversation?.id),
-              context),
+          onTap: () {
+            chatDao!.openABox(value!.conversation!.id!);
+            PageRouter.gotoWidget(
+                MessageScreen(
+                    user: value, conversationID: value.conversation?.id),
+                context);
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,

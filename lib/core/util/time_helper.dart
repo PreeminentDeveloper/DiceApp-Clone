@@ -53,7 +53,8 @@ class TimeUtil {
   }
 
   static String lastTimeMessage(String? dateString) {
-    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(dateString!, true);
+    if (dateString == null) return '';
+    var _dt = DateFormat("yyyy-MM-dd HH:mm").parse(dateString, true);
     final _formattedTime = DateFormat("HH:mm a").format(_dt.toLocal());
     final _presentDate = DateTime.now();
     final _difference = _presentDate.difference(_dt.toLocal());

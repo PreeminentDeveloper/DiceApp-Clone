@@ -4,7 +4,6 @@ import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/event_bus/events/online_event.dart';
 import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/core/util/helper.dart';
-import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
 
 final PhonixManager phonixManager = PhonixManager();
@@ -25,15 +24,14 @@ class PhonixManager {
 
       phoenixChannel?.join();
       phoenixChannel?.messages.listen((event) {
-        // presence_state
-        if (event.event.value == 'presence_diff') {
-          eventBus.fire(event.payload);
-        }
         if (event.event.value == 'single_presence_state') {
           logger.d(
               'JAYBUG: This event was triggered: ${event.event.value} ==== ${event.payload}');
+          eventBus.fire(OnlineListener(
+              event.event.value, OnlineEvent.fromJson(event.payload!)));
         }
-        if (event.event.value.contains(event.event.value)) {
+
+        if (event.event.value.contains('create_message')) {
           eventBus.fire(ChatEventBus(
               event.event.value, ChatEventModel.fromJson(event.payload)));
         }
