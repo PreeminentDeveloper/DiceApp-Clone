@@ -237,20 +237,18 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                               horizontal: MediaQuery.of(context).size.width / 4,
                               vertical: 16.h),
                           child: TextButton(
-                              onPressed: checker &&
-                                      !result &&
-                                      _usernameController.text.trim().isNotEmpty
-                                  ? () {
-                                      _bloc.add(ProfileSetUpEvent(
-                                          profileSetupModel: ProfileSetupModel(
-                                        phone: _profileProvider?.user?.phone,
-                                        username: _usernameController.text,
-                                        name: _nameController.text,
-                                        age: widget.age,
-                                        id: _profileProvider?.user?.id,
-                                      )));
-                                    }
-                                  : () {},
+                              onPressed: () {
+                                if (result) return;
+
+                                _bloc.add(ProfileSetUpEvent(
+                                    profileSetupModel: ProfileSetupModel(
+                                  phone: _profileProvider?.user?.phone,
+                                  username: _usernameController.text,
+                                  name: _nameController.text,
+                                  age: widget.age,
+                                  id: _profileProvider?.user?.id,
+                                )));
+                              },
                               style: ButtonStyle(
                                   backgroundColor: checker &&
                                           !result &&

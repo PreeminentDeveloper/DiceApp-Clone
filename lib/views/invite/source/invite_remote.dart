@@ -35,11 +35,14 @@ class InviteService {
       required String userID}) async {
     try {
       final result = await _graphQLClient.client.query(
-        QueryOptions(document: gql(InviteGQL.listConnections), variables: {
-          "pageNo": pageNumber,
-          "perPage": perPage,
-          "userId": userID
-        }),
+        QueryOptions(
+            document: gql(InviteGQL.listConnections),
+            variables: {
+              "pageNo": pageNumber,
+              "perPage": perPage,
+              "userId": userID
+            },
+            fetchPolicy: FetchPolicy.networkOnly),
       );
       return MyConnectionResponse.fromJson(result.data!);
     } catch (e) {
@@ -50,7 +53,9 @@ class InviteService {
   Future<SearchUserResponse?> findPeople({required String name}) async {
     try {
       final result = await _graphQLClient.client.query(QueryOptions(
-          document: gql(InviteGQL.searchUser), variables: {"search": name}));
+          document: gql(InviteGQL.searchUser),
+          variables: {"search": name},
+          fetchPolicy: FetchPolicy.networkOnly));
       return SearchUserResponse.fromJson(result.data!);
     } catch (e) {
       logger.e(e);

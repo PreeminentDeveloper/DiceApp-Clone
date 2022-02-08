@@ -1,6 +1,8 @@
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/settings/privacy.dart';
+import 'package:dice_app/views/settings/widget/legal/policy.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +85,7 @@ class SignInSplashScreen extends StatelessWidget {
                                   fontWeight: FontWeight.w600),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  // navigate to desired screen
+                                  PageRouter.gotoWidget(Policy(), context);
                                 }),
                           TextSpan(
                               text: ' Privacy Policy.',
@@ -93,7 +95,7 @@ class SignInSplashScreen extends StatelessWidget {
                                   fontWeight: FontWeight.w800),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  // navigate to desired screen
+                                  PageRouter.gotoWidget(Policy(), context);
                                 }),
                         ]),
                   ),

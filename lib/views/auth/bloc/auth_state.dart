@@ -14,6 +14,11 @@ class AuthSuccessState extends AuthState {
   AuthSuccessState({required this.response});
 }
 
+class AuthSendingOtpSuccess extends AuthState {
+  dynamic response;
+  AuthSendingOtpSuccess({required this.response});
+}
+
 class AuthVerifyUsernameSuccess extends AuthState {
   UsernameResponse response;
   AuthVerifyUsernameSuccess({required this.response});

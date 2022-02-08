@@ -63,7 +63,7 @@ class _SignUpState extends State<SignUp> {
             if (state is AuthLoadingState) {
               setState(() => _loadingState = true);
             }
-            if (state is AuthSuccessState) {
+            if (state is AuthSendingOtpSuccess) {
               setState(() => _loadingState = false);
               String _phone = _phoneController.text[0] == '0'
                   ? _phoneController.text.replaceFirst('0', '+234')

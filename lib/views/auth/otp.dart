@@ -9,12 +9,14 @@ import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter/gestures.dart';
 
 import 'birthday.dart';
 import 'bloc/auth_bloc.dart';
 import 'connect_friends.dart';
+import 'data/model/login/login_model.dart';
 
 class OTP extends StatefulWidget {
   final String? phone, deviceID;
@@ -52,6 +54,16 @@ class _OTPState extends State<OTP> {
                   PageRouter.gotoWidget(const ConnectFriends(), context,
                       clearStack: true);
                 }
+              }
+              if (state is AuthSendingOtpSuccess) {
+                setState(() => _loadingState = false);
+                Fluttertoast.showToast(
+                    msg: "Resent OTP Successfuly",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: DColors.primaryColor,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
               }
               if (state is AuthFailedState) {
                 setState(() => _loadingState = false);
@@ -127,7 +139,9 @@ class _OTPState extends State<OTP> {
                                 fontSize: FontSize.s12),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                // navigate to desired screen
+                                _bloc.add(StartLoginEvent(
+                                    loginModel: LoginModel(
+                                        widget.phone, widget.deviceID)));
                               })
                       ])),
                 ],

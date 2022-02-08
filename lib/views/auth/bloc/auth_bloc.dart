@@ -25,7 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         yield AuthLoadingState();
         final response = await _authService.login(event.loginModel);
-        yield AuthSuccessState(response: response);
+        yield AuthSendingOtpSuccess(response: response);
       } catch (e) {
         yield AuthFailedState(message: e.toString());
       }

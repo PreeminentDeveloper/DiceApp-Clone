@@ -1,7 +1,9 @@
 import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/data/phonix_manager.dart';
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/core/util/time_helper.dart';
@@ -42,9 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
   SlidableController? _slidableController;
 
   ScrollController _scrollController = ScrollController();
+  ScrollController _paginationController = ScrollController();
   bool upDirection = false, flag = false;
   HomeProvider? _homeProvider;
   ProfileProvider? _profileProvider;
+  int _pageIndex = 1;
 
   @override
   void initState() {
@@ -54,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _initializeController();
     _listConversations();
+    logger.d(SessionManager.instance.authToken);
+    logger.d(SessionManager.instance.usersData);
 
     super.initState();
   }
@@ -74,7 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _listConversations() async {
     _profileProvider?.getUsersInformations();
     _homeProvider?.listConversations(
-        pageNumber: 1, search: '', userID: _profileProvider!.user!.id!);
+        pageNumber: _pageIndex,
+        search: '',
+        userID: _profileProvider!.user!.id!);
   }
 
   @override
@@ -157,75 +165,90 @@ class _HomeScreenState extends State<HomeScreen> {
                       return const EmptyFriendsWidget();
                     }
 
-                    return ListView(
-                      children: [
-                        CustomeDivider(thickness: .3),
-                        SizedBox(height: 8.h),
-                        ..._conversationList
-                            .map((conversation) => Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ...conversation.user!
-                                        .map((user) => ChatListWidget(
-                                              slideKey: user.id,
-                                              chatObject: ChatObject(
-                                                  image:
-                                                      'https://${user.photo?.hostname}/${user.photo?.url}',
-                                                  name: user.name,
-                                                  recentMessage:
-                                                      '@${user.username}',
-                                                  date:
-                                                      TimeUtil.lastTimeMessage(
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (scrollNotification) {
+                        if (_paginationController
+                                .position.userScrollDirection ==
+                            ScrollDirection.reverse) {
+                          setState(() => _pageIndex++);
+                          _homeProvider?.listConversations(
+                              pageNumber: _pageIndex,
+                              search: '',
+                              userID: _profileProvider!.user!.id!);
+                        }
+                        return true;
+                      },
+                      child: ListView(
+                        controller: _paginationController,
+                        children: [
+                          CustomeDivider(thickness: .3),
+                          SizedBox(height: 8.h),
+                          ..._conversationList
+                              .map((conversation) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ...conversation.user!
+                                          .map((user) => ChatListWidget(
+                                                slideKey: user.id,
+                                                chatObject: ChatObject(
+                                                    image:
+                                                        'https://${user.photo?.hostname}/${user.photo?.url}',
+                                                    name: user.name,
+                                                    recentMessage:
+                                                        '@${user.username}',
+                                                    date: TimeUtil
+                                                        .lastTimeMessage(
+                                                            conversation
+                                                                .lastMessage
+                                                                ?.insertedAt),
+                                                    viewersCount: conversation
+                                                        .viewersCount),
+                                                onTapProfile: () =>
+                                                    PageRouter.gotoWidget(
+                                                        OtherProfile(user.id!),
+                                                        context),
+                                                onPressed: () async {
+                                                  Provider.of<ChatProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .markAllMessageAsRead(
                                                           conversation
-                                                              .lastMessage
-                                                              ?.insertedAt),
-                                                  viewersCount: conversation
-                                                      .viewersCount),
-                                              onTapProfile: () =>
+                                                              .conversationID!);
+                                                  chatDao!.openABox(conversation
+                                                      .conversationID!);
                                                   PageRouter.gotoWidget(
-                                                      OtherProfile(user.id!),
-                                                      context),
-                                              onPressed: () async {
-                                                Provider.of<ChatProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .markAllMessageAsRead(
-                                                        conversation
-                                                            .conversationID!);
-                                                chatDao!.openABox(conversation
-                                                    .conversationID!);
-                                                PageRouter.gotoWidget(
-                                                    MessageScreen(
-                                                        user: user,
-                                                        conversationID:
-                                                            conversation
-                                                                .conversationID),
-                                                    context);
-                                              },
-                                              onTapDelete: () {
-                                                _homeProvider
-                                                    ?.removeConversation(
-                                                        conversationId:
-                                                            conversation
-                                                                .conversationID!,
-                                                        userID:
-                                                            _profileProvider!
-                                                                .user!.id!);
-                                              },
-                                              onTapCamera: () async {
-                                                PageRouter.gotoWidget(
-                                                    CameraPictureScreen(
-                                                        user: user,
-                                                        convoID: conversation
-                                                            .conversationID),
-                                                    context);
-                                              },
-                                            ))
-                                        .toList()
-                                  ],
-                                ))
-                            .toList(),
-                      ],
+                                                      MessageScreen(
+                                                          user: user,
+                                                          conversationID:
+                                                              conversation
+                                                                  .conversationID),
+                                                      context);
+                                                },
+                                                onTapDelete: () {
+                                                  _homeProvider
+                                                      ?.removeConversation(
+                                                          conversationId:
+                                                              conversation
+                                                                  .conversationID!,
+                                                          userID:
+                                                              _profileProvider!
+                                                                  .user!.id!);
+                                                },
+                                                onTapCamera: () async {
+                                                  PageRouter.gotoWidget(
+                                                      CameraPictureScreen(
+                                                          user: user,
+                                                          convoID: conversation
+                                                              .conversationID),
+                                                      context);
+                                                },
+                                              ))
+                                          .toList()
+                                    ],
+                                  ))
+                              .toList(),
+                        ],
+                      ),
                     );
                   },
                 );
