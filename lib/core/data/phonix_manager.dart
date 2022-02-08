@@ -29,10 +29,14 @@ class PhonixManager {
         if (event.event.value == 'presence_diff') {
           eventBus.fire(event.payload);
         }
-        // if (event.event.value.contains(event.event.value)) {
-        //   eventBus.fire(ChatEventBus(
-        //       event.event.value, ChatEventModel.fromJson(event.payload)));
-        // }
+        if (event.event.value == 'single_presence_state') {
+          logger.d(
+              'JAYBUG: This event was triggered: ${event.event.value} ==== ${event.payload}');
+        }
+        if (event.event.value.contains(event.event.value)) {
+          eventBus.fire(ChatEventBus(
+              event.event.value, ChatEventModel.fromJson(event.payload)));
+        }
       });
     });
   }

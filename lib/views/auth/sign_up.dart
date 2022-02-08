@@ -66,8 +66,11 @@ class _SignUpState extends State<SignUp> {
             if (state is AuthSendingOtpSuccess) {
               setState(() => _loadingState = false);
               String _phone = _phoneController.text[0] == '0'
-                  ? _phoneController.text.replaceFirst('0', '+234')
-                  : '+234${_phoneController.text}';
+                  ? _phoneController.text
+                      .replaceAll(' ', '')
+                      .replaceFirst('0', '+234')
+                  : '+234${_phoneController.text.replaceAll(' ', '')}';
+
               PageRouter.gotoWidget(OTP(_phone, _deviceID), context);
             }
             if (state is AuthFailedState) {
@@ -198,8 +201,9 @@ class _SignUpState extends State<SignUp> {
 
                                 String _phone = _phoneController.text[0] == '0'
                                     ? _phoneController.text
+                                        .replaceAll(' ', '')
                                         .replaceFirst('0', '')
-                                    : _phoneController.text;
+                                    : _phoneController.text.replaceAll(' ', '');
 
                                 _bloc.add(StartLoginEvent(
                                     loginModel: LoginModel(

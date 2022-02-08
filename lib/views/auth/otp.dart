@@ -1,5 +1,6 @@
 import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
@@ -30,6 +31,12 @@ class OTP extends StatefulWidget {
 class _OTPState extends State<OTP> {
   bool _loadingState = false;
   final _bloc = AuthBloc(inject());
+
+  @override
+  void initState() {
+    logger.d(widget.phone);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
