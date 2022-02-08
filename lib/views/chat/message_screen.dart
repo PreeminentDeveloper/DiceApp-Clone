@@ -61,6 +61,7 @@ class _MessageScreenState extends State<MessageScreen> {
   List<AssetEntity> results = [];
   ProfileProvider? _profileProvider;
   ChatProvider? _chatProvider;
+  HomeProvider? _homeProvider;
   final _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final _bloc = ChatBloc(inject());
@@ -71,6 +72,7 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _chatProvider!.loadMessagesFromServer(widget.conversationID!);
     _chatProvider!.listenToChatEvents(
         widget.conversationID!, _profileProvider!.user!.id!, widget.user!.id!);
@@ -347,6 +349,7 @@ class _MessageScreenState extends State<MessageScreen> {
               : Provider.of<SetUpProvider>(context, listen: false).blockUser(
                   userID: _profileProvider?.user?.id,
                   receiverID: widget.user?.id);
+          _homeProvider!.listConversations(userID: _profileProvider!.user!.id!);
           controller.hideMenu();
         },
       );
