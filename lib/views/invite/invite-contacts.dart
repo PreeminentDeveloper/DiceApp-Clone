@@ -3,6 +3,7 @@ import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/invite/model/contact/contacts_exists_response.dart';
 import 'package:dice_app/views/invite/provider/invite_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
@@ -57,15 +58,6 @@ class _InviteContactsState extends State<InviteContacts> {
     }
   }
 
-  bool onNotification(ScrollEndNotification t) {
-    if (t.metrics.pixels > 0 && t.metrics.atEdge) {
-      logger.d('I am at the end');
-    } else {
-      logger.d('I am at the start');
-    }
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -117,7 +109,7 @@ class _InviteContactsState extends State<InviteContacts> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(height: 16.h),
-                                    ...invite.mContacts!
+                                    ..._sortListOfContacts(invite.mContacts!)
                                         .map(
                                           (contacts) => FriendsInviteWidget(
                                             profilePic:
@@ -172,5 +164,16 @@ class _InviteContactsState extends State<InviteContacts> {
                     ]),
               ),
             )));
+  }
+
+  List<Contacts> _sortListOfContacts(List<Contacts> list) {
+    List<Contacts> _list = [];
+    list.map((p) {
+      if (phone.contains(p.user?.phone)) {
+        _list.add(p);
+        setState(() {});
+      }
+    }).toList();
+    return _list;
   }
 }
