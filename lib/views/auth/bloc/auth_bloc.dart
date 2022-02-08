@@ -34,8 +34,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     /// Verify otp event
     if (event is VerifyOtpEvent) {
       try {
-        logger.d(event.otpModel.phone);
-        logger.d(event.otpModel.deviceId);
         yield AuthLoadingState();
         final response = await _authService.verifyOtp(event.otpModel);
         yield AuthSuccessState(response: response);

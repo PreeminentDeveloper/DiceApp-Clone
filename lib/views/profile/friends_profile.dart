@@ -179,9 +179,7 @@ class _OtherProfileState extends State<OtherProfile> {
         return GestureDetector(
           onTap: () => PageRouter.gotoWidget(
               MessageScreen(
-                user: value,
-                conversationID: '', // Todo: Return connection  ID here
-              ),
+                  user: value, conversationID: value?.conversation?.id),
               context),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

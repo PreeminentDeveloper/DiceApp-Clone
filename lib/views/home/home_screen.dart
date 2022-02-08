@@ -58,9 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _initializeController();
     _listConversations();
-    logger.d(SessionManager.instance.authToken);
-    logger.d(SessionManager.instance.usersData);
-
     super.initState();
   }
 

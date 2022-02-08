@@ -12,7 +12,7 @@ class User {
   String? iblocked;
   String? ublocked;
   Photo? photo;
-  dynamic conversation;
+  Conversation? conversation;
   PrivacySettings? privacySettings;
   NotificationSettings? notificationSettings;
   ChatSettings? chatSettings;
@@ -57,7 +57,9 @@ class User {
 
     status = json["status"];
     photo = json["photo"] == null ? null : Photo.fromJson(json["photo"]);
-    conversation = json["conversation"];
+    conversation = json["conversation"] == null
+        ? null
+        : Conversation.fromJson(json["conversation"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -76,12 +78,17 @@ class User {
       data["chatSettings"] = chatSettings?.toJson();
     }
     if (photo != null) data["photo"] = photo?.toJson();
-    data["conversation"] = conversation;
     if (notificationSettings != null) {
       data["notificationSettings"] = notificationSettings?.toJson();
     }
     if (privacySettings != null) {
       data["privacySettings"] = privacySettings?.toJson();
+    }
+    if (privacySettings != null) {
+      data["privacySettings"] = privacySettings?.toJson();
+    }
+    if (conversation != null) {
+      data["conversation"] = conversation?.toJson();
     }
     return data;
   }
@@ -163,6 +170,22 @@ class ChatSettings {
     data["onlineStatus"] = onlineStatus;
     data["pushNotification"] = pushNotification;
     data["showReceiptMark"] = showReceiptMark;
+    return data;
+  }
+}
+
+class Conversation {
+  String? id;
+
+  Conversation({this.id});
+
+  Conversation.fromJson(json) {
+    id = json["id"];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["id"] = id;
     return data;
   }
 }
