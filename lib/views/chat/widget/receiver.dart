@@ -119,11 +119,10 @@ class ReceiverSide extends StatelessWidget {
                         decoration: BoxDecoration(
                           border: Border.all(color: const Color(0xffCBCBCB)),
                           color: DColors.primaryColor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30.r),
-                            topRight: Radius.circular(30.r),
-                            bottomLeft: Radius.circular(20.r),
-                          ),
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                              bottomRight: Radius.circular(30)),
                         ),
                         child: SingleChildScrollView(
                           physics: const NeverScrollableScrollPhysics(),
@@ -133,11 +132,10 @@ class ReceiverSide extends StatelessWidget {
                               Hero(
                                 tag: 'https://${e.hostname}/${e.url}',
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(30.r),
-                                    topRight: Radius.circular(30.r),
-                                    bottomLeft: Radius.circular(15.r),
-                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(30),
+                                      topRight: Radius.circular(30),
+                                      bottomRight: Radius.circular(30)),
                                   child: Image.file(File(snap.data.toString()),
                                       height: 156.54.h,
                                       width: 357.52.w,
@@ -171,11 +169,10 @@ class ReceiverSide extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border.all(color: DColors.primaryAccentColor),
                   color: DColors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.r),
-                    topRight: Radius.circular(30.r),
-                    bottomLeft: Radius.circular(20.r),
-                  ),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                      bottomRight: Radius.circular(30)),
                 ),
                 child: SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),

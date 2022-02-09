@@ -14,8 +14,8 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
-import 'package:dice_app/views/chat/widget/receiver.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
+
 import 'package:dice_app/views/home/camera/camera_screen.dart';
 import 'package:dice_app/views/home/home_screen.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
@@ -43,6 +43,7 @@ import 'feature_images.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
+import 'widget/receiver.dart';
 
 final bucketGlobal = PageStorageBucket();
 

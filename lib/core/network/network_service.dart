@@ -101,7 +101,6 @@ class NetworkService {
             //     .fire(
             //     FileUploadProgressEvent(FileUploadProgress(sent, total, tag: classTag)));
           });
-          logger.d(response.data);
           break;
       }
       return response;

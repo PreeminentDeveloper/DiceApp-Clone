@@ -88,7 +88,7 @@ class ChatProvider extends ChangeNotifier {
           conversationID: _data.message?.conversationId));
     });
   }
-  
+
   AssetType assetType = AssetType.image;
 
   void toggleMediaIcons(AssetType index) {
