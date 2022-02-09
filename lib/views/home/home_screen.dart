@@ -194,8 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 image:
                                                     'https://${user.photo?.hostname}/${user.photo?.url}',
                                                 name: user.name,
-                                                recentMessage:
-                                                    '@${user.username}',
+                                                recentMessage: conversation
+                                                        .lastMessage?.message ??
+                                                    '',
                                                 date: TimeUtil.lastTimeMessage(
                                                     conversation.lastMessage
                                                         ?.insertedAt),
@@ -244,7 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               );
                             }).toList(),
-                            
                           ],
                         ),
                       );
