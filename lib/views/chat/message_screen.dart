@@ -71,6 +71,13 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   void initState() {
+    _initializeValues();
+    super.initState();
+  }
+
+  void _initializeValues() {
+    _scrollDown();
+
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
@@ -87,7 +94,6 @@ class _MessageScreenState extends State<MessageScreen> {
     _profileProvider!.getMyFriendsProfile(widget.user.id);
 
     _ensureThatDbIsoOpened();
-    super.initState();
   }
 
   void _ensureThatDbIsoOpened() async {
@@ -156,7 +162,11 @@ class _MessageScreenState extends State<MessageScreen> {
 
               return BlocListener<ChatBloc, ChatState>(
                 bloc: _bloc,
-                listener: (context, state) {},
+                listener: (context, state) {
+                  if (state is ChatSuccessState) {
+                    _scrollDown();
+                  }
+                },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

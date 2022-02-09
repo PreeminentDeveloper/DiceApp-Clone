@@ -40,8 +40,7 @@ class ChatDao {
     await _box!.putAll(map);
   }
 
-  void saveSingleChat(String key, ListOfMessages? localChatModel) async {
-    openABox(key);
+  void saveSingleChat(ListOfMessages? localChatModel) async {
     await _box!.add(localChatModel!.toJson());
   }
 

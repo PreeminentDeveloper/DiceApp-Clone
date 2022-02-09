@@ -4,6 +4,8 @@ import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/core/util/injection_container.dart';
+import 'package:dice_app/views/chat/bloc/chat_bloc.dart';
 import 'package:dice_app/views/chat/data/models/list_chat_response.dart';
 import 'package:dice_app/views/chat/data/models/local_chats_model.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
@@ -76,49 +78,17 @@ class ChatProvider extends ChangeNotifier {
   /// when listening for chat event, if the UserID that is been returned is not equivalent to the senders UserID
   /// then the message should be cached locally
   listenToChatEvents(String key, String userID, String receiverID) {
+    final _bloc = ChatBloc(inject());
+
     eventBus.on<ChatEventBus>().listen((event) {
       Data _data = event.payload?.data ?? Data();
-      logger.d(_data.toJson());
-      chatDao!.saveSingleChat(
-          key,
-          ListOfMessages(
-              insertedAt: _data.message?.insertedAt,
-              id: _data.message?.id.toString(),
-              user: User(id: _data.message?.userId),
-              medias: _data.message?.medias));
+      _bloc.add(ListChatEvent(
+          pageIndex: 1,
+          userID: userID,
+          conversationID: _data.message?.conversationId));
     });
   }
-
-  /// Handles when a user joins a conversation
-  void _handleWhenUserJoins(List list, String? receipientID) {
-    list.map((e) {
-      if (e['id'] == receipientID) {
-        _isUserOnline = true;
-        notifyListeners();
-      }
-    }).toList();
-    logger.i('$receipientID Joins the conversations: $_isUserOnline');
-  }
-
-  /// Handles when a user leaves a conversation
-  void _handleWhenUserLeaves(List list, String? receipientID) {
-    list.map((e) {
-      if (e['id'] == receipientID) {
-        _isUserOnline = false;
-        notifyListeners();
-      }
-    }).toList();
-    logger.i('$receipientID Leaves the conversations: $_isUserOnline');
-  }
-
-  /// Returns true if the event type is a ChatEventBus,
-  /// contains the chat conversation id and also the message is not from the sender
-  bool _isTargetMet(event, key, userID) {
-    return event is ChatEventBus &&
-        event.key!.contains(key) &&
-        event.payload?.data?.message?.userId != userID;
-  }
-
+  
   AssetType assetType = AssetType.image;
 
   void toggleMediaIcons(AssetType index) {
