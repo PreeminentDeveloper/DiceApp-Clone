@@ -101,7 +101,7 @@ class ListOfMessages {
     user = json["user"] == null ? null : User.fromJson(json["user"]);
     read = json["read"] == null ? null : Read.fromJson(json["read"]);
     medias = json["medias"] == null
-        ? null
+        ? []
         : (json["medias"] as List).map((e) => Medias.fromJson(e)).toList();
   }
 

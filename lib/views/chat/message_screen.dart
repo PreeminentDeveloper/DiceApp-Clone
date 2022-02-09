@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/event_bus/events/online_event.dart';
@@ -168,16 +169,17 @@ class _MessageScreenState extends State<MessageScreen> {
                             TimeUtil.chatDate(element.insertedAt),
                         groupSeparatorBuilder: (String groupByValue) =>
                             _getGroupedTime(groupByValue),
-                        indexedItemBuilder: (context, dynamic element,
-                                int index) =>
-                            element.user?.id == _profileProvider?.user?.id
-                                ? SenderSide(
-                                    chat: element,
-                                    deleteCallback: () => _removeMessage(index))
-                                : ReceiverSide(
-                                    chat: element,
-                                    deleteCallback: () =>
-                                        _removeMessage(index)),
+                        indexedItemBuilder:
+                            (context, dynamic element, int index) =>
+                                element.user?.id == _profileProvider?.user?.id
+                                    ? SenderSide(
+                                        chat: element,
+                                        deleteCallback: () =>
+                                            _removeMessage(index, element.id))
+                                    : ReceiverSide(
+                                        chat: element,
+                                        deleteCallback: () =>
+                                            _removeMessage(index, element.id)),
                         floatingHeader: true,
                       ),
                     ),
@@ -253,8 +255,10 @@ class _MessageScreenState extends State<MessageScreen> {
     setState(() {});
   }
 
-  void _removeMessage(int index) {
+  void _removeMessage(int index, String? messageID) {
     chatDao!.removeSingleItem(index);
+    _chatProvider?.removeSingleMessage(
+        int.tryParse(messageID!)!, _profileProvider!.user!.id!);
     setState(() {});
   }
 

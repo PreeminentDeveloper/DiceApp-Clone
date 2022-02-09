@@ -7,6 +7,7 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/views/chat/data/models/list_chat_response.dart';
 import 'package:dice_app/views/chat/data/models/local_chats_model.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
+import 'package:dice_app/views/chat/data/sources/chat_sources.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -16,6 +17,9 @@ class ChatProvider extends ChangeNotifier {
   bool _isUserOnline = false;
   bool get isUserOnline => _isUserOnline;
   List<ListOfMessages> tempMessagesHolder = [];
+  ChatService? _chatService;
+
+  ChatProvider(this._chatService);
 
   @override
   void dispose() {
@@ -120,5 +124,13 @@ class ChatProvider extends ChangeNotifier {
   void toggleMediaIcons(AssetType index) {
     assetType = index;
     notifyListeners();
+  }
+
+  void removeSingleMessage(int messageid, String userId) async {
+    try {
+      await _chatService?.deleteMessage(messageid, userId);
+    } catch (_) {
+      logger.e(_);
+    }
   }
 }

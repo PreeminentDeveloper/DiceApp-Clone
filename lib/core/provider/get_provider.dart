@@ -13,6 +13,6 @@ class Providers {
     ChangeNotifierProvider(create: (_) => ProfileProvider(inject())),
     ChangeNotifierProvider(create: (_) => InviteProvider(inject())),
     ChangeNotifierProvider(create: (_) => SetUpProvider(inject())),
-    ChangeNotifierProvider(create: (_) => ChatProvider())
+    ChangeNotifierProvider(create: (_) => ChatProvider(inject()))
   ];
 }
