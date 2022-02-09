@@ -92,4 +92,29 @@ class SetUpService {
       logger.e(e);
     }
   }
+
+  Future<dynamic> changePhoneRequest(
+      String current, String deviceid, String newPhone) async {
+    logger.d(current);
+    try {
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document:
+              gql(SetUpGql.changePhoneRequest(current, deviceid, newPhone))));
+      logger.d(_result.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<dynamic> changePhoneConfirm(String otp, String newPhone) async {
+    try {
+  
+      final _result = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(SetUpGql.changePhone(otp, newPhone)),
+          fetchPolicy: FetchPolicy.networkOnly));
+      return _result.data;
+    } catch (e) {
+      logger.e(e);
+    }
+  }
 }

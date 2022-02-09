@@ -138,4 +138,38 @@ class SetUpGql {
 }
     """;
   }
+
+  static String changePhoneRequest(
+      String current, String deviceid, String newPhone) {
+    return """
+            mutation{
+  changePhoneRequest(
+    currentPhone:"$current", 
+    deviceId: "$deviceid", 
+    newPhone: "$newPhone")
+  {
+    phoneVerificationObject
+    {
+      phone
+    }
+  }
+}
+    """;
+  }
+
+  static String changePhone(String otp, String newPhone) {
+    return """
+            mutation{
+                changePhone(
+                  otpCode:"$otp", 
+                  newPhone: "$newPhone")
+                      {
+                        phoneVerificationObject
+                        {
+                          phone
+                        }
+                      }
+                    }
+    """;
+  }
 }

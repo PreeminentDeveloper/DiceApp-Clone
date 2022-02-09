@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:device_info/device_info.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
+import 'package:dice_app/views/settings/provider/setup_provider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dice_app/views/widgets/validate.dart';
@@ -82,7 +85,7 @@ class _ChangeNumberState extends State<ChangeNumber> {
                     // initialSelection: 'US'
                     onChanged: (code) {
                       setState(() {
-                        // dialCode = code.dialCode;
+                        dialCode = code?.dialCode ?? '';
                       });
                     },
                   ),
@@ -161,6 +164,14 @@ class _ChangeNumberState extends State<ChangeNumber> {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     if (phoneKey.currentState!.validate()) {
                       String deviceId = await _getId();
+
+                      final _user =
+                          Provider.of<ProfileProvider>(context, listen: false)
+                              .user;
+
+                      Provider.of<SetUpProvider>(context, listen: false)
+                          .changePhoneRequest(context, _user!.phone!, deviceId,
+                              '+234' + _phoneController.text);
                     }
                   },
                   style: ButtonStyle(

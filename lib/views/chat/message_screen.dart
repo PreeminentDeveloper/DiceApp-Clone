@@ -77,7 +77,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _initializeValues() {
-    _scrollDown();
+    PageStorage.of(context)!.readState(context, identifier: 'chat');
 
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
@@ -90,7 +90,6 @@ class _MessageScreenState extends State<MessageScreen> {
         _isOnline = event.event?['status'] ?? false;
         setState(() {});
       }
-      _scrollDown();
     });
     _profileProvider!.getMyFriendsProfile(widget.user.id);
 
@@ -122,6 +121,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     chatDao!.truncate();
     super.dispose();
   }
@@ -132,24 +132,23 @@ class _MessageScreenState extends State<MessageScreen> {
     if (chatDao!.getListenable(widget.conversationID!) == null) {
       return Container();
     }
-    return PageStorage(
-      bucket: bucketGlobal,
-      child: Scaffold(
-        appBar: defaultAppBar(context,
-            titleSpacing: 0,
-            centerTitle: false,
-            titleWidget: _getTitleWidget(),
-            goBack: widget.isFromMedia!
-                ? () => PageRouter.gotoWidget(HomeScreen(), context,
-                    clearStack: true, animationType: PageTransitionType.fade)
-                : () => PageRouter.goBack(context),
-            onTap: () => setState(() => _switchView = !_switchView),
-            actions: [_blockUser()]),
-        body: GestureDetector(
-            onTap: () => _toggleStickerOff(false),
-            child: SafeArea(
-                child: _switchView ? const StickersView() : _bodyView())),
-      ),
+    return Scaffold(
+      appBar: defaultAppBar(context,
+          titleSpacing: 0,
+          centerTitle: false,
+          titleWidget: _getTitleWidget(),
+          goBack: widget.isFromMedia!
+              ? () => PageRouter.gotoWidget(HomeScreen(), context,
+                  clearStack: true, animationType: PageTransitionType.fade)
+              : () => PageRouter.goBack(context),
+          onTap: () => setState(() => _switchView = !_switchView),
+          actions: [_blockUser()]),
+      body: GestureDetector(
+          // onTap: () => _toggleStickerOff(false),
+          child: SafeArea(
+              child: _switchView
+                  ? const StickersView()
+                  : PageStorage(bucket: bucketGlobal, child: _bodyView()))),
     );
   }
 
@@ -160,7 +159,6 @@ class _MessageScreenState extends State<MessageScreen> {
             valueListenable: chatDao!.getListenable(widget.conversationID!)!,
             builder: (BuildContext context, Box<dynamic> value, Widget? child) {
               final _response = chatDao!.convert(value).toList();
-
               return BlocListener<ChatBloc, ChatState>(
                 bloc: _bloc,
                 listener: (context, state) {
@@ -173,6 +171,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   children: [
                     Expanded(
                       child: GroupedListView<dynamic, String>(
+                        key: const PageStorageKey<String>('chat'),
                         elements: _response,
                         sort: false,
                         controller: _scrollController,

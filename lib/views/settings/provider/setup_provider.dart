@@ -1,5 +1,12 @@
+import 'package:dice_app/core/data/hive_manager.dart';
+import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/entity/users_entity.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/navigation/routes.dart';
 import 'package:dice_app/core/util/helper.dart';
+import 'package:dice_app/views/auth/sign_up.dart';
+import 'package:dice_app/views/onboarding/sign_in_splash.dart';
+import 'package:dice_app/views/settings/confirm_new_phone.dart';
 import 'package:dice_app/views/settings/source/remote.dart';
 import 'package:flutter/material.dart';
 
@@ -15,13 +22,12 @@ class SetUpProvider extends ChangeNotifier {
   // 087a51cb-0aaf-42eb-8708-eb76bb5ff051
   SetUpProvider(this._setUpService);
 
-    @override
+  @override
   void dispose() {
     ignoreList = [];
     blockedList = [];
     super.dispose();
   }
-
 
   void listIgnoredAndBlockedUsers({
     required int pageNumber,
@@ -81,6 +87,39 @@ class SetUpProvider extends ChangeNotifier {
       await _setUpService.unblockUser(userID: userID, receiverID: receiverID);
       await _setUpService.listBlockedUser(
           pageNumber: 1, perPage: 20, search: '', userID: userID!);
+    } catch (e) {
+      logger.e(e);
+      setUpEnum = SetUpEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void changePhoneRequest(BuildContext context, String current, String deviceID,
+      String newPhone) async {
+    try {
+      await _setUpService.changePhoneRequest(current, deviceID, newPhone);
+      PageRouter.gotoWidget(ChangePhoneOtp(newPhone), context);
+    } catch (e) {
+      logger.e(e);
+      setUpEnum = SetUpEnum.idle;
+    }
+    notifyListeners();
+  }
+
+  void changePhoneConfirm(
+      BuildContext context, String otp, String newPhone) async {
+    try {
+      final _response = await _setUpService.changePhoneConfirm(otp, newPhone);
+      if (_response != null) {
+        await HiveBoxes.clearAllBox();
+        await SessionManager.instance.sharedPreferences?.clear();
+        await SessionManager.instance.logOut();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => const SignInSplashScreen()),
+            (Route<dynamic> route) => false);
+      }
     } catch (e) {
       logger.e(e);
       setUpEnum = SetUpEnum.idle;
