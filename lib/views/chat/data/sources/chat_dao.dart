@@ -44,7 +44,6 @@ class ChatDao {
     openABox(key);
     await _box!.add(localChatModel!.toJson());
   }
-  
 
   void removeSingleItem(int index) async {
     await _box!.deleteAt(index);

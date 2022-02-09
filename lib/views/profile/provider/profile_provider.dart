@@ -24,13 +24,11 @@ class ProfileProvider extends ChangeNotifier {
 
   ProfileProvider(this._profileService);
 
-  @override
-  void dispose() {
+  void clearAll() {
     user = null;
     chatSettings = null;
     notificationSettings = null;
     getUserDataResponse = null;
-    super.dispose();
   }
 
   Future<void>? getUsersInformations({bool notifyListeners = false}) {

@@ -25,6 +25,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             pageNo: event.pageIndex,
             userID: event.userID,
             conversationID: event.conversationID);
+        logger.d(response.listMessages?.list?.length);
         chatDao!.saveMyChats(event.conversationID, response.listMessages?.list);
         yield ChatSuccessState(response: _localChats);
       } catch (e) {

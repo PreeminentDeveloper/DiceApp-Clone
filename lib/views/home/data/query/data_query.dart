@@ -55,17 +55,12 @@ class HomeGqlMutation {
 
   static String removeConversation = '''
   query (\$conversationId: String!, \$userId: String!){
-      {
-  removeConversationUser(
-      conversationId: \$conversationId, 
-      userId: \$userId
-    ){
-    id
-    userId
-    conversationId
-    deletedAt
-  }
-}
+    removeConversationUser(conversationId: \$conversationId, userId: \$userId){
+      id
+      userId
+      conversationId
+      deletedAt
+    }  
   }
   ''';
 }

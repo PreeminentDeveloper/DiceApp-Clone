@@ -32,6 +32,10 @@ class ListOfConversationsDao {
     await _box!.putAll(map);
   }
 
+  void deleteConvo(index) async {
+    await _box!.deleteAt(index);
+  }
+
   List<ConversationList> convert(Box box) {
     Map<String, dynamic> raw = Map<String, dynamic>.from(box.toMap());
     return raw.values.map((e) => ConversationList.fromMap(e)).toList();

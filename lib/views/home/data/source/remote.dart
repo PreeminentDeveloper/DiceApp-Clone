@@ -43,6 +43,7 @@ class HomeService {
             variables: {"userId": userID, "conversationId": conversationId},
             fetchPolicy: FetchPolicy.networkOnly),
       );
+      await listConvo(userID: userID, pageNumber: 1, search: '');
       logger.d(_result.data);
     } catch (exception) {
       logger.e(exception);

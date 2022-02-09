@@ -71,7 +71,6 @@ class HomeProvider extends ChangeNotifier {
     try {
       await _homeService.removeConvo(
           conversationId: conversationId, userID: userID);
-      listConversations(userID: userID);
       notifyListeners();
     } catch (e) {
       logger.e(e);
