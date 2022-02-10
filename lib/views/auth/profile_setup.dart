@@ -8,6 +8,7 @@ import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/views/auth/data/model/profile/profile_setup_model.dart';
 import 'package:dice_app/views/auth/data/model/username/username_model.dart';
+import 'package:dice_app/views/auth/provider/auth_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/profile/widget/image_modal.dart';
 import 'package:dice_app/views/widgets/back_arrow.dart';
@@ -49,10 +50,12 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
   bool _loadingState = false;
   final _bloc = AuthBloc(inject());
   ProfileProvider? _profileProvider;
+  AuthProvider? _authProvider;
 
   @override
   void initState() {
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
     _profileProvider?.getUsersInformations();
     super.initState();
   }
@@ -86,7 +89,6 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                 }
 
                 if (state is AuthFailedState) {
-                  logger.d(state.message);
                   setState(() => _loadingState = false);
                 }
               }, child:
@@ -220,66 +222,78 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                             ),
                           ),
                         ),
-                        Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.only(top: 8),
-                            child: TextWidget(
-                              text: output,
-                              size: FontSize.s11,
-                              appcolor:
-                                  result ? Colors.red : DColors.primaryColor,
-                            )),
+                        Consumer<AuthProvider>(
+                          builder: (context, provider, child) {
+                            return Container(
+                                alignment: Alignment.center,
+                                margin: const EdgeInsets.only(top: 8),
+                                child: TextWidget(
+                                  text: _usernameController.text.isEmpty ? ''  : provider.acceptedUsername
+                                      ? 'Congrats! Username is available'
+                                      : 'Oops! already taken',
+                                  size: FontSize.s11,
+                                  appcolor: provider.acceptedUsername
+                                      ? DColors.primaryColor
+                                      : Colors.red,
+                                ));
+                          },
+                        ),
                         SizedBox(height: SizeConfig.sizeXXXL),
-                        Container(
-                          width: double.infinity,
-                          height: 44,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: MediaQuery.of(context).size.width / 4,
-                              vertical: 16.h),
-                          child: TextButton(
-                              onPressed: () {
-                                if (result) return;
+                        Consumer<AuthProvider>(
+                          builder: (context, auth, child) {
+                            return Container(
+                              width: double.infinity,
+                              height: 44,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width / 4,
+                                  vertical: 16.h),
+                              child: TextButton(
+                                  onPressed: () {
+                                    if (auth.acceptedUsername) {
+                                    
 
-                                _bloc.add(ProfileSetUpEvent(
-                                    profileSetupModel: ProfileSetupModel(
-                                  phone: _profileProvider?.user?.phone,
-                                  username: _usernameController.text,
-                                  name: _nameController.text,
-                                  age: widget.age,
-                                  id: _profileProvider?.user?.id,
-                                )));
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor: checker &&
-                                          !result &&
-                                          _usernameController.text
-                                              .trim()
-                                              .isNotEmpty
-                                      ? MaterialStateProperty.all<Color>(
-                                          DColors.primaryColor)
-                                      : MaterialStateProperty.all<Color>(
-                                          const Color(0xFFF2F0F0)),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        SizeConfig.sizeXXL!),
-                                    // side: BorderSide(color: Colors.red)
-                                  ))),
-                              child: TextWidget(
-                                text: _loadingState
-                                    ? "Loading..."
-                                    : "enter".toUpperCase(),
-                                weight: FontWeight.w700,
-                                appcolor: checker &&
-                                        !result &&
-                                        _usernameController.text
-                                            .trim()
-                                            .isNotEmpty
-                                    ? DColors.white
-                                    : DColors.faded,
-                                size: FontSize.s12,
-                              )),
+                                      _bloc.add(ProfileSetUpEvent(
+                                          profileSetupModel: ProfileSetupModel(
+                                        phone: _profileProvider?.user?.phone,
+                                        username: _usernameController.text,
+                                        name: _nameController.text,
+                                        age: widget.age,
+                                        id: _profileProvider?.user?.id,
+                                      )));
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor: auth.acceptedUsername &&
+                                              _usernameController.text
+                                                  .trim()
+                                                  .isNotEmpty
+                                          ? MaterialStateProperty.all<Color>(
+                                              DColors.primaryColor)
+                                          : MaterialStateProperty.all<Color>(
+                                              const Color(0xFFF2F0F0)),
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            SizeConfig.sizeXXL!),
+                                        // side: BorderSide(color: Colors.red)
+                                      ))),
+                                  child: TextWidget(
+                                    text: _loadingState
+                                        ? "Loading..."
+                                        : "enter".toUpperCase(),
+                                    weight: FontWeight.w700,
+                                    appcolor: auth.acceptedUsername &&
+                                            _usernameController.text
+                                                .trim()
+                                                .isNotEmpty
+                                        ? DColors.white
+                                        : DColors.faded,
+                                    size: FontSize.s12,
+                                  )),
+                            );
+                          },
                         )
                       ],
                     ),
@@ -313,8 +327,7 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
 
   void _validateUser(BuildContext context, String val) {
     if (_isUsernameCompliant(val)) {
-      _debouncer.run(() =>
-          _bloc.add(VerifyUsernameEvent(codeNameModel: CodeNameModel(val))));
+      _debouncer.run(() => _authProvider?.verifyUserName(val));
     }
   }
 }

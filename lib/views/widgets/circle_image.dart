@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,30 +50,41 @@ class CircleImageHandler extends StatelessWidget {
       );
     }
     if (image!.contains('https') || image!.isEmpty) {
-      return CircularProfileAvatar(
-        image!,
-        radius: radius!.r,
-        backgroundColor: DColors.grey,
-        borderWidth: borderWidth!,
-        borderColor: borderColor!,
-        cacheImage: true,
-        initialsText: showInitialText!
-            ? Text(
-                initials!,
-                style: const TextStyle(color: DColors.white),
-              )
-            : const Text(''),
-        showInitialTextAbovePicture: showInitialText!,
-        placeHolder: (context, url) => CircleAvatar(
-          radius: radius!.r,
-          backgroundColor: DColors.grey,
-          child: Text(initials!, style: const TextStyle(color: DColors.white)),
-        ),
-        errorWidget: (context, url, _) => CircleAvatar(
-          radius: radius?.r,
-          backgroundColor: DColors.grey,
-          child: Text(initials!, style: const TextStyle(color: DColors.white)),
-        ),
+      logger.d(image);
+      // return CircularProfileAvatar(
+      //   'https://dicemessaging.s3.amazonaws.com/images/888258.jpg',
+      //   radius: radius!.r,
+      //   backgroundColor: DColors.grey,
+      //   borderWidth: borderWidth!,
+      //   borderColor: borderColor!,
+      //   cacheImage: true,
+      //   initialsText: showInitialText!
+      //       ? Text(
+      //           initials!,
+      //           style: const TextStyle(color: DColors.white),
+      //         )
+      //       : const Text(''),
+      //   showInitialTextAbovePicture: showInitialText!,
+      //   placeHolder: (context, url) => CircleAvatar(
+      //     radius: radius!.r,
+      //     backgroundColor: DColors.grey,
+      //     child: Text(initials!, style: const TextStyle(color: DColors.white)),
+      //   ),
+      //   errorWidget: (context, url, we) {
+      //     logger.d(we);
+      //     return CircleAvatar(
+      //       radius: radius?.r,
+      //       backgroundColor: DColors.grey,
+      //       child:
+      //           Text(initials!, style: const TextStyle(color: DColors.white)),
+      //     );
+      //   },
+      // );
+
+      return CircleAvatar(
+        maxRadius: radius,
+        minRadius: radius,
+        backgroundImage: CachedNetworkImageProvider(image!),
       );
     }
     return Container();
