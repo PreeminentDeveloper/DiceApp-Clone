@@ -6,6 +6,7 @@ import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/widgets/circle_image.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_avatar/flutter_advanced_avatar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,6 +17,7 @@ class ChatObject {
   final String? recentMessage;
   final String? date;
   final int? viewersCount;
+  final int? unread;
   final String? lastMessage;
 
   ChatObject(
@@ -24,6 +26,7 @@ class ChatObject {
       @required this.recentMessage,
       @required this.date,
       @required this.viewersCount,
+      @required this.unread,
       @required this.lastMessage});
 }
 
@@ -113,14 +116,49 @@ class ChatListWidget extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleImageHandler(
-                chatObject!.image!.isNotEmpty &&
-                        !chatObject!.image!.contains('https://')
-                    ? 'https://${chatObject!.image}'
-                    : chatObject!.image,
-                radius: 20,
-                showInitialText: chatObject!.image!.isEmpty,
-                initials: Helpers.getInitials(chatObject?.name ?? ''),
+              AdvancedAvatar(
+                statusSize: 16,
+                size: 50,
+                child: CircleImageHandler(
+                  chatObject!.image!.isNotEmpty &&
+                          !chatObject!.image!.contains('https://')
+                      ? 'https://${chatObject!.image}'
+                      : chatObject!.image,
+                  radius: 50,
+                  showInitialText: chatObject!.image!.isEmpty,
+                  initials: Helpers.getInitials(chatObject?.name ?? ''),
+                ),
+                foregroundDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: chatObject!.unread! > 0
+                        ? DColors.primaryColor.withOpacity(0.75)
+                        : Colors.white,
+                    width: 3,
+                  ),
+                ),
+                bottomLeft: Visibility(
+                  visible: chatObject!.unread! > 0,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 0.5,
+                      ),
+                      color: DColors.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: TextWidget(
+                      text: '${chatObject?.unread ?? 0}',
+                      size: FontSize.s10,
+                      weight: FontWeight.w300,
+                      appcolor: DColors.white,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(width: 10.w),
               Expanded(

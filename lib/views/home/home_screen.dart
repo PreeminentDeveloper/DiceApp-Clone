@@ -201,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     conversation.lastMessage
                                                         ?.insertedAt),
                                                 viewersCount:
-                                                    conversation.viewersCount),
+                                                    conversation.viewersCount,
+                                                unread: conversation.unread),
                                             onTapProfile: () =>
                                                 PageRouter.gotoWidget(
                                                     OtherProfile(user.id!),

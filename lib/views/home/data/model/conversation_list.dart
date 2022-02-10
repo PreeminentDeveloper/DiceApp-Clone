@@ -10,6 +10,7 @@ class ConversationList {
   final String? id;
   final String? conversationID;
   final int? viewersCount;
+  final int? unread;
   final LastMessage? lastMessage;
 
   List<User>? user = [];
@@ -18,6 +19,7 @@ class ConversationList {
       {this.id,
       this.conversationID,
       this.viewersCount,
+      this.unread,
       this.user,
       this.lastMessage});
 
@@ -30,6 +32,7 @@ class ConversationList {
         id: id ?? this.id,
         conversationID: conversationID ?? this.conversationID,
         viewersCount: viewersCount ?? 0,
+        unread: unread ?? 0,
         user: user ?? this.user,
         lastMessage: lastMessage);
   }
@@ -39,6 +42,7 @@ class ConversationList {
       'id': id,
       'conversationID': conversationID,
       'viewersCount': viewersCount,
+      'unread': unread,
       'lastMessage': lastMessage?.toJson(),
       'user': user?.map((x) => x.toJson()).toList(),
     };
@@ -49,6 +53,7 @@ class ConversationList {
       id: map['id'],
       conversationID: map['conversationID'],
       viewersCount: map['viewersCount'],
+      unread: map['unread'],
       lastMessage: map['lastMessage'] != null
           ? LastMessage.fromJson(map['lastMessage'])
           : null,

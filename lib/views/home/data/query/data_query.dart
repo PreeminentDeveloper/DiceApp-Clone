@@ -15,6 +15,7 @@ class HomeGqlMutation {
         type
         updatedAt
         viewersCount
+        unread
         lastMessage{
           insertedAt
           message

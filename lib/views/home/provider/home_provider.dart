@@ -50,6 +50,7 @@ class HomeProvider extends ChangeNotifier {
             id: DateTime.now().toString(),
             conversationID: listData.id,
             viewersCount: listData.viewersCount,
+            unread: listData.unread,
             lastMessage: listData.lastMessage,
             user: listData.users));
         notifyListeners();

@@ -80,6 +80,7 @@ class ListOfData {
   String? updatedAt;
   String? userId;
   int? viewersCount;
+  int? unread;
   LastMessage? lastMessage;
   List<User>? users;
 
@@ -93,6 +94,7 @@ class ListOfData {
       this.lastMessage,
       this.userId,
       this.viewersCount,
+      this.unread,
       this.users});
 
   ListOfData.fromJson(Map<String, dynamic> json) {
@@ -101,6 +103,7 @@ class ListOfData {
     name = json["name"];
     status = json["status"];
     viewersCount = json["viewersCount"];
+    unread = json["unread"];
     lastMessage = json["lastMessage"] != null
         ? LastMessage.fromJson(json['lastMessage'])
         : null;
@@ -119,6 +122,7 @@ class ListOfData {
     data["name"] = name;
     data["status"] = status;
     data["viewersCount"] = viewersCount;
+    data["unread"] = unread;
     data["type"] = type;
     data["updatedAt"] = updatedAt;
     data["userId"] = userId;
