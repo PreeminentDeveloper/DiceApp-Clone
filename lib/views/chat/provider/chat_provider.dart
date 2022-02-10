@@ -86,6 +86,9 @@ class ChatProvider extends ChangeNotifier {
           pageIndex: 1,
           userID: userID,
           conversationID: _data.message?.conversationId));
+
+      ///
+      markAllMessageAsRead(_data.message?.conversationId);
     });
   }
 

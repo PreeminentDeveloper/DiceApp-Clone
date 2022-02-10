@@ -1,3 +1,4 @@
+import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/views/auth/sign_up.dart';
 import 'package:dice_app/views/onboarding/sign_in_splash.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'core/data/session_manager.dart';
 import 'core/navigation/routes.dart';
 import 'core/network/url_config.dart';
+import 'core/notification/pn_services.dart';
 import 'core/provider/get_provider.dart';
 import 'core/util/injection_container.dart';
 import 'views/home/home_screen.dart';
@@ -34,9 +36,17 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(primarySwatch: Colors.green),
             routes: Routes.getRoutes,
-            home: SessionManager.instance.authLogging
-                ? HomeScreen()
-                : const SignInSplashScreen(),
+            home: FutureBuilder(
+              future: pnService.initializeNotification(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(backgroundColor: DColors.white);
+                }
+                return SessionManager.instance.authLogging
+                    ? HomeScreen()
+                    : const SignInSplashScreen();
+              },
+            ),
           );
         },
       ),

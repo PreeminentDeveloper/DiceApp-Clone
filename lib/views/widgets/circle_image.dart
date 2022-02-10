@@ -50,7 +50,6 @@ class CircleImageHandler extends StatelessWidget {
       );
     }
     if (image!.contains('https') || image!.isEmpty) {
-      logger.d(image);
       // return CircularProfileAvatar(
       //   'https://dicemessaging.s3.amazonaws.com/images/888258.jpg',
       //   radius: radius!.r,
@@ -83,6 +82,7 @@ class CircleImageHandler extends StatelessWidget {
 
       return CircleAvatar(
         maxRadius: radius,
+        backgroundColor: DColors.primaryAccentColor,
         minRadius: radius,
         backgroundImage: CachedNetworkImageProvider(image!),
       );

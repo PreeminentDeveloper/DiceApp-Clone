@@ -4,12 +4,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-final NotificationService notificationService = NotificationService(null);
+final NotificationService pnService = NotificationService();
 
 class NotificationService {
-  dynamic _fcmTokenService;
-
-  NotificationService(this._fcmTokenService);
+  NotificationService();
 
   /// Define a top-level named handler which background/terminated messages will
   /// call.
@@ -26,16 +24,13 @@ class NotificationService {
   /// Initialize the [FlutterLocalNotificationsPlugin] package.
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  /// get users device token
-  late String? token;
-
   /// Initialize notification
   Future<void> initializeNotification() async {
     // If you're going to use other Firebase services in the background, such as Firestore,
     // make sure you call `initializeApp` before using other Firebase services.
     await Firebase.initializeApp();
     // Set the background messaging handler early on, as a named top-level function
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     if (!kIsWeb) {
       channel = const AndroidNotificationChannel(
@@ -69,11 +64,11 @@ class NotificationService {
   }
 
   /// Triggers all notification
-  void _triggerAllSetUp() {
+  void _triggerAllSetUp() async {
     _getInitialMessage();
     _listenToMessage();
     _openMessageApp();
-    _getToken();
+    await getToken();
     _refreshToken();
   }
 
@@ -87,7 +82,6 @@ class NotificationService {
   /// Get initialize messages
   void _listenToMessage() async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      logger.d(message);
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {
@@ -96,12 +90,8 @@ class NotificationService {
           notification.title,
           notification.body,
           NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              //      one that already exists in example app.
-              icon: 'edoko',
-            ),
+            android: AndroidNotificationDetails(channel.id, channel.name,
+                icon: 'd', importance: Importance.high),
           ),
         );
       }
@@ -115,9 +105,9 @@ class NotificationService {
   }
 
   /// Get users token
-  void _getToken() async {
-    token = await FirebaseMessaging.instance.getToken();
-    // _fcmTokenService.updateToken(token);
+  Future<String?> getToken() async {
+    logger.d(await FirebaseMessaging.instance.getToken());
+    return await FirebaseMessaging.instance.getToken();
   }
 
   /// Refresh users token

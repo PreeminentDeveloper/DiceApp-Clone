@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dice_app/core/data/hive_manager.dart';
-import 'package:dice_app/core/notification/notification_service.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';

@@ -88,7 +88,7 @@ class _MessageScreenState extends State<MessageScreen> {
     eventBus.on().listen((event) {
       if (event is OnlineListener) {
         _isOnline = event.event?['status'] ?? false;
-        setState(() {});
+        // setState(() {});
       }
     });
     _profileProvider!.getMyFriendsProfile(widget.user.id);
