@@ -82,7 +82,7 @@ class CircleImageHandler extends StatelessWidget {
 
       return CircleAvatar(
         maxRadius: radius,
-        backgroundColor: DColors.primaryAccentColor,
+        backgroundColor: DColors.grey,
         minRadius: radius,
         backgroundImage: CachedNetworkImageProvider(image!),
       );
