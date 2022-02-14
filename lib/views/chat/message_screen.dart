@@ -2,9 +2,7 @@
 
 import 'dart:io';
 
-import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
-import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/event_bus/events/online_event.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
@@ -15,7 +13,6 @@ import 'package:dice_app/core/util/size_config.dart';
 import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/chat/data/sources/chat_dao.dart';
 import 'package:dice_app/views/chat/widget/sender.dart';
-
 import 'package:dice_app/views/home/camera/camera_screen.dart';
 import 'package:dice_app/views/home/home_screen.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
@@ -32,13 +29,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'bloc/chat_bloc.dart';
 import 'data/models/chat_menus.dart';
+import 'data/models/list_chat_response.dart';
 import 'feature_images.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
@@ -69,6 +66,7 @@ class _MessageScreenState extends State<MessageScreen> {
   final _bloc = ChatBloc(inject());
   int _index = 1;
   bool _isOnline = false;
+  List<ListOfMessages> _messages = [];
 
   @override
   void initState() {
@@ -93,15 +91,7 @@ class _MessageScreenState extends State<MessageScreen> {
     });
     _profileProvider!.getMyFriendsProfile(widget.user.id);
 
-    _ensureThatDbIsoOpened();
-  }
-
-  void _ensureThatDbIsoOpened() async {
-    if (chatDao!.getListenable(widget.conversationID!) == null) {
-      await chatDao!.openABox(widget.conversationID!);
-    }
     _makeCall();
-    setState(() {});
   }
 
   ///Auto scroll chat to bottom of the list
@@ -122,7 +112,6 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    chatDao!.truncate();
     super.dispose();
   }
 
@@ -148,56 +137,49 @@ class _MessageScreenState extends State<MessageScreen> {
           child: SafeArea(
               child: _switchView
                   ? const StickersView()
-                  : PageStorage(bucket: bucketGlobal, child: _bodyView()))),
+                  : PageStorage(bucket: bucketGlobal, child: _newBody()))),
     );
   }
 
   /// returns body view
-  Stack _bodyView() => Stack(
+  Stack _newBody() => Stack(
         children: [
-          ValueListenableBuilder(
-            valueListenable: chatDao!.getListenable(widget.conversationID!)!,
-            builder: (BuildContext context, Box<dynamic> value, Widget? child) {
-              final _response = chatDao!.convert(value).toList();
-              return BlocListener<ChatBloc, ChatState>(
-                bloc: _bloc,
-                listener: (context, state) {
-                  if (state is ChatSuccessState) {
-                    _scrollDown();
-                  }
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: GroupedListView<dynamic, String>(
-                        key: const PageStorageKey<String>('chat'),
-                        elements: _response,
-                        sort: false,
-                        controller: _scrollController,
-                        groupBy: (element) =>
-                            TimeUtil.chatDate(element.insertedAt),
-                        groupSeparatorBuilder: (String groupByValue) =>
-                            _getGroupedTime(groupByValue),
-                        indexedItemBuilder:
-                            (context, dynamic element, int index) =>
-                                element.user?.id == _profileProvider?.user?.id
-                                    ? SenderSide(
-                                        chat: element,
-                                        deleteCallback: () =>
-                                            _removeMessage(index, element.id))
-                                    : ReceiverSide(
-                                        chat: element,
-                                        deleteCallback: () =>
-                                            _removeMessage(index, element.id)),
-                        floatingHeader: true,
-                      ),
-                    ),
-                    SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-                  ],
-                ),
-              );
+          BlocListener<ChatBloc, ChatState>(
+            bloc: _bloc,
+            listener: (context, state) {
+              if (state is ChatSuccessState) {
+                _messages = state.response ?? [];
+                setState(() {});
+              }
             },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: GroupedListView<dynamic, String>(
+                    key: const PageStorageKey<String>('chat'),
+                    elements: _messages,
+                    sort: false,
+                    controller: _scrollController,
+                    groupBy: (element) => TimeUtil.chatDate(element.insertedAt),
+                    groupSeparatorBuilder: (String groupByValue) =>
+                        _getGroupedTime(groupByValue),
+                    indexedItemBuilder: (context, dynamic element, int index) =>
+                        element.user?.id == _profileProvider?.user?.id
+                            ? SenderSide(
+                                chat: element,
+                                deleteCallback: () =>
+                                    _removeMessage(index, element.id))
+                            : ReceiverSide(
+                                chat: element,
+                                deleteCallback: () =>
+                                    _removeMessage(index, element.id)),
+                    floatingHeader: true,
+                  ),
+                ),
+                SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+              ],
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -266,7 +248,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _removeMessage(int index, String? messageID) {
-    chatDao!.removeSingleItem(index);
+    _messages.removeAt(index);
     _chatProvider?.removeSingleMessage(
         int.tryParse(messageID!)!, _profileProvider!.user!.id!);
     setState(() {});
