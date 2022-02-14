@@ -33,13 +33,16 @@ class ImageModal extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextWidget(
-                    text: "Delete Photo",
-                    size: FontSize.s16,
-                    weight: FontWeight.w400,
-                    appcolor: DColors.red,
-                    align: TextAlign.center,
-                    onTap: deletePhoto,
+                  SizedBox(
+                    width: Helpers.getDeviceWidth(context),
+                    child: TextWidget(
+                      text: "Delete Photo",
+                      size: FontSize.s16,
+                      weight: FontWeight.w400,
+                      appcolor: DColors.red,
+                      align: TextAlign.center,
+                      onTap: deletePhoto,
+                    ),
                   ),
                   SizedBox(height: 8.h),
                   const Divider(),
@@ -47,32 +50,38 @@ class ImageModal extends StatelessWidget {
                 ],
               ),
             ),
-            TextWidget(
-              text: "Take photo",
-              size: FontSize.s16,
-              weight: FontWeight.w400,
-              appcolor: DColors.primaryAccentColor,
-              align: TextAlign.center,
-              onTap: () async {
-                final _file =
-                    await Helpers.processImage(context, ImageSource.camera);
-                fileCallBack!(_file);
-              },
+            SizedBox(
+              width: Helpers.getDeviceWidth(context),
+              child: TextWidget(
+                text: "Take photo",
+                size: FontSize.s16,
+                weight: FontWeight.w400,
+                appcolor: DColors.primaryAccentColor,
+                align: TextAlign.center,
+                onTap: () async {
+                  final _file =
+                      await Helpers.processImage(context, ImageSource.camera);
+                  fileCallBack!(_file);
+                },
+              ),
             ),
             SizedBox(height: 8.h),
             const Divider(),
             SizedBox(height: 8.h),
-            TextWidget(
-              text: "Choose photo",
-              size: FontSize.s16,
-              weight: FontWeight.w400,
-              appcolor: DColors.primaryAccentColor,
-              align: TextAlign.center,
-              onTap: () async {
-                final _file =
-                    await Helpers.processImage(context, ImageSource.gallery);
-                fileCallBack!(_file);
-              },
+            SizedBox(
+              width: Helpers.getDeviceWidth(context),
+              child: TextWidget(
+                text: "Choose photo",
+                size: FontSize.s16,
+                weight: FontWeight.w400,
+                appcolor: DColors.primaryAccentColor,
+                align: TextAlign.center,
+                onTap: () async {
+                  final _file =
+                      await Helpers.processImage(context, ImageSource.gallery);
+                  fileCallBack!(_file);
+                },
+              ),
             ),
           ],
         ),
