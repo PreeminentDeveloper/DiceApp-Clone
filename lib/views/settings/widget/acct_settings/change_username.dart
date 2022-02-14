@@ -108,7 +108,9 @@ class _ChangeUsernameState extends State<ChangeUsername> {
                                   ? 'Oops! Taken already'
                                   : 'Congrats! Username is available.',
                           size: FontSize.s11,
-                          appcolor: _result ? Colors.red : DColors.primaryColor,
+                          appcolor: provider.isExists
+                              ? Colors.red
+                              : DColors.primaryColor,
                         )),
 
                     Container(
