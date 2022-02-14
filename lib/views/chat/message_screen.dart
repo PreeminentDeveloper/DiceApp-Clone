@@ -134,51 +134,54 @@ class _MessageScreenState extends State<MessageScreen> {
           actions: [_blockUser()]),
       body: GestureDetector(
           // onTap: () => _toggleStickerOff(false),
-          child: SafeArea(
-              child: _switchView
-                  ? const StickersView()
-                  : PageStorage(bucket: bucketGlobal, child: _newBody()))),
+          child:
+              SafeArea(child: _switchView ? const StickersView() : _newBody())),
     );
   }
 
   /// returns body view
   Stack _newBody() => Stack(
         children: [
-          BlocListener<ChatBloc, ChatState>(
-            bloc: _bloc,
-            listener: (context, state) {
-              if (state is ChatSuccessState) {
-                _messages = state.response ?? [];
-                setState(() {});
-              }
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: GroupedListView<dynamic, String>(
-                    key: const PageStorageKey<String>('chat'),
-                    elements: _messages,
-                    sort: false,
-                    controller: _scrollController,
-                    groupBy: (element) => TimeUtil.chatDate(element.insertedAt),
-                    groupSeparatorBuilder: (String groupByValue) =>
-                        _getGroupedTime(groupByValue),
-                    indexedItemBuilder: (context, dynamic element, int index) =>
-                        element.user?.id == _profileProvider?.user?.id
-                            ? SenderSide(
-                                chat: element,
-                                deleteCallback: () =>
-                                    _removeMessage(index, element.id))
-                            : ReceiverSide(
-                                chat: element,
-                                deleteCallback: () =>
-                                    _removeMessage(index, element.id)),
-                    floatingHeader: true,
+          PageStorage(
+            bucket: bucketGlobal,
+            child: BlocListener<ChatBloc, ChatState>(
+              bloc: _bloc,
+              listener: (context, state) {
+                if (state is ChatSuccessState) {
+                  _messages = state.response ?? [];
+                  setState(() {});
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: GroupedListView<dynamic, String>(
+                      key: const PageStorageKey<String>('chat'),
+                      elements: _messages,
+                      sort: false,
+                      controller: _scrollController,
+                      groupBy: (element) =>
+                          TimeUtil.chatDate(element.insertedAt),
+                      groupSeparatorBuilder: (String groupByValue) =>
+                          _getGroupedTime(groupByValue),
+                      indexedItemBuilder:
+                          (context, dynamic element, int index) =>
+                              element.user?.id == _profileProvider?.user?.id
+                                  ? SenderSide(
+                                      chat: element,
+                                      deleteCallback: () =>
+                                          _removeMessage(index, element.id))
+                                  : ReceiverSide(
+                                      chat: element,
+                                      deleteCallback: () =>
+                                          _removeMessage(index, element.id)),
+                      floatingHeader: true,
+                    ),
                   ),
-                ),
-                SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-              ],
+                  SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+                ],
+              ),
             ),
           ),
           Align(
