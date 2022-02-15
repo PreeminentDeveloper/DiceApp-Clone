@@ -122,14 +122,14 @@ class ChatEditBox extends StatelessWidget {
                               horizontal: 10, vertical: 10),
                           child: SvgPicture.asset("assets/add.svg")),
                     ),
-                  if (!isEnabled!)
-                    GestureDetector(
-                      onTap: takePicture,
-                      child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          child: SvgPicture.asset("assets/camera.svg")),
-                    ),
+                  // if (!isEnabled!)
+                  //   GestureDetector(
+                  //     onTap: takePicture,
+                  //     child: Container(
+                  //         margin: const EdgeInsets.symmetric(
+                  //             horizontal: 10, vertical: 10),
+                  //         child: SvgPicture.asset("assets/camera.svg")),
+                  //   ),
                 ],
               )),
         ],

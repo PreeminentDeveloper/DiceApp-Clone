@@ -61,15 +61,15 @@ class ChatListWidget extends StatelessWidget {
       actionPane: const SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       actions: [
-        SlideAction(
-          child: SvgPicture.asset(
-            Assets.camera,
-            color: Colors.white,
-            height: 18.h,
-          ),
-          color: DColors.primaryColor,
-          onTap: onTapCamera,
-        ),
+        // SlideAction(
+        //   child: SvgPicture.asset(
+        //     Assets.camera,
+        //     color: Colors.white,
+        //     height: 18.h,
+        //   ),
+        //   color: DColors.primaryColor,
+        //   onTap: onTapCamera,
+        // ),
         SlideAction(
             child: SvgPicture.asset(
               Assets.profile,
