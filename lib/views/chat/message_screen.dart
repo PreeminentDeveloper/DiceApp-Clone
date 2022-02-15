@@ -143,45 +143,34 @@ class _MessageScreenState extends State<MessageScreen> {
   /// returns body view
   Stack _newBody() => Stack(
         children: [
-          PageStorage(
-            bucket: bucketGlobal,
-            child: BlocListener<ChatBloc, ChatState>(
-              bloc: _bloc,
-              listener: (context, state) {
-                if (state is ChatSuccessState) {
-                  _messages = state.response ?? [];
-                  setState(() {});
-                }
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: GroupedListView<dynamic, String>(
-                      key: const PageStorageKey<String>('chat'),
-                      elements: _messages,
-                      sort: false,
-                      controller: _scrollController,
-                      groupBy: (element) =>
-                          TimeUtil.chatDate(element.insertedAt),
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          GroupedTimer(groupByValue),
-                      indexedItemBuilder:
-                          (context, dynamic element, int index) =>
-                              element.user?.id == _profileProvider?.user?.id
-                                  ? SenderSide(
-                                      chat: element,
-                                      deleteCallback: () =>
-                                          _removeMessage(index, element.id))
-                                  : ReceiverSide(
-                                      chat: element,
-                                      deleteCallback: () =>
-                                          _removeMessage(index, element.id)),
-                      floatingHeader: true,
-                    ),
-                  ),
-                  SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-                ],
+          BlocListener<ChatBloc, ChatState>(
+            bloc: _bloc,
+            listener: (context, state) {
+              if (state is ChatSuccessState) {
+                _messages = state.response ?? [];
+                setState(() {});
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(bottom: 90.h),
+              child: GroupedListView<dynamic, String>(
+                elements: _messages,
+                sort: false,
+                controller: _scrollController,
+                groupBy: (element) => TimeUtil.chatDate(element.insertedAt),
+                groupSeparatorBuilder: (String groupByValue) =>
+                    GroupedTimer(groupByValue),
+                indexedItemBuilder: (context, dynamic element, int index) =>
+                    element.user?.id == _profileProvider?.user?.id
+                        ? SenderSide(
+                            chat: element,
+                            deleteCallback: () =>
+                                _removeMessage(index, element.id))
+                        : ReceiverSide(
+                            chat: element,
+                            deleteCallback: () =>
+                                _removeMessage(index, element.id)),
+                floatingHeader: true,
               ),
             ),
           ),
@@ -325,6 +314,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               ? DColors.primaryAccentColor
                               : const Color(0xffB2B2B2),
                           weight: FontWeight.w300,
+                          type: "Objectivity",
                           size: FontSize.s12,
                         ),
                       ],

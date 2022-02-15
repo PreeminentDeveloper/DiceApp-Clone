@@ -26,8 +26,13 @@ class SenderSide extends StatelessWidget {
   final ListOfMessages? chat;
   final Function? deleteCallback;
   final bool? showIcon;
+  final PressType? pressType;
   const SenderSide(
-      {this.chat, this.deleteCallback, Key? key, this.showIcon = true})
+      {this.chat,
+      this.pressType,
+      this.deleteCallback,
+      Key? key,
+      this.showIcon = true})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,11 @@ class SenderSide extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                width: SizeConfig.getDeviceWidth(context) * .7,
+                width: chat?.message != null &&
+                        chat!.message!.isNotEmpty &&
+                        chat!.message!.length > 50
+                    ? SizeConfig.getDeviceWidth(context) * .7
+                    : null,
                 child: PopMenuWidget(
                   primaryWidget: chat!.medias!.isNotEmpty
                       ? _displayImage(chat!.medias, context)
@@ -56,17 +65,18 @@ class SenderSide extends StatelessWidget {
                                   topRight: Radius.circular(30),
                                   bottomLeft: Radius.circular(30))),
                           padding: const EdgeInsets.only(
-                              top: 15, bottom: 15, left: 25, right: 60),
+                              top: 15, bottom: 15, left: 25, right: 42.8),
                           margin: const EdgeInsets.fromLTRB(20, 10, 17.2, 0),
                           child: TextWidget(
                             text: chat?.message ?? '',
                             type: "Circular",
                             appcolor: DColors.white,
+                            size: 13,
                             align: TextAlign.left,
                             height: 1.6,
                           )),
                   menuItems: ChatMenu.chatMenu(),
-                  pressType: PressType.longPress,
+                  pressType: pressType ?? PressType.longPress,
                   menuCallback: (option) {
                     if (ChatOptions.delete == option) {
                       deleteCallback!();
@@ -96,6 +106,7 @@ class SenderSide extends StatelessWidget {
             text: TimeUtil.chatTime(chat?.insertedAt ?? ''),
             size: FontSize.s8,
             align: TextAlign.right,
+            type: "Objectivity",
           ),
         ),
       ],

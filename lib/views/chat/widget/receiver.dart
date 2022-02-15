@@ -62,6 +62,7 @@ class ReceiverSide extends StatelessWidget {
                           child: TextWidget(
                             text: chat?.message ?? '',
                             type: "Circular",
+                            size: 13,
                             appcolor: DColors.mildDark,
                             align: TextAlign.left,
                             height: 1.6,
@@ -88,6 +89,7 @@ class ReceiverSide extends StatelessWidget {
             text: TimeUtil.chatTime(chat?.insertedAt ?? ''),
             size: FontSize.s8,
             align: TextAlign.right,
+            type: "Objectivity",
           ),
         ),
       ],

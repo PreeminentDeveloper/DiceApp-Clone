@@ -93,6 +93,7 @@ class ChatListWidget extends StatelessWidget {
                 TextWidget(
                   text: '${chatObject?.viewersCount ?? 0}',
                   size: FontSize.s10,
+                  type: "Objectivity",
                   appcolor: DColors.white,
                 )
               ],

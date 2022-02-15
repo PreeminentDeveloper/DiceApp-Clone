@@ -24,6 +24,7 @@ import 'data/models/list_chat_response.dart' as chat;
 import 'data/models/local_chats_model.dart';
 import 'data/sources/chat_dao.dart';
 import 'provider/chat_provider.dart';
+import 'widget/chat_bubble.dart';
 import 'widget/grouped_time.dart';
 import 'widget/receiver.dart';
 import 'widget/sender.dart';
@@ -166,12 +167,8 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
                           indexedItemBuilder:
                               (context, dynamic element, int index) =>
                                   element.user?.id == _profileProvider?.user?.id
-                                      ? SenderSide(
-                                          showIcon: false,
-                                          chat: element,
-                                          deleteCallback: null)
-                                      : ReceiverSide(
-                                          chat: element, deleteCallback: null),
+                                      ? SenderSide(chat: element)
+                                      : ReceiverSide(chat: element),
                           floatingHeader: true,
                         ),
                       ),

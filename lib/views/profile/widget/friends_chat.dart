@@ -53,7 +53,7 @@ class FriendsChat extends StatelessWidget {
                                     .map(
                                       (user) => Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 50.4.w, vertical: 25.h),
+                                            horizontal: 50.4.w, vertical: 16.h),
                                         child: Row(
                                           children: [
                                             CircleImageHandler(
@@ -97,6 +97,7 @@ class FriendsChat extends StatelessWidget {
                                                   size: FontSize.s12,
                                                   appcolor:
                                                       DColors.primaryColor,
+                                                  type: "Objectivity",
                                                 ),
                                                 SizedBox(width: 15.w),
                                                 GestureDetector(
@@ -143,7 +144,6 @@ class FriendsChat extends StatelessWidget {
                     //         ]))
                     //     .toList(),
 
-                    SizedBox(height: 11.4.h),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: CustomeDivider(),
