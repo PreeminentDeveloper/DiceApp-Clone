@@ -25,7 +25,9 @@ import 'image_viewer.dart';
 class SenderSide extends StatelessWidget {
   final ListOfMessages? chat;
   final Function? deleteCallback;
-  const SenderSide({this.chat, this.deleteCallback, Key? key})
+  final bool? showIcon;
+  const SenderSide(
+      {this.chat, this.deleteCallback, Key? key, this.showIcon = true})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -75,13 +77,15 @@ class SenderSide extends StatelessWidget {
                   },
                 ),
               ),
-              chat?.read != null
-                  ? SvgPicture.asset("assets/delivered.svg")
-                  : SvgPicture.asset(
-                      "assets/ssent_icon.svg",
-                      width: 24,
-                      fit: BoxFit.cover,
-                    )
+              Visibility(
+                  visible: showIcon!,
+                  child: chat?.read != null
+                      ? SvgPicture.asset("assets/delivered.svg")
+                      : SvgPicture.asset(
+                          "assets/ssent_icon.svg",
+                          width: 24,
+                          fit: BoxFit.cover,
+                        ))
             ],
           ),
         ),

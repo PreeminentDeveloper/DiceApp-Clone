@@ -40,6 +40,7 @@ import 'feature_images.dart';
 import 'provider/chat_provider.dart';
 import 'stickers_screen.dart';
 import 'widget/chat_field.dart';
+import 'widget/grouped_time.dart';
 import 'widget/receiver.dart';
 
 final bucketGlobal = PageStorageBucket();
@@ -164,7 +165,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       groupBy: (element) =>
                           TimeUtil.chatDate(element.insertedAt),
                       groupSeparatorBuilder: (String groupByValue) =>
-                          _getGroupedTime(groupByValue),
+                          GroupedTimer(groupByValue),
                       indexedItemBuilder:
                           (context, dynamic element, int index) =>
                               element.user?.id == _profileProvider?.user?.id
@@ -361,25 +362,6 @@ class _MessageScreenState extends State<MessageScreen> {
     }
     setState(() {});
     return _imageFile;
-  }
-
-  Widget _getGroupedTime(String groupByValue) {
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(top: 15.h, bottom: 10.h),
-      child: Row(
-        children: [
-          Expanded(child: CustomeDivider(thickness: .3)),
-          TextWidget(
-            text: TimeUtil.timeAgoSinceDate(groupByValue),
-            appcolor: const Color(0xffB2B2B2),
-            weight: FontWeight.w500,
-            size: 10.sp,
-          ),
-          Expanded(child: CustomeDivider(thickness: .3)),
-        ],
-      ),
-    );
   }
 }
 

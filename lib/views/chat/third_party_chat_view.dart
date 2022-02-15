@@ -7,22 +7,24 @@ import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/core/util/time_helper.dart';
 import 'package:dice_app/views/home/provider/home_provider.dart';
 import 'package:dice_app/views/profile/provider/profile_provider.dart';
-import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 import 'bloc/chat_bloc.dart';
+import 'data/models/list_chat_response.dart' as chat;
 import 'data/models/local_chats_model.dart';
 import 'data/sources/chat_dao.dart';
 import 'provider/chat_provider.dart';
+import 'widget/grouped_time.dart';
 import 'widget/receiver.dart';
 import 'widget/sender.dart';
 import 'widget/texters_info_widget.dart';
@@ -59,6 +61,7 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
   List<LocalChatModel> _localChats = [];
   final ScrollController _scrollController = ScrollController();
   final _bloc = ChatBloc(inject());
+  List<chat.ListOfMessages> _messages = [];
 
   @override
   void initState() {
@@ -122,57 +125,80 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
               icon: const Icon(Icons.arrow_downward,
                   color: DColors.primaryColor)),
           centerTitle: true,
-          titleWidget: _customAppBar(
-              myFriendProfile: widget.myFriendProfile,
-              myFriendFriendsProfile: widget.myFriendFriendsProfile,
-              onTap: () {
-                setState(() => _animateValue = !_animateValue);
-                if (_animateValue) {
-                  _controller?.forward();
-                } else {
-                  _controller?.reverse();
-                }
-              }), // 702822
+          titleWidget: Visibility(
+            visible: !_animateValue,
+            child: _customAppBar(
+                myFriendProfile: widget.myFriendProfile,
+                myFriendFriendsProfile: widget.myFriendFriendsProfile,
+                onTap: () => _animate()),
+          ), // 702822
         ),
         body: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            _animateValue = false;
+            _controller?.reverse();
+            setState(() {});
+          },
           child: BlocListener<ChatBloc, ChatState>(
             bloc: _bloc,
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state is ChatSuccessState) {
+                _messages = state.response ?? [];
+                setState(() {});
+              }
+            },
             child: SafeArea(
               child: Stack(
                 children: [
-                  ValueListenableBuilder(
-                    valueListenable:
-                        chatDao!.getListenable(widget.conversationId)!,
-                    builder: (BuildContext context, Box<dynamic> value,
-                        Widget? child) {
-                      final _response = chatDao!.convert(value).toList();
-                      return ListView(
-                        controller: _scrollController,
-                        children: [
-                          ...List.generate(_response.length, (index) {
-                            final chat = _response[index];
-
-                            return chat.user?.id == widget.myFriendProfile?.id
-                                ? SenderSide(
-                                    chat: chat, deleteCallback: () => null)
-                                : ReceiverSide(
-                                    chat: chat, deleteCallback: () => null);
-                          }).toList(),
-                          SizedBox(
-                              height: SizeConfig.getDeviceHeight(context) / 10)
-                        ],
-                      );
-                    },
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: GroupedListView<dynamic, String>(
+                          key: const PageStorageKey<String>('chat'),
+                          elements: _messages,
+                          sort: false,
+                          controller: _scrollController,
+                          groupBy: (element) =>
+                              TimeUtil.chatDate(element.insertedAt),
+                          groupSeparatorBuilder: (String groupByValue) =>
+                              GroupedTimer(groupByValue),
+                          indexedItemBuilder:
+                              (context, dynamic element, int index) =>
+                                  element.user?.id == _profileProvider?.user?.id
+                                      ? SenderSide(
+                                          showIcon: false,
+                                          chat: element,
+                                          deleteCallback: null)
+                                      : ReceiverSide(
+                                          chat: element, deleteCallback: null),
+                          floatingHeader: true,
+                        ),
+                      ),
+                      SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+                    ],
                   ),
-                  TextersInfoWidget(_animateValue, _animation!),
+                  TextersInfoWidget(
+                    _animateValue,
+                    _animation!,
+                    myFriendProfile: widget.myFriendProfile,
+                    myFriendFriendsProfile: widget.myFriendFriendsProfile,
+                  ),
                   _getBottomStackedView(),
                 ],
               ),
             ),
           ),
         ));
+  }
+
+  void _animate() {
+    setState(() => _animateValue = !_animateValue);
+    if (_animateValue) {
+      _controller?.forward();
+    } else {
+      _controller?.reverse();
+    }
   }
 
   callAsyncFetch(res) async {
@@ -198,12 +224,12 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
                         text: 'Dice Views',
                         appcolor: DColors.black,
                         size: FontSize.s15,
-                        weight: FontWeight.w500,
+                        weight: FontWeight.bold,
                       ),
-                      SizedBox(width: 5.w),
+                      SizedBox(width: 19.w),
                       SvgPicture.asset(
                         Assets.eye,
-                        color: DColors.inputBorderColor,
+                        color: DColors.black,
                         height: 10.h,
                       ),
                     ],
@@ -212,7 +238,7 @@ class _ThirdPartyChatViewScreenState extends State<ThirdPartyChatViewScreen>
                   TextWidget(
                     text: '${widget.viewersCount} Views | 0 Active',
                     appcolor: DColors.black,
-                    size: FontSize.s14,
+                    size: FontSize.s12,
                     weight: FontWeight.normal,
                   )
                 ],

@@ -40,11 +40,11 @@ class TextersImagePreview extends StatelessWidget {
                       showInitialText:
                           myFriendProfile?.photo?.url?.isEmpty ?? false,
                       borderWidth: 5,
-                      radius: 30.r,
+                      radius: 25.r,
                     ),
                     Positioned(
-                      top: 40,
-                      right: 40,
+                      top: 35,
+                      right: 35,
                       child: CircleAvatar(
                         radius: 8.r,
                         backgroundColor: DColors.white,
@@ -73,11 +73,11 @@ class TextersImagePreview extends StatelessWidget {
                               myFriendFriendsProfile?.photo?.url?.isEmpty ??
                                   false,
                           borderWidth: 5,
-                          radius: 30.r,
+                          radius: 25.r,
                         ),
                         Positioned(
-                          top: 40,
-                          left: 40,
+                          top: 35,
+                          left: 35,
                           child: CircleAvatar(
                             radius: 8.r,
                             backgroundColor: DColors.white,
@@ -92,7 +92,7 @@ class TextersImagePreview extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 7.h),
+          SizedBox(height: 4.h),
           TextWidget(
               text:
                   '${myFriendProfile?.name ?? ''}, ${myFriendFriendsProfile?.name ?? ''}',
