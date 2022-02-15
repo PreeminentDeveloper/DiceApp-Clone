@@ -1,6 +1,8 @@
 import 'package:dice_app/core/data/permission_manager.dart';
 import 'package:dice_app/core/data/phonix_manager.dart';
 import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/event_bus/event_bus.dart';
+import 'package:dice_app/core/event_bus/events/user_online.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/util/assets.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -35,6 +37,8 @@ import 'find_people.dart';
 import 'widget/chat_widget.dart';
 import 'widget/profile_window.dart';
 
+Iterable<String>? onlinePresence = [];
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -58,7 +62,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _initializeController();
     _listConversations();
+    _checksForOnlineFriends();
     super.initState();
+  }
+
+  void _checksForOnlineFriends() {
+    eventBus.on<OnlineUser>().listen((event) {
+      onlinePresence = event.key ?? [];
+      setState(() {});
+    });
   }
 
   void _initializeController() {
@@ -208,13 +220,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     OtherProfile(user.id!),
                                                     context),
                                             onPressed: () async {
-                                              Provider.of<ChatProvider>(context,
+                                              // chatDao!.openABox(
+                                              //     conversation.conversationID!);
+                                              await Provider.of<ChatProvider>(
+                                                      context,
                                                       listen: false)
                                                   .markAllMessageAsRead(
                                                       conversation
                                                           .conversationID!);
-                                              chatDao!.openABox(
-                                                  conversation.conversationID!);
                                               PageRouter.gotoWidget(
                                                   MessageScreen(
                                                       user: user,

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/online_event.dart';
+import 'package:dice_app/core/event_bus/events/user_online.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
 import 'package:dice_app/core/package/flutter_gallery.dart';
 import 'package:dice_app/core/util/helper.dart';
@@ -78,6 +79,10 @@ class _MessageScreenState extends State<MessageScreen> {
     PageStorage.of(context)!.readState(context, identifier: 'chat');
 
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+
+    _isOnline = onlinePresence!.contains(widget.user?.id);
+    setState(() {});
+
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _chatProvider!.loadMessagesFromServer(widget.conversationID!);
@@ -86,7 +91,8 @@ class _MessageScreenState extends State<MessageScreen> {
     eventBus.on().listen((event) {
       if (event is OnlineListener) {
         _isOnline = event.event?['status'] ?? false;
-        // setState(() {});
+        setState(() {});
+        logger.d(_isOnline);
       }
     });
     _profileProvider!.getMyFriendsProfile(widget.user.id);
@@ -111,13 +117,15 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    // _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollDown());
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _scrollDown();
+    });
     if (chatDao!.getListenable(widget.conversationID!) == null) {
       return Container();
     }
@@ -142,46 +150,41 @@ class _MessageScreenState extends State<MessageScreen> {
   /// returns body view
   Stack _newBody() => Stack(
         children: [
-          PageStorage(
-            bucket: bucketGlobal,
-            child: BlocListener<ChatBloc, ChatState>(
-              bloc: _bloc,
-              listener: (context, state) {
-                if (state is ChatSuccessState) {
-                  _messages = state.response ?? [];
-                  setState(() {});
-                }
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: GroupedListView<dynamic, String>(
-                      key: const PageStorageKey<String>('chat'),
-                      elements: _messages,
-                      sort: false,
-                      controller: _scrollController,
-                      groupBy: (element) =>
-                          TimeUtil.chatDate(element.insertedAt),
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          _getGroupedTime(groupByValue),
-                      indexedItemBuilder:
-                          (context, dynamic element, int index) =>
-                              element.user?.id == _profileProvider?.user?.id
-                                  ? SenderSide(
-                                      chat: element,
-                                      deleteCallback: () =>
-                                          _removeMessage(index, element.id))
-                                  : ReceiverSide(
-                                      chat: element,
-                                      deleteCallback: () =>
-                                          _removeMessage(index, element.id)),
-                      floatingHeader: true,
-                    ),
+          BlocListener<ChatBloc, ChatState>(
+            bloc: _bloc,
+            listener: (context, state) {
+              if (state is ChatSuccessState) {
+                _messages = state.response ?? [];
+                setState(() {});
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: GroupedListView<dynamic, String>(
+                    key: const PageStorageKey<String>('chat'),
+                    elements: _messages,
+                    sort: false,
+                    controller: _scrollController,
+                    groupBy: (element) => TimeUtil.chatDate(element.insertedAt),
+                    groupSeparatorBuilder: (String groupByValue) =>
+                        _getGroupedTime(groupByValue),
+                    indexedItemBuilder: (context, dynamic element, int index) =>
+                        element.user?.id == _profileProvider?.user?.id
+                            ? SenderSide(
+                                chat: element,
+                                deleteCallback: () =>
+                                    _removeMessage(index, element.id))
+                            : ReceiverSide(
+                                chat: element,
+                                deleteCallback: () =>
+                                    _removeMessage(index, element.id)),
+                    floatingHeader: true,
                   ),
-                  SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
-                ],
-              ),
+                ),
+                SizedBox(height: SizeConfig.getDeviceHeight(context) / 10)
+              ],
             ),
           ),
           Align(

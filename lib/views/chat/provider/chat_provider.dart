@@ -50,10 +50,10 @@ class ChatProvider extends ChangeNotifier {
         logger.i(
             'Mark All Message Read: ${_push.sent}:  ConversationID === $conversationID');
       }
-      final _isOnline = phonixManager.phoenixChannel
+      final _online = phonixManager.phoenixChannel
           ?.push("get_converstion_online_status-$conversationID", {});
-      if (_isOnline!.sent) {
-        logger.i('Checking if a user is online: $_isOnline');
+      if (_online!.sent) {
+        logger.i('Check is user is online');
       }
     } catch (e) {
       logger.e(e);

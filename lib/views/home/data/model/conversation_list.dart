@@ -53,7 +53,7 @@ class ConversationList {
       id: map['id'],
       conversationID: map['conversationID'],
       viewersCount: map['viewersCount'],
-      unread: map['unread'],
+      unread: map['unread'] ?? 0,
       lastMessage: map['lastMessage'] != null
           ? LastMessage.fromJson(map['lastMessage'])
           : null,

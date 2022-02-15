@@ -42,15 +42,13 @@ class HomeGqlMutation {
             type
             updatedAt
             userId
-          
           }
           notificationSettings{
             visibility
           }
-        
         }
       }
-    }  
+    }
   }
   ''';
 

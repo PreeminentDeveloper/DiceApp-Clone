@@ -2,6 +2,7 @@ import 'package:dice_app/core/data/session_manager.dart';
 import 'package:dice_app/core/event_bus/event_bus.dart';
 import 'package:dice_app/core/event_bus/events/chat_event.dart';
 import 'package:dice_app/core/event_bus/events/online_event.dart';
+import 'package:dice_app/core/event_bus/events/user_online.dart';
 import 'package:dice_app/core/network/url_config.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:phoenix_socket/phoenix_socket.dart';
@@ -24,16 +25,15 @@ class PhonixManager {
 
       phoenixChannel?.join();
       phoenixChannel?.messages.listen((event) {
-        // if (event.event.value == 'single_presence_state') {
-        //   eventBus.fire(OnlineListener(
-        //       event.event.value, OnlineEvent.fromJson(event.payload!)));
-        // }
+        if (event.event.value == 'presence_state') {
+          eventBus.fire(OnlineUser(event.payload?.keys ?? []));
+        }
 
         if (event.event.value.contains('create_message')) {
           eventBus.fire(ChatEventBus(
               event.event.value, ChatEventModel.fromJson(event.payload)));
         }
-        if (event.event.value.contains('get_converstion_online_status')) {
+        if (event.event.value.contains('get_conversation_online_status')) {
           eventBus.fire(OnlineListener(event.event.value, event.payload!));
         }
       });
