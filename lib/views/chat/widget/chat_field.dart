@@ -1,15 +1,14 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_new
 
-import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/pallets.dart';
-import 'package:dice_app/views/home/camera/camera_screen.dart';
-import 'package:dice_app/views/widgets/pop_menu/items.dart';
-import 'package:dice_app/views/widgets/pop_menu/pop_up_menu.dart';
 import 'package:dice_app/views/widgets/pop_menu_options.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
+ScrollController _scrollController = ScrollController();
 
 class ChatEditBox extends StatelessWidget {
   final Function(String)? onChanged;
@@ -64,25 +63,37 @@ class ChatEditBox extends StatelessWidget {
                     : CrossAxisAlignment.center,
                 children: [
                   Flexible(
-                    child: TextField(
-                      onChanged: onChanged,
-                      controller: msgController,
-                      maxLines: null,
-                      onTap: () => showStickerDialog ?? (false),
-                      decoration: const InputDecoration(
-                        hintText: "Type a message...",
-                        // fillColor: DColors.white,
-                        hintStyle: TextStyle(
-                          color: Color(0xff808080),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                    child: ConstrainedBox(
+                      constraints: new BoxConstraints(
+                        minWidth: Helpers.getDeviceWidth(context),
+                        maxWidth: Helpers.getDeviceWidth(context),
+                        minHeight: 25.0,
+                        maxHeight: 135.0,
+                      ),
+                      child: Scrollbar(
+                        controller: _scrollController,
+                        child: TextField(
+                          onChanged: onChanged,
+                          controller: msgController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          onTap: () => showStickerDialog ?? (false),
+                          decoration: const InputDecoration(
+                            hintText: "Type a message...",
+                            // fillColor: DColors.white,
+                            hintStyle: TextStyle(
+                              color: Color(0xff808080),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            // filled: true,
+                            border: OutlineInputBorder(
+                                // borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                          ),
                         ),
-                        // filled: true,
-                        border: OutlineInputBorder(
-                            // borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       ),
                     ),
                   ),

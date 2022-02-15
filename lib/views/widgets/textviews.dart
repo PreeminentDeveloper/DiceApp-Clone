@@ -10,6 +10,7 @@ class TextWidget extends StatelessWidget {
   final double? size, space, height;
   final Color? appcolor;
   final TextAlign? align;
+  final int? maxLines;
 
   TextWidget(
       {this.onTap,
@@ -19,6 +20,7 @@ class TextWidget extends StatelessWidget {
       this.appcolor,
       this.align,
       this.space,
+      this.maxLines,
       this.type,
       this.textOverflow,
       this.height});
@@ -27,16 +29,19 @@ class TextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Text(text ?? '',
-          style: TextStyle(
-              fontFamily: type,
-              fontWeight: weight,
-              fontSize: size,
-              color: appcolor,
-              letterSpacing: space,
-              height: height),
-          overflow: textOverflow,
-          textAlign: align),
+      child: Text(
+        text ?? '',
+        style: TextStyle(
+            fontFamily: type,
+            fontWeight: weight,
+            fontSize: size,
+            color: appcolor,
+            letterSpacing: space,
+            height: height),
+        overflow: textOverflow,
+        textAlign: align,
+        maxLines: maxLines,
+      ),
     );
   }
 }
