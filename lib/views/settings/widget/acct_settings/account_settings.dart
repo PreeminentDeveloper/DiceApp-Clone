@@ -1,5 +1,11 @@
+import 'package:dice_app/core/data/hive_manager.dart';
+import 'package:dice_app/core/data/session_manager.dart';
+import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/navigation/routes.dart';
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/core/util/size_config.dart';
+import 'package:dice_app/views/onboarding/sign_in_splash.dart';
+import 'package:dice_app/views/profile/provider/profile_provider.dart';
 import 'package:dice_app/views/widgets/custom_divider.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/grey_card.dart';
@@ -7,6 +13,7 @@ import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import 'change_number.dart';
 import 'change_username.dart';
@@ -50,10 +57,18 @@ class AccountSetting extends StatelessWidget {
               alignment: Alignment.bottomLeft,
               margin: EdgeInsets.all(SizeConfig.appPadding!),
               child: TextWidget(
-                  text: "Delete Account",
-                  appcolor: Colors.red,
-                  weight: FontWeight.w500,
-                  size: FontSize.s18),
+                text: "Delete Account",
+                appcolor: Colors.red,
+                weight: FontWeight.w500,
+                size: FontSize.s18,
+                onTap: () async {
+                  Provider.of<ProfileProvider>(context, listen: false)
+                      .deleteUser();
+                  await SessionManager.instance.logOut();
+                  PageRouter.gotoWidget(const SignInSplashScreen(), context,
+                      clearStack: true);
+                },
+              ),
             )
           ],
         ),

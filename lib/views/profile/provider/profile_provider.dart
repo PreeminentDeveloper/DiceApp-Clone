@@ -151,6 +151,17 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// delete a users account
+  void deleteUser() async {
+    try {
+      await _profileService.deleteUser();
+    } catch (e) {
+      logger.e(e);
+      profileEnum = ProfileEnum.idle;
+    }
+    notifyListeners();
+  }
+
   bool isExists = false;
 
   void verifyUserName(String username) async {

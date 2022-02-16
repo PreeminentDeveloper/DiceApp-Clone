@@ -149,6 +149,19 @@ class ProfileSetupModel {
     """;
   }
 
+  String deleteUser() {
+    return """
+      query{
+            deleteAccount
+            {
+              age
+              name
+              deletedAt
+            }
+          }
+    """;
+  }
+
   String codeNameExists = '''
   query (\$codeName: String!){
     codeNameExists(codeName: \$codeName)

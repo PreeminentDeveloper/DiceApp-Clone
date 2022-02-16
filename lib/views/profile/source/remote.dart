@@ -105,6 +105,17 @@ class ProfileService {
     }
   }
 
+  Future<dynamic> deleteUser() async {
+    try {
+      final _response = await _graphQLClient.client.mutate(MutationOptions(
+          document: gql(_model.deleteUser()),
+          fetchPolicy: FetchPolicy.networkOnly));
+      logger.d(_response.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
   Future<CodeNameVerification?> verifyUserName(String username) async {
     try {
       final _result = await _graphQLClient.client.mutate(MutationOptions(
