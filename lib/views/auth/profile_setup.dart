@@ -228,13 +228,19 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                 alignment: Alignment.center,
                                 margin: const EdgeInsets.only(top: 8),
                                 child: TextWidget(
-                                  text: _usernameController.text.isEmpty ? ''  : provider.acceptedUsername
-                                      ? 'Congrats! Username is available'
-                                      : 'Oops! already taken',
+                                  text: _usernameController.text.isEmpty
+                                      ? ''
+                                      : output.isNotEmpty
+                                          ? output
+                                          : provider.acceptedUsername
+                                              ? 'Congrats! Username is available'
+                                              : 'Oops! already taken',
                                   size: FontSize.s11,
-                                  appcolor: provider.acceptedUsername
-                                      ? DColors.primaryColor
-                                      : Colors.red,
+                                  appcolor: output.isNotEmpty
+                                      ? Colors.red
+                                      : provider.acceptedUsername
+                                          ? DColors.primaryColor
+                                          : Colors.red,
                                 ));
                           },
                         ),
@@ -250,9 +256,9 @@ class _ProfileSetUpState extends State<ProfileSetUp> {
                                   vertical: 16.h),
                               child: TextButton(
                                   onPressed: () {
-                                    if (auth.acceptedUsername) {
-                                    
-
+                                    if (auth.acceptedUsername &&
+                                        _usernameController.text.isNotEmpty &&
+                                        _nameController.text.isNotEmpty) {
                                       _bloc.add(ProfileSetUpEvent(
                                           profileSetupModel: ProfileSetupModel(
                                         phone: _profileProvider?.user?.phone,
