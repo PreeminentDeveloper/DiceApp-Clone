@@ -1,6 +1,7 @@
 import 'package:dice_app/core/util/pallets.dart';
 import 'package:dice_app/views/auth/sign_up.dart';
 import 'package:dice_app/views/onboarding/sign_in_splash.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,30 +27,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-    return MultiProvider(
-      providers: Providers.getProviders,
-      child: ScreenUtilInit(
-        designSize: const Size(375, 812),
-        builder: () {
-          return MaterialApp(
-            title: 'DiceMessanger',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(primarySwatch: Colors.green),
-            routes: Routes.getRoutes,
-            home: FutureBuilder(
-              future: pnService.initializeNotification(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(backgroundColor: DColors.white);
-                }
-                return SessionManager.instance.authLogging
+    return FutureBuilder(
+      future: pnService.initializeNotification(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return MultiProvider(
+          providers: Providers.getProviders,
+          child: ScreenUtilInit(
+            designSize: const Size(375, 812),
+            builder: () {
+              return MaterialApp(
+                title: 'DiceMessanger',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(primarySwatch: Colors.green),
+                routes: Routes.getRoutes,
+                home: SessionManager.instance.authLogging
                     ? HomeScreen()
-                    : const SignInSplashScreen();
-              },
-            ),
-          );
-        },
-      ),
+                    : const SignInSplashScreen(),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

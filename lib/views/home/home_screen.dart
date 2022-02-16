@@ -52,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    PermissionManager.requestPermission(context);
     phonixManager.initializePhonix();
     _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);

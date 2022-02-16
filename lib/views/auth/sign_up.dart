@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dice_app/core/navigation/page_router.dart';
+import 'package:dice_app/core/notification/pn_services.dart';
 import 'package:dice_app/core/util/helper.dart';
 import 'package:dice_app/core/util/injection_container.dart';
 import 'package:dice_app/core/util/pallets.dart';
@@ -13,6 +14,8 @@ import 'package:dice_app/views/widgets/custom_country_picker.dart';
 import 'package:dice_app/views/widgets/default_appbar.dart';
 import 'package:dice_app/views/widgets/textviews.dart';
 import 'package:dice_app/views/widgets/validate.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,16 +44,18 @@ class _SignUpState extends State<SignUp> {
     super.initState();
   }
 
-  Future<String> _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      return androidDeviceInfo.androidId; // unique ID on Android
-    }
-  }
+  // Future<String?> _getId() async {
+  //   final _firebase = await pnService.getToken();
+  //   return _firebase;
+  //   // var deviceInfo = DeviceInfoPlugin();
+  //   // if (Platform.isIOS) {
+  //   //   var iosDeviceInfo = await deviceInfo.iosInfo;
+  //   //   return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+  //   // } else {
+  //   //   var androidDeviceInfo = await deviceInfo.androidInfo;
+  //   //   return androidDeviceInfo.androidId; // unique ID on Android
+  //   // }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -196,8 +201,8 @@ class _SignUpState extends State<SignUp> {
                               // _onLoginButtonPressed();
                               FocusScope.of(context).requestFocus(FocusNode());
                               if (phoneKey.currentState!.validate()) {
-                                _deviceID = await _getId();
-                                setState(() {});
+                                // _deviceID = await _getId();
+                                // setState(() {});
 
                                 String _phone = _phoneController.text[0] == '0'
                                     ? _phoneController.text
@@ -206,8 +211,8 @@ class _SignUpState extends State<SignUp> {
                                     : _phoneController.text.replaceAll(' ', '');
 
                                 _bloc.add(StartLoginEvent(
-                                    loginModel: LoginModel(
-                                        dialCode + _phone, _deviceID)));
+                                    loginModel: LoginModel(dialCode + _phone,
+                                        await pnService.getToken())));
                               }
                             },
                             style: ButtonStyle(

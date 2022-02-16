@@ -106,7 +106,6 @@ class NotificationService {
 
   /// Get users token
   Future<String?> getToken() async {
-    logger.d(await FirebaseMessaging.instance.getToken());
     return await FirebaseMessaging.instance.getToken();
   }
 
