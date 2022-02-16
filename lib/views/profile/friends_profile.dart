@@ -143,7 +143,10 @@ class _OtherProfileState extends State<OtherProfile> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 23.w),
-            child: _buttonIconDetector(getProfile),
+            child: _isRequesting
+                ? SvgPicture.asset("assets/ellipsis.svg",
+                    color: DColors.primaryColor)
+                : _buttonIconDetector(getProfile),
           ),
         ),
       ),
@@ -209,12 +212,14 @@ class _OtherProfileState extends State<OtherProfile> {
   }
 
   void _makeRequest(User? value) {
-    if (value?.connection!.toLowerCase() != 'unconnected' &&
-        value?.connection!.toLowerCase() != 'requested') {
-      return;
-    }
+    // if (value?.connection!.toLowerCase() != 'unconnected' &&
+    //     value?.connection!.toLowerCase() != 'requested') {
+    //   return;
+    // }
 
-    _showDialog();
+    if (value?.connection!.toLowerCase() == 'unconnected') {
+      _showDialog();
+    }
   }
 
   void _showDialog() {
@@ -237,7 +242,10 @@ class _OtherProfileState extends State<OtherProfile> {
         });
   }
 
+  bool _isRequesting = false;
+
   _followThisUser({String? note}) {
+    setState(() => _isRequesting = true);
     _profileProvider?.requestConnection(msg: note, friendsID: widget.id);
     _profileProvider?.getMyFriendsProfile(widget.id);
   }
