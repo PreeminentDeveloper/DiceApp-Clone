@@ -1,4 +1,6 @@
 PODS:
+  - "app_settings (3.0.0+1)":
+    - Flutter
   - camera (0.0.1):
     - Flutter
   - connectivity_plus (0.0.1):
@@ -139,6 +141,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - camera (from `.symlinks/plugins/camera/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
@@ -185,6 +188,8 @@ SPEC REPOS:
     - TOCropViewController
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
   camera:
     :path: ".symlinks/plugins/camera/ios"
   connectivity_plus:
@@ -235,6 +240,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
+  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
   camera: fe33292aff715a981eb34d7ce7b35b54337ff34c
   connectivity_plus: 5f0eb61093bec56935f21a1699dd2758bc895587
   contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca

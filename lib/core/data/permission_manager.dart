@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -28,20 +29,11 @@ class PermissionManager {
       BuildContext context, PermissionStatus permissionStatus) {
     switch (permissionStatus) {
       case PermissionStatus.denied:
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Access to contact data denied')));
-        break;
       case PermissionStatus.granted:
-        break;
       case PermissionStatus.restricted:
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('You are restricted from this action')));
-        break;
       case PermissionStatus.limited:
-        break;
       case PermissionStatus.permanentlyDenied:
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Contact data not available on device')));
+        AppSettings.openAppSettings();
         break;
     }
   }
